@@ -608,7 +608,7 @@ function capturePhoto() {
   capturedDataUrl = photoCanvas.toDataURL('image/jpeg', 0.92);
 
   // Show canvas, hide live video
-  photoCanvas.style.display = 'block';
+  show(photoCanvas);
   hide(video);
 
   // Stop stream
@@ -622,7 +622,6 @@ function capturePhoto() {
 async function retakePhoto() {
   capturedDataUrl = null;
   hide(photoCanvas);
-  photoCanvas.style.display = '';
   hide(retakeBtn);
   show(captureBtn);
   stickerSection.classList.add('hidden');
@@ -832,7 +831,7 @@ printBtn.addEventListener('click', () => {
    Init
 ════════════════════════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', () => {
-  photoCanvas.style.display = 'none';
+  hide(photoCanvas);
   hide(video);
   initDrawCanvas();
   refreshGenerateBtn();
