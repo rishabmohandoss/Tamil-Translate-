@@ -714,33 +714,89 @@ undoBtn.addEventListener('click', () => {
 });
 
 /* ════════════════════════════════════════════════════════
+   Canvas segmentation — splits drawing into one crop per
+   Tamil character using vertical ink column analysis
+════════════════════════════════════════════════════════ */
+function segmentCanvas() {
+  const { width, height } = drawCanvas;
+  const data = drawCanvas.getContext('2d').getImageData(0, 0, width, height).data;
+
+  // Mark which columns contain ink (pixel brightness < 200)
+  const hasInk = new Uint8Array(width);
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      const i = (y * width + x) * 4;
+      if ((data[i] + data[i+1] + data[i+2]) / 3 < 200) { hasInk[x] = 1; break; }
+    }
+  }
+
+  // Find vertical ink extent (to trim blank rows top/bottom)
+  let inkTop = height, inkBottom = 0;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const i = (y * width + x) * 4;
+      if ((data[i] + data[i+1] + data[i+2]) / 3 < 200) {
+        if (y < inkTop) inkTop = y;
+        if (y > inkBottom) inkBottom = y;
+      }
+    }
+  }
+  if (inkTop > inkBottom) return []; // nothing drawn
+
+  const PAD = 10, MIN_GAP = 10, MIN_W = 8;
+  const cropY = Math.max(0, inkTop - PAD);
+  const cropH = Math.min(height, inkBottom + PAD + 1) - cropY;
+
+  // Detect character boundaries via column gaps
+  const chars = [];
+  let start = -1, gap = 0;
+  for (let x = 0; x <= width; x++) {
+    if (x < width && hasInk[x]) {
+      if (start < 0) start = x;
+      gap = 0;
+    } else if (start >= 0) {
+      if (++gap >= MIN_GAP || x === width) {
+        const end = x - gap;
+        if (end - start >= MIN_W) chars.push([Math.max(0, start - PAD), Math.min(width, end + PAD)]);
+        start = -1; gap = 0;
+      }
+    }
+  }
+
+  if (!chars.length) return [];
+
+  // Crop each character to its own canvas and encode as PNG
+  return chars.slice(0, 5).map(([x1, x2]) => {
+    const c = document.createElement('canvas');
+    c.width = x2 - x1; c.height = cropH;
+    const cx = c.getContext('2d');
+    cx.fillStyle = '#fff';
+    cx.fillRect(0, 0, c.width, c.height);
+    cx.drawImage(drawCanvas, x1, cropY, x2 - x1, cropH, 0, 0, c.width, c.height);
+    return c.toDataURL('image/png').split(',')[1];
+  });
+}
+
+/* ════════════════════════════════════════════════════════
    Tamil recognition — calls our Vercel serverless function
    which holds the API key server-side
 ════════════════════════════════════════════════════════ */
 recognizeBtn.addEventListener('click', async () => {
-  // Downscale canvas to ≤400px JPEG before encoding
-  const MAX_W = 400;
-  const scaleRatio = Math.min(1, MAX_W / drawCanvas.width);
-  const scaledW = Math.round(drawCanvas.width  * scaleRatio);
-  const scaledH = Math.round(drawCanvas.height * scaleRatio);
-  const tmpCanvas = document.createElement('canvas');
-  tmpCanvas.width  = scaledW;
-  tmpCanvas.height = scaledH;
-  const tmpCtx = tmpCanvas.getContext('2d');
-  tmpCtx.fillStyle = '#fff';
-  tmpCtx.fillRect(0, 0, scaledW, scaledH);
-  tmpCtx.drawImage(drawCanvas, 0, 0, scaledW, scaledH);
-  const imageBase64 = tmpCanvas.toDataURL('image/png').split(',')[1];
+  const segments = segmentCanvas();
+  if (!segments.length) {
+    setStatus('Nothing drawn — draw your Tamil name first.', 'error');
+    return;
+  }
 
   recognizeBtn.disabled = true;
   recognizeBtn.innerHTML = '<span class="spin"></span>Recognizing…';
-  setStatus('Analyzing your handwriting…');
+  setStatus(`Analyzing ${segments.length} character${segments.length > 1 ? 's' : ''}…`);
 
   try {
     const res = await fetch('/api/recognize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageBase64 })
+      body: JSON.stringify({ segments })
     });
 
     if (!res.ok) {
