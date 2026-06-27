@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tamil Name Sticker Maker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Noto+Serif+Tamil:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --accent:       #C97D1A;
+      --accent-h:     #e0941f;
+      --accent-pale:  #fdf3e3;
+      --red:          #cc2200;
+      --bg:           #f8f5f0;
+      --card:         #ffffff;
+      --text:         #1e1e1e;
+      --muted:        #7a7068;
+      --border:       #e5ddd4;
+      --radius:       14px;
+      --shadow:       0 2px 14px rgba(0,0,0,0.07);
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    .hidden { display: none !important; }
+
+    /* ── Base ── */
+    body {
+      font-family: 'Libre Baskerville', serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .header-title h1 {
+      font-size: 1.25rem;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+    .header-title .subtitle {
+      font-family: 'Noto Serif Tamil', serif;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+    #settings-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.3rem;
+      color: var(--muted);
+      padding: 6px 8px;
+      border-radius: 8px;
+      transition: background 0.18s, color 0.18s;
+      line-height: 1;
+    }
+    #settings-btn:hover { background: var(--accent-pale); color: var(--accent); }
+
+    /* ── Warning banner ── */
+    #api-warning {
+      background: #fff8e6;
+      border-bottom: 1px solid #f0c060;
+      color: #7a5500;
+      font-size: 0.82rem;
+      padding: 7px 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #api-warning button {
+      margin-left: 6px;
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-family: inherit;
+      font-size: inherit;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+
+    /* ── Main grid ── */
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-rows: auto auto auto;
+      gap: 16px;
+      padding: 20px 28px 32px;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Card base ── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    .step-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    /* ── Camera section ── */
+    .camera-section {
+      display: flex;
+      flex-direction: column;
+    }
+    .camera-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .camera-viewport {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      aspect-ratio: 4/3;
+      background: #111;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+    }
+    #video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transform: scaleX(-1); /* mirror */
+    }
+    #photo-canvas {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .cam-placeholder {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: #555; gap: 10px;
+    }
+    .cam-placeholder svg { opacity: 0.4; }
+    .cam-placeholder p { font-size: 0.85rem; font-style: italic; }
+    .camera-controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+    /* ── Bottom row ── */
+    .bottom-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ── Drawing canvas section ── */
+    .draw-section { display: flex; flex-direction: column; }
+    #draw-canvas {
+      width: 100%;
+      height: 200px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      cursor: crosshair;
+      touch-action: none;
+      display: block;
+    }
+    .draw-controls { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .status-line {
+      font-size: 0.8rem;
+      color: var(--muted);
+      min-height: 1.2em;
+      margin-top: 8px;
+      transition: color 0.2s;
+    }
+    .status-line.error { color: #c0392b; }
+    .status-line.ok    { color: #1a7a3a; }
+
+    /* ── Name preview section ── */
+    .name-section { display: flex; flex-direction: column; gap: 12px; }
+    .name-block {}
+    .name-block .lang-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .name-english {
+      font-size: 2.6rem;
+      font-weight: 700;
+      line-height: 1.1;
+      min-height: 3.1rem;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+    .name-tamil {
+      font-family: 'Noto Serif Tamil', serif;
+      font-size: 2rem;
+      color: var(--accent);
+      min-height: 2.4rem;
+      line-height: 1.2;
+    }
+    .em-placeholder { color: var(--border); font-weight: 400; }
+    .generate-area { margin-top: auto; padding-top: 10px; }
+    .sticker-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* ── Sticker section ── */
+    .sticker-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* ── The sticker card itself ── */
+    .sticker-wrap {
+      width: 384px;    /* ~4in @96dpi */
+      height: 288px;   /* ~3in @96dpi */
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.14);
+      display: flex;
+      flex-direction: column;
+      font-family: 'Libre Baskerville', serif;
+      border: 1px solid #ddd;
+    }
+    .sticker-header-bar {
+      background: var(--red);
+      color: #fff;
+      text-align: center;
+      padding: 10px 16px 8px;
+      flex-shrink: 0;
+    }
+    .sticker-hello {
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.88;
+    }
+    .sticker-hello-main {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-top: 1px;
+    }
+    .sticker-hello-tamil {
+      font-family: 'Noto Serif Tamil', serif;
+      font-size: 0.72rem;
+      opacity: 0.8;
+      margin-top: 1px;
+    }
+    .sticker-body-row {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 16px 22px;
+      gap: 20px;
+      background: #fff;
+    }
+    .sticker-photo-wrap {
+      flex-shrink: 0;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid var(--red);
+      background: #f0ece6;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sticker-photo-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .sticker-name-col { flex: 1; min-width: 0; }
+    .sticker-name-en {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #111;
+      line-height: 1.05;
+      word-break: break-word;
+    }
+    .sticker-name-ta {
+      font-family: 'Noto Serif Tamil', serif;
+      font-size: 1.15rem;
+      color: var(--red);
+      margin-top: 4px;
+    }
+    .sticker-actions { display: flex; gap: 10px; }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 9px 22px;
+      border-radius: 9px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: background 0.18s, color 0.18s, border-color 0.18s, opacity 0.18s;
+      display: inline-flex; align-items: center; gap: 6px;
+      white-space: nowrap;
+    }
+    .btn-primary   { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-h); }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--border); }
+    .btn-outline   { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+    .btn-outline:hover:not(:disabled) { background: var(--accent); color: #fff; }
+    .btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Spinner ── */
+    .spin {
+      display: inline-block;
+      width: 12px; height: 12px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spinning 0.65s linear infinite;
+    }
+    @keyframes spinning { to { transform: rotate(360deg); } }
+
+    /* ── Modal ── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(2px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: #fff;
+      border-radius: 18px;
+      padding: 30px;
+      width: 440px;
+      max-width: 92vw;
+      box-shadow: 0 12px 50px rgba(0,0,0,0.22);
+      transform: translateY(14px);
+      transition: transform 0.2s;
+    }
+    .modal-backdrop.open .modal-box { transform: translateY(0); }
+    .modal-box h2 { font-size: 1.15rem; color: var(--accent); margin-bottom: 10px; }
+    .modal-box p  { font-size: 0.83rem; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+    .modal-box label { font-size: 0.78rem; font-weight: 700; color: var(--muted); display: block; margin-bottom: 5px; }
+    .modal-box input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      font-family: monospace;
+      font-size: 0.88rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.18s;
+      margin-bottom: 18px;
+    }
+    .modal-box input:focus { border-color: var(--accent); }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; }
+
+    /* ── Fade-in animation ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.35s ease both; }
+
+    /* ── Print styles ── */
+    @media print {
+      body > * { display: none !important; }
+      #print-area { display: block !important; }
+      #print-area .sticker-wrap {
+        width: 384px;
+        height: 288px;
+        margin: 0 auto;
+        box-shadow: none;
+        border: 1px solid #ccc;
+      }
+      @page { size: 4in 3in; margin: 0; }
+    }
+
+    #print-area { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     Modal: API Key Settings
+════════════════════════════════════ -->
+<div class="modal-backdrop" id="settings-backdrop">
+  <div class="modal-box">
+    <h2>⚙ API Settings</h2>
+    <p>Paste your Anthropic API key below. It's held in memory only — never written to disk or sent anywhere except the Anthropic API.</p>
+    <label for="api-key-input">Anthropic API Key</label>
+    <input type="password" id="api-key-input" placeholder="sk-ant-api03-…" autocomplete="off" spellcheck="false">
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+      <button class="btn btn-primary"   id="modal-save">Save Key</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden print target -->
+<div id="print-area"></div>
+
+<!-- ════════════════════════════════════
+     Header
+════════════════════════════════════ -->
+<header>
+  <div class="header-title">
+    <h1>Tamil Name Sticker Maker</h1>
+    <div class="subtitle">தமிழ் பெயர் ஸ்டிக்கர் மேக்கர்</div>
+  </div>
+  <button id="settings-btn" title="API Settings" aria-label="Open API settings">⚙</button>
+</header>
+
+<!-- ── API warning ── -->
+<div id="api-warning">
+  ⚠ No API key set — handwriting recognition won't work.
+  <button id="warn-settings-link">Add key →</button>
+</div>
+
+<!-- ════════════════════════════════════
+     Main content
+════════════════════════════════════ -->
+<main>
+
+  <!-- ── 1. Camera ── -->
+  <div class="card camera-section">
+    <span class="step-label">Step 1 · Capture Your Photo</span>
+    <div class="camera-inner">
+      <div class="camera-viewport" id="camera-viewport">
+        <!-- placeholder shown before camera starts -->
+        <div class="cam-placeholder" id="cam-placeholder">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <p>Click "Start Camera" to begin</p>
+        </div>
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="photo-canvas"></canvas>
+      </div>
+      <div class="camera-controls">
+        <button class="btn btn-primary" id="start-camera-btn">📷 Start Camera</button>
+        <button class="btn btn-primary hidden" id="capture-btn">Capture Photo</button>
+        <button class="btn btn-secondary hidden" id="retake-btn">↩ Retake</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 2 + 3. Bottom row ── -->
+  <div class="bottom-row">
+
+    <!-- ── 2. Drawing canvas ── -->
+    <div class="card draw-section">
+      <span class="step-label">Step 2 · Write Your Name in Tamil</span>
+      <canvas id="draw-canvas"></canvas>
+      <div class="draw-controls">
+        <button class="btn btn-secondary" id="clear-btn">✕ Clear</button>
+        <button class="btn btn-secondary" id="undo-btn">↩ Undo</button>
+        <button class="btn btn-primary"   id="recognize-btn">✦ Recognize</button>
+      </div>
+      <div class="status-line" id="status-line">Draw Tamil letters above, then click Recognize.</div>
+    </div>
+
+    <!-- ── 3. Name display ── -->
+    <div class="card name-section">
+      <span class="step-label">Step 3 · Your Name</span>
+
+      <div class="name-block">
+        <div class="lang-label">English transliteration</div>
+        <div class="name-english" id="name-english">
+          <span class="em-placeholder">—</span>
+        </div>
+      </div>
+
+      <div class="name-block">
+        <div class="lang-label">Tamil · தமிழ்</div>
+        <div class="name-tamil" id="name-tamil">
+          <span class="em-placeholder" style="font-family:inherit;font-size:1rem">—</span>
+        </div>
+      </div>
+
+      <div class="generate-area">
+        <button class="btn btn-outline" id="generate-btn" disabled>Generate Sticker ✦</button>
+        <div class="sticker-hint" id="sticker-hint">Capture a photo and recognize your name to generate a sticker.</div>
+      </div>
+    </div>
+
+  </div><!-- /bottom-row -->
+
+  <!-- ── 4. Sticker section (hidden until generated) ── -->
+  <div class="card sticker-section hidden" id="sticker-section">
+    <span class="step-label" style="align-self:flex-start">Step 4 · Your Sticker</span>
+
+    <div class="sticker-wrap fade-up" id="sticker-wrap">
+      <!-- Header bar -->
+      <div class="sticker-header-bar">
+        <div class="sticker-hello">Hello,</div>
+        <div class="sticker-hello-main">my name is</div>
+        <div class="sticker-hello-tamil">என் பெயர்</div>
+      </div>
+      <!-- Body -->
+      <div class="sticker-body-row">
+        <div class="sticker-photo-wrap" id="sticker-photo-wrap">
+          <!-- silhouette SVG placeholder -->
+          <svg width="52" height="52" viewBox="0 0 60 60" fill="#bbb">
+            <circle cx="30" cy="21" r="14"/>
+            <path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25" fill-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="sticker-name-col">
+          <div class="sticker-name-en" id="sticker-name-en">Name</div>
+          <div class="sticker-name-ta" id="sticker-name-ta"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sticker-actions">
+      <button class="btn btn-primary"   id="print-btn">🖨 Print Sticker</button>
+      <button class="btn btn-secondary" id="redo-btn">↺ Redo</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ════════════════════════════════════════════════════════
+   State
+════════════════════════════════════════════════════════ */
+let apiKey            = '';
+let capturedDataUrl   = null;   // JPEG data URL from camera
+let recognizedName    = { english: '', tamil: '' };
+let cameraStream      = null;
+let drawingUndoStack  = [];     // array of ImageData
+let isDrawing         = false;
+let lastX = 0, lastY = 0;
+
+/* ════════════════════════════════════════════════════════
+   DOM refs
+════════════════════════════════════════════════════════ */
+const $  = id => document.getElementById(id);
+const settingsBackdrop  = $('settings-backdrop');
+const apiKeyInput       = $('api-key-input');
+const apiWarning        = $('api-warning');
+const camPlaceholder    = $('cam-placeholder');
+const video             = $('video');
+const photoCanvas       = $('photo-canvas');
+const startCameraBtn    = $('start-camera-btn');
+const captureBtn        = $('capture-btn');
+const retakeBtn         = $('retake-btn');
+const drawCanvas        = $('draw-canvas');
+const dc                = drawCanvas.getContext('2d');
+const clearBtn          = $('clear-btn');
+const undoBtn           = $('undo-btn');
+const recognizeBtn      = $('recognize-btn');
+const statusLine        = $('status-line');
+const nameEnglish       = $('name-english');
+const nameTamil         = $('name-tamil');
+const generateBtn       = $('generate-btn');
+const stickerHint       = $('sticker-hint');
+const stickerSection    = $('sticker-section');
+const stickerPhotoWrap  = $('sticker-photo-wrap');
+const stickerNameEn     = $('sticker-name-en');
+const stickerNameTa     = $('sticker-name-ta');
+const printBtn          = $('print-btn');
+const redoBtn           = $('redo-btn');
+const printArea         = $('print-area');
+
+/* ════════════════════════════════════════════════════════
+   Helpers
+════════════════════════════════════════════════════════ */
+function show(el) { el.classList.remove('hidden'); }
+function hide(el) { el.classList.add('hidden'); }
+
+function setStatus(msg, cls = '') {
+  statusLine.textContent = msg;
+  statusLine.className = 'status-line' + (cls ? ' ' + cls : '');
+}
+
+function refreshWarning() {
+  apiWarning.classList.toggle('hidden', !!apiKey);
+}
+
+function refreshGenerateBtn() {
+  const ready = !!(capturedDataUrl && (recognizedName.english || recognizedName.tamil));
+  generateBtn.disabled = !ready;
+  if (!capturedDataUrl && !(recognizedName.english || recognizedName.tamil)) {
+    stickerHint.textContent = 'Capture a photo and recognize your name to generate a sticker.';
+  } else if (!capturedDataUrl) {
+    stickerHint.textContent = 'Also capture a photo to generate your sticker.';
+  } else if (!(recognizedName.english || recognizedName.tamil)) {
+    stickerHint.textContent = 'Also recognize your handwritten name to generate your sticker.';
+  } else {
+    stickerHint.textContent = 'Ready! Click "Generate Sticker" above.';
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   Settings modal
+════════════════════════════════════════════════════════ */
+function openSettings() {
+  apiKeyInput.value = apiKey;
+  settingsBackdrop.classList.add('open');
+  setTimeout(() => apiKeyInput.focus(), 120);
+}
+function closeSettings() { settingsBackdrop.classList.remove('open'); }
+
+$('settings-btn').addEventListener('click', openSettings);
+$('warn-settings-link').addEventListener('click', openSettings);
+$('modal-cancel').addEventListener('click', closeSettings);
+$('modal-save').addEventListener('click', () => {
+  apiKey = apiKeyInput.value.trim();
+  closeSettings();
+  refreshWarning();
+});
+settingsBackdrop.addEventListener('click', e => { if (e.target === settingsBackdrop) closeSettings(); });
+apiKeyInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter')  $('modal-save').click();
+  if (e.key === 'Escape') closeSettings();
+});
+
+/* ════════════════════════════════════════════════════════
+   Camera
+════════════════════════════════════════════════════════ */
+async function startCamera() {
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 } }, audio: false });
+    video.srcObject = cameraStream;
+    hide(camPlaceholder);
+    show(video);
+    hide(photoCanvas);
+    hide(startCameraBtn);
+    show(captureBtn);
+  } catch (err) {
+    alert('Camera access denied or unavailable: ' + err.message);
+  }
+}
+
+function capturePhoto() {
+  const w = video.videoWidth  || 640;
+  const h = video.videoHeight || 480;
+  photoCanvas.width  = w;
+  photoCanvas.height = h;
+  const pctx = photoCanvas.getContext('2d');
+  // Un-mirror for the saved image
+  pctx.save();
+  pctx.translate(w, 0);
+  pctx.scale(-1, 1);
+  pctx.drawImage(video, 0, 0);
+  pctx.restore();
+
+  capturedDataUrl = photoCanvas.toDataURL('image/jpeg', 0.92);
+
+  // Show canvas, hide live video
+  photoCanvas.style.display = 'block';
+  hide(video);
+
+  // Stop stream
+  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
+
+  hide(captureBtn);
+  show(retakeBtn);
+  refreshGenerateBtn();
+}
+
+async function retakePhoto() {
+  capturedDataUrl = null;
+  hide(photoCanvas);
+  photoCanvas.style.display = '';
+  hide(retakeBtn);
+  show(captureBtn);
+  stickerSection.classList.add('hidden');
+  refreshGenerateBtn();
+  await startCamera();
+}
+
+startCameraBtn.addEventListener('click', startCamera);
+captureBtn.addEventListener('click',     capturePhoto);
+retakeBtn.addEventListener('click',      retakePhoto);
+
+/* ════════════════════════════════════════════════════════
+   Drawing canvas
+════════════════════════════════════════════════════════ */
+function initDrawCanvas() {
+  const parent = drawCanvas.parentElement;
+  const w = parent.clientWidth - 44;   // account for card padding
+  const h = Math.min(210, Math.round(w * 0.48));
+  drawCanvas.width  = w;
+  drawCanvas.height = h;
+  dc.fillStyle = '#ffffff';
+  dc.fillRect(0, 0, w, h);
+  applyPenStyle();
+  drawingUndoStack = [];
+}
+
+function applyPenStyle() {
+  dc.strokeStyle = '#111111';
+  dc.lineWidth   = 3.5;
+  dc.lineCap     = 'round';
+  dc.lineJoin    = 'round';
+}
+
+function saveUndo() {
+  drawingUndoStack.push(dc.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
+  if (drawingUndoStack.length > 60) drawingUndoStack.shift();
+}
+
+function canvasXY(e) {
+  const r = drawCanvas.getBoundingClientRect();
+  const sx = drawCanvas.width  / r.width;
+  const sy = drawCanvas.height / r.height;
+  const src = e.touches ? e.touches[0] : e;
+  return { x: (src.clientX - r.left) * sx, y: (src.clientY - r.top) * sy };
+}
+
+function onPointerDown(e) {
+  e.preventDefault();
+  isDrawing = true;
+  const { x, y } = canvasXY(e);
+  lastX = x; lastY = y;
+  saveUndo();
+  dc.beginPath();
+  dc.moveTo(x, y);
+}
+function onPointerMove(e) {
+  e.preventDefault();
+  if (!isDrawing) return;
+  const { x, y } = canvasXY(e);
+  dc.lineTo(x, y);
+  dc.stroke();
+  lastX = x; lastY = y;
+}
+function onPointerUp(e) {
+  e.preventDefault();
+  if (!isDrawing) return;
+  isDrawing = false;
+  dc.closePath();
+}
+
+drawCanvas.addEventListener('mousedown',  onPointerDown);
+drawCanvas.addEventListener('mousemove',  onPointerMove);
+drawCanvas.addEventListener('mouseup',    onPointerUp);
+drawCanvas.addEventListener('mouseleave', onPointerUp);
+drawCanvas.addEventListener('touchstart', onPointerDown, { passive: false });
+drawCanvas.addEventListener('touchmove',  onPointerMove, { passive: false });
+drawCanvas.addEventListener('touchend',   onPointerUp,   { passive: false });
+
+clearBtn.addEventListener('click', () => {
+  saveUndo();
+  dc.fillStyle = '#fff';
+  dc.fillRect(0, 0, drawCanvas.width, drawCanvas.height);
+  applyPenStyle();
+});
+
+undoBtn.addEventListener('click', () => {
+  if (drawingUndoStack.length > 0) {
+    dc.putImageData(drawingUndoStack.pop(), 0, 0);
+  }
+});
+
+/* ════════════════════════════════════════════════════════
+   Claude API – Tamil recognition
+════════════════════════════════════════════════════════ */
+recognizeBtn.addEventListener('click', async () => {
+  if (!apiKey) {
+    setStatus('No API key set. Click the gear icon ⚙ to add your key.', 'error');
+    return;
+  }
+
+  const b64 = drawCanvas.toDataURL('image/png').split(',')[1];
+
+  recognizeBtn.disabled = true;
+  recognizeBtn.innerHTML = '<span class="spin"></span>Recognizing…';
+  setStatus('Sending canvas to Claude…');
+
+  const prompt =
+    'The user has handwritten Tamil letters on a canvas. Here is the canvas as an image. ' +
+    'Please identify the Tamil letters drawn and return: 1) The Tamil unicode text, ' +
+    '2) The English transliteration of the name. ' +
+    'Respond only in JSON: { "tamil": "...", "english": "..." }';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key':    apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-allow-browser': 'true'
+      },
+      body: JSON.stringify({
+        model:      'claude-sonnet-4-6',
+        max_tokens: 256,
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: { type: 'base64', media_type: 'image/png', data: b64 }
+            },
+            { type: 'text', text: prompt }
+          ]
+        }]
+      })
+    });
+
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody?.error?.message || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    const raw  = (data.content?.[0]?.text || '').trim();
+
+    // Extract JSON even if wrapped in markdown fences
+    const jsonMatch = raw.match(/\{[\s\S]*?\}/);
+    if (!jsonMatch) throw new Error('Unexpected response format. Please try again.');
+
+    let parsed;
+    try { parsed = JSON.parse(jsonMatch[0]); }
+    catch { throw new Error('Could not parse JSON from response.'); }
+
+    const english = (parsed.english || '').trim();
+    const tamil   = (parsed.tamil   || '').trim();
+
+    if (!english && !tamil) throw new Error('No name detected — try drawing the letters larger and more clearly.');
+
+    recognizedName = { english, tamil };
+
+    nameEnglish.innerHTML = english
+      ? english
+      : '<span class="em-placeholder">—</span>';
+    nameTamil.innerHTML = tamil
+      ? tamil
+      : '<span class="em-placeholder" style="font-family:inherit;font-size:1rem">—</span>';
+
+    nameEnglish.classList.add('fade-up');
+    nameTamil.classList.add('fade-up');
+    setTimeout(() => { nameEnglish.classList.remove('fade-up'); nameTamil.classList.remove('fade-up'); }, 400);
+
+    setStatus(`✓ Recognized: "${english}"${tamil ? ' · ' + tamil : ''}`, 'ok');
+    refreshGenerateBtn();
+
+  } catch (err) {
+    setStatus('✕ ' + err.message, 'error');
+  } finally {
+    recognizeBtn.disabled = false;
+    recognizeBtn.innerHTML = '✦ Recognize';
+  }
+});
+
+/* ════════════════════════════════════════════════════════
+   Sticker – build & print
+════════════════════════════════════════════════════════ */
+function buildSticker() {
+  // Photo
+  stickerPhotoWrap.innerHTML = '';
+  if (capturedDataUrl) {
+    const img = document.createElement('img');
+    img.src = capturedDataUrl;
+    img.alt = 'Your photo';
+    stickerPhotoWrap.appendChild(img);
+  } else {
+    stickerPhotoWrap.innerHTML = `
+      <svg width="52" height="52" viewBox="0 0 60 60" fill="#bbb">
+        <circle cx="30" cy="21" r="14"/>
+        <path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25" fill-rule="evenodd"/>
+      </svg>`;
+  }
+
+  stickerNameEn.textContent = recognizedName.english || 'Your Name';
+  stickerNameTa.textContent = recognizedName.tamil   || '';
+
+  show(stickerSection);
+  stickerSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const wrap = $('sticker-wrap');
+  wrap.classList.remove('fade-up');
+  void wrap.offsetWidth; // reflow to re-trigger animation
+  wrap.classList.add('fade-up');
+}
+
+generateBtn.addEventListener('click', buildSticker);
+redoBtn.addEventListener('click',     buildSticker);
+
+printBtn.addEventListener('click', () => {
+  const clone = $('sticker-wrap').cloneNode(true);
+  printArea.innerHTML = '';
+  printArea.appendChild(clone);
+  window.print();
+});
+
+/* ════════════════════════════════════════════════════════
+   Init
+════════════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  // The photo-canvas starts hidden
+  photoCanvas.style.display = 'none';
+  hide(video);
+
+  initDrawCanvas();
+  refreshWarning();
+  refreshGenerateBtn();
+});
+
+window.addEventListener('resize', () => {
+  // Re-init canvas on resize (clears drawing — acceptable trade-off for single-page tool)
+  initDrawCanvas();
+});
+</script>
+</body>
+</html>
