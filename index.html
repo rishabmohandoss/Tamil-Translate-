@@ -74,29 +74,6 @@
     }
     #settings-btn:hover { background: var(--accent-pale); color: var(--accent); }
 
-    /* ── Warning banner ── */
-    #api-warning {
-      background: #fff8e6;
-      border-bottom: 1px solid #f0c060;
-      color: #7a5500;
-      font-size: 0.82rem;
-      padding: 7px 28px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    #api-warning button {
-      margin-left: 6px;
-      background: none;
-      border: none;
-      color: var(--accent);
-      font-family: inherit;
-      font-size: inherit;
-      cursor: pointer;
-      text-decoration: underline;
-      padding: 0;
-    }
-
     /* ── Main grid ── */
     main {
       flex: 1;
@@ -416,22 +393,6 @@
 </head>
 <body>
 
-<!-- ════════════════════════════════════
-     Modal: API Key Settings
-════════════════════════════════════ -->
-<div class="modal-backdrop" id="settings-backdrop">
-  <div class="modal-box">
-    <h2>⚙ API Settings</h2>
-    <p>Paste your Anthropic API key below. It's held in memory only — never written to disk or sent anywhere except the Anthropic API.</p>
-    <label for="api-key-input">Anthropic API Key</label>
-    <input type="password" id="api-key-input" value="__ANTHROPIC_KEY__" placeholder="sk-ant-api03-…" autocomplete="off" spellcheck="false">
-    <div class="modal-footer">
-      <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
-      <button class="btn btn-primary"   id="modal-save">Save Key</button>
-    </div>
-  </div>
-</div>
-
 <!-- Hidden print target -->
 <div id="print-area"></div>
 
@@ -443,14 +404,7 @@
     <h1>Tamil Name Sticker Maker</h1>
     <div class="subtitle">தமிழ் பெயர் ஸ்டிக்கர் மேக்கர்</div>
   </div>
-  <button id="settings-btn" title="API Settings" aria-label="Open API settings">⚙</button>
 </header>
-
-<!-- ── API warning ── -->
-<div id="api-warning">
-  ⚠ No API key set — handwriting recognition won't work.
-  <button id="warn-settings-link">Add key →</button>
-</div>
 
 <!-- ════════════════════════════════════
      Main content
@@ -561,11 +515,10 @@
 /* ════════════════════════════════════════════════════════
    State
 ════════════════════════════════════════════════════════ */
-let apiKey            = '';
-let capturedDataUrl   = null;   // JPEG data URL from camera
+let capturedDataUrl   = null;
 let recognizedName    = { english: '', tamil: '' };
 let cameraStream      = null;
-let drawingUndoStack  = [];     // array of ImageData
+let drawingUndoStack  = [];
 let isDrawing         = false;
 let lastX = 0, lastY = 0;
 
@@ -573,9 +526,6 @@ let lastX = 0, lastY = 0;
    DOM refs
 ════════════════════════════════════════════════════════ */
 const $  = id => document.getElementById(id);
-const settingsBackdrop  = $('settings-backdrop');
-const apiKeyInput       = $('api-key-input');
-const apiWarning        = $('api-warning');
 const camPlaceholder    = $('cam-placeholder');
 const video             = $('video');
 const photoCanvas       = $('photo-canvas');
@@ -611,10 +561,6 @@ function setStatus(msg, cls = '') {
   statusLine.className = 'status-line' + (cls ? ' ' + cls : '');
 }
 
-function refreshWarning() {
-  apiWarning.classList.toggle('hidden', !!apiKey);
-}
-
 function refreshGenerateBtn() {
   const ready = !!(capturedDataUrl && (recognizedName.english || recognizedName.tamil));
   generateBtn.disabled = !ready;
@@ -628,30 +574,6 @@ function refreshGenerateBtn() {
     stickerHint.textContent = 'Ready! Click "Generate Sticker" above.';
   }
 }
-
-/* ════════════════════════════════════════════════════════
-   Settings modal
-════════════════════════════════════════════════════════ */
-function openSettings() {
-  apiKeyInput.value = apiKey;
-  settingsBackdrop.classList.add('open');
-  setTimeout(() => apiKeyInput.focus(), 120);
-}
-function closeSettings() { settingsBackdrop.classList.remove('open'); }
-
-$('settings-btn').addEventListener('click', openSettings);
-$('warn-settings-link').addEventListener('click', openSettings);
-$('modal-cancel').addEventListener('click', closeSettings);
-$('modal-save').addEventListener('click', () => {
-  apiKey = apiKeyInput.value.trim();
-  closeSettings();
-  refreshWarning();
-});
-settingsBackdrop.addEventListener('click', e => { if (e.target === settingsBackdrop) closeSettings(); });
-apiKeyInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter')  $('modal-save').click();
-  if (e.key === 'Escape') closeSettings();
-});
 
 /* ════════════════════════════════════════════════════════
    Camera
@@ -793,26 +715,11 @@ undoBtn.addEventListener('click', () => {
 });
 
 /* ════════════════════════════════════════════════════════
-   Claude API – Tamil recognition
-   Uses the official Anthropic SDK loaded from CDN to
-   avoid raw-fetch CORS preflight issues in browsers.
+   Tamil recognition — calls our Vercel serverless function
+   which holds the API key server-side
 ════════════════════════════════════════════════════════ */
-let _anthropic = null;  // cached SDK instance
-
-async function getClient() {
-  if (_anthropic) return _anthropic;
-  const { default: Anthropic } = await import('https://esm.sh/@anthropic-ai/sdk');
-  _anthropic = new Anthropic({ apiKey, dangerouslyAllowBrowser: true });
-  return _anthropic;
-}
-
 recognizeBtn.addEventListener('click', async () => {
-  if (!apiKey) {
-    setStatus('No API key set. Click the gear icon ⚙ to add your key.', 'error');
-    return;
-  }
-
-  // Downscale canvas to ≤400px JPEG before encoding — small, fast payload
+  // Downscale canvas to ≤400px JPEG before encoding
   const MAX_W = 400;
   const scaleRatio = Math.min(1, MAX_W / drawCanvas.width);
   const scaledW = Math.round(drawCanvas.width  * scaleRatio);
@@ -824,41 +731,25 @@ recognizeBtn.addEventListener('click', async () => {
   tmpCtx.fillStyle = '#fff';
   tmpCtx.fillRect(0, 0, scaledW, scaledH);
   tmpCtx.drawImage(drawCanvas, 0, 0, scaledW, scaledH);
-  const b64 = tmpCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+  const imageBase64 = tmpCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
 
   recognizeBtn.disabled = true;
   recognizeBtn.innerHTML = '<span class="spin"></span>Recognizing…';
-  setStatus('Connecting to Claude…');
-
-  const prompt =
-    'The user has handwritten Tamil letters on a canvas. Here is the canvas as an image. ' +
-    'Please identify the Tamil letters drawn and return: 1) The Tamil unicode text, ' +
-    '2) The English transliteration of the name. ' +
-    'Respond only in JSON: { "tamil": "...", "english": "..." }';
+  setStatus('Analyzing your handwriting…');
 
   try {
-    const client = await getClient();
-    // Rebuild client if apiKey changed since last call
-    if (client.apiKey !== apiKey) {
-      _anthropic = null;
-      const freshClient = await getClient();
-      Object.assign(client, freshClient);
-    }
-
-    setStatus('Analyzing your handwriting…');
-    const response = await client.messages.create({
-      model:      'claude-sonnet-4-6',
-      max_tokens: 256,
-      messages: [{
-        role: 'user',
-        content: [
-          { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
-          { type: 'text', text: prompt }
-        ]
-      }]
+    const res = await fetch('/api/recognize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageBase64 })
     });
 
-    const raw = (response.content?.[0]?.text || '').trim();
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `Server error ${res.status}`);
+    }
+
+    const { text: raw } = await res.json();
 
     // Extract JSON even if wrapped in markdown fences
     const jsonMatch = raw.match(/\{[\s\S]*?\}/);
@@ -941,15 +832,9 @@ printBtn.addEventListener('click', () => {
    Init
 ════════════════════════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', () => {
-  // Seed apiKey from the input's default value on load
-  apiKey = apiKeyInput.value.trim();
-
-  // The photo-canvas starts hidden
   photoCanvas.style.display = 'none';
   hide(video);
-
   initDrawCanvas();
-  refreshWarning();
   refreshGenerateBtn();
 });
 
