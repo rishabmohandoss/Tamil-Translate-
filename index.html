@@ -794,15 +794,26 @@ undoBtn.addEventListener('click', () => {
 
 /* ════════════════════════════════════════════════════════
    Claude API – Tamil recognition
+   Uses the official Anthropic SDK loaded from CDN to
+   avoid raw-fetch CORS preflight issues in browsers.
 ════════════════════════════════════════════════════════ */
+let _anthropic = null;  // cached SDK instance
+
+async function getClient() {
+  if (_anthropic) return _anthropic;
+  const { default: Anthropic } = await import('https://esm.sh/@anthropic-ai/sdk');
+  _anthropic = new Anthropic({ apiKey, dangerouslyAllowBrowser: true });
+  return _anthropic;
+}
+
 recognizeBtn.addEventListener('click', async () => {
   if (!apiKey) {
     setStatus('No API key set. Click the gear icon ⚙ to add your key.', 'error');
     return;
   }
 
-  // Downscale canvas to ≤600px wide before encoding — keeps payload small
-  const MAX_W = 600;
+  // Downscale canvas to ≤400px JPEG before encoding — small, fast payload
+  const MAX_W = 400;
   const scaleRatio = Math.min(1, MAX_W / drawCanvas.width);
   const scaledW = Math.round(drawCanvas.width  * scaleRatio);
   const scaledH = Math.round(drawCanvas.height * scaleRatio);
@@ -813,11 +824,11 @@ recognizeBtn.addEventListener('click', async () => {
   tmpCtx.fillStyle = '#fff';
   tmpCtx.fillRect(0, 0, scaledW, scaledH);
   tmpCtx.drawImage(drawCanvas, 0, 0, scaledW, scaledH);
-  const b64 = tmpCanvas.toDataURL('image/jpeg', 0.92).split(',')[1];
+  const b64 = tmpCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
 
   recognizeBtn.disabled = true;
   recognizeBtn.innerHTML = '<span class="spin"></span>Recognizing…';
-  setStatus('Sending canvas to Claude…');
+  setStatus('Connecting to Claude…');
 
   const prompt =
     'The user has handwritten Tamil letters on a canvas. Here is the canvas as an image. ' +
@@ -826,45 +837,28 @@ recognizeBtn.addEventListener('click', async () => {
     'Respond only in JSON: { "tamil": "...", "english": "..." }';
 
   try {
-    let res;
-    try {
-      res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key':    apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-allow-browser': 'true'
-        },
-        body: JSON.stringify({
-          model:      'claude-sonnet-4-6',
-          max_tokens: 256,
-          messages: [{
-            role: 'user',
-            content: [
-              {
-                type: 'image',
-                source: { type: 'base64', media_type: 'image/jpeg', data: b64 }
-              },
-              { type: 'text', text: prompt }
-            ]
-          }]
-        })
-      });
-    } catch (networkErr) {
-      throw new Error(
-        'Network error — could not reach the Anthropic API. ' +
-        'Check your internet connection. (Detail: ' + networkErr.message + ')'
-      );
+    const client = await getClient();
+    // Rebuild client if apiKey changed since last call
+    if (client.apiKey !== apiKey) {
+      _anthropic = null;
+      const freshClient = await getClient();
+      Object.assign(client, freshClient);
     }
 
-    if (!res.ok) {
-      const errBody = await res.json().catch(() => ({}));
-      throw new Error(errBody?.error?.message || `API error ${res.status}`);
-    }
+    setStatus('Analyzing your handwriting…');
+    const response = await client.messages.create({
+      model:      'claude-sonnet-4-6',
+      max_tokens: 256,
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
+          { type: 'text', text: prompt }
+        ]
+      }]
+    });
 
-    const data = await res.json();
-    const raw  = (data.content?.[0]?.text || '').trim();
+    const raw = (response.content?.[0]?.text || '').trim();
 
     // Extract JSON even if wrapped in markdown fences
     const jsonMatch = raw.match(/\{[\s\S]*?\}/);
