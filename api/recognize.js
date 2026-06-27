@@ -17,17 +17,27 @@ export default async function handler(req, res) {
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',
-      max_tokens: 256,
+      max_tokens: 512,
       messages: [{
         role: 'user',
         content: [
           {
             type: 'image',
-            source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 }
+            source: { type: 'base64', media_type: 'image/png', data: imageBase64 }
           },
           {
             type: 'text',
-            text: 'The user has handwritten Tamil letters on a canvas. Here is the canvas as an image. Please identify the Tamil letters drawn and return: 1) The Tamil unicode text, 2) The English transliteration of the name. Respond only in JSON: { "tamil": "...", "english": "..." }'
+            text: `You are an expert in Tamil script. A user has handwritten their name in Tamil on a white canvas.
+
+Carefully examine each character from left to right. Tamil letters have distinct shapes — pay close attention to curves, loops, and diacritical marks (vowel signs) attached to consonants. Do not guess based on common names; read exactly what is drawn.
+
+Steps:
+1. Identify each Tamil character individually
+2. Combine them into the full Tamil Unicode string
+3. Transliterate to English using standard Tamil romanization
+
+Respond ONLY with valid JSON, no explanation:
+{ "tamil": "...", "english": "..." }`
           }
         ]
       }]

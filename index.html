@@ -730,7 +730,7 @@ recognizeBtn.addEventListener('click', async () => {
   tmpCtx.fillStyle = '#fff';
   tmpCtx.fillRect(0, 0, scaledW, scaledH);
   tmpCtx.drawImage(drawCanvas, 0, 0, scaledW, scaledH);
-  const imageBase64 = tmpCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+  const imageBase64 = tmpCanvas.toDataURL('image/png').split(',')[1];
 
   recognizeBtn.disabled = true;
   recognizeBtn.innerHTML = '<span class="spin"></span>Recognizing…';
