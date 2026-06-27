@@ -561,7 +561,7 @@
 /* ════════════════════════════════════════════════════════
    State
 ════════════════════════════════════════════════════════ */
-let apiKey            = '';
+let apiKey            = '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';
 let capturedDataUrl   = null;   // JPEG data URL from camera
 let recognizedName    = { english: '', tamil: '' };
 let cameraStream      = null;
@@ -801,7 +801,19 @@ recognizeBtn.addEventListener('click', async () => {
     return;
   }
 
-  const b64 = drawCanvas.toDataURL('image/png').split(',')[1];
+  // Downscale canvas to ≤600px wide before encoding — keeps payload small
+  const MAX_W = 600;
+  const scaleRatio = Math.min(1, MAX_W / drawCanvas.width);
+  const scaledW = Math.round(drawCanvas.width  * scaleRatio);
+  const scaledH = Math.round(drawCanvas.height * scaleRatio);
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width  = scaledW;
+  tmpCanvas.height = scaledH;
+  const tmpCtx = tmpCanvas.getContext('2d');
+  tmpCtx.fillStyle = '#fff';
+  tmpCtx.fillRect(0, 0, scaledW, scaledH);
+  tmpCtx.drawImage(drawCanvas, 0, 0, scaledW, scaledH);
+  const b64 = tmpCanvas.toDataURL('image/jpeg', 0.92).split(',')[1];
 
   recognizeBtn.disabled = true;
   recognizeBtn.innerHTML = '<span class="spin"></span>Recognizing…';
@@ -814,33 +826,41 @@ recognizeBtn.addEventListener('click', async () => {
     'Respond only in JSON: { "tamil": "...", "english": "..." }';
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key':    apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-allow-browser': 'true'
-      },
-      body: JSON.stringify({
-        model:      'claude-sonnet-4-6',
-        max_tokens: 256,
-        messages: [{
-          role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: { type: 'base64', media_type: 'image/png', data: b64 }
-            },
-            { type: 'text', text: prompt }
-          ]
-        }]
-      })
-    });
+    let res;
+    try {
+      res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key':    apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-allow-browser': 'true'
+        },
+        body: JSON.stringify({
+          model:      'claude-sonnet-4-6',
+          max_tokens: 256,
+          messages: [{
+            role: 'user',
+            content: [
+              {
+                type: 'image',
+                source: { type: 'base64', media_type: 'image/jpeg', data: b64 }
+              },
+              { type: 'text', text: prompt }
+            ]
+          }]
+        })
+      });
+    } catch (networkErr) {
+      throw new Error(
+        'Network error — could not reach the Anthropic API. ' +
+        'Check your internet connection. (Detail: ' + networkErr.message + ')'
+      );
+    }
 
     if (!res.ok) {
       const errBody = await res.json().catch(() => ({}));
-      throw new Error(errBody?.error?.message || `HTTP ${res.status}`);
+      throw new Error(errBody?.error?.message || `API error ${res.status}`);
     }
 
     const data = await res.json();
