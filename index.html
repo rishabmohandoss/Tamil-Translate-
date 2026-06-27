@@ -424,7 +424,7 @@
     <h2>⚙ API Settings</h2>
     <p>Paste your Anthropic API key below. It's held in memory only — never written to disk or sent anywhere except the Anthropic API.</p>
     <label for="api-key-input">Anthropic API Key</label>
-    <input type="password" id="api-key-input" placeholder="sk-ant-api03-…" autocomplete="off" spellcheck="false">
+    <input type="password" id="api-key-input" value="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" placeholder="sk-ant-api03-…" autocomplete="off" spellcheck="false">
     <div class="modal-footer">
       <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
       <button class="btn btn-primary"   id="modal-save">Save Key</button>
@@ -561,7 +561,7 @@
 /* ════════════════════════════════════════════════════════
    State
 ════════════════════════════════════════════════════════ */
-let apiKey            = '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';
+let apiKey            = '';
 let capturedDataUrl   = null;   // JPEG data URL from camera
 let recognizedName    = { english: '', tamil: '' };
 let cameraStream      = null;
@@ -947,6 +947,9 @@ printBtn.addEventListener('click', () => {
    Init
 ════════════════════════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', () => {
+  // Seed apiKey from the input's default value on load
+  apiKey = apiKeyInput.value.trim();
+
   // The photo-canvas starts hidden
   photoCanvas.style.display = 'none';
   hide(video);
