@@ -3,31 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tamil Name Sticker Maker</title>
+  <title>Tamil Name Through Time</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Noto+Serif+Tamil:wght@400;700&family=Noto+Sans+Brahmi&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Noto+Serif+Tamil:wght@400;700&family=Noto+Sans+Brahmi&family=Noto+Sans+Grantha&display=swap" rel="stylesheet">
   <style>
-    /* ── Tokens ── */
     :root {
-      --accent:       #C97D1A;
-      --accent-h:     #e0941f;
-      --accent-pale:  #fdf3e3;
-      --red:          #cc2200;
-      --bg:           #f8f5f0;
-      --card:         #ffffff;
-      --text:         #1e1e1e;
-      --muted:        #7a7068;
-      --border:       #e5ddd4;
-      --radius:       14px;
-      --shadow:       0 2px 14px rgba(0,0,0,0.07);
+      --accent:      #C97D1A;
+      --accent-h:    #e0941f;
+      --accent-pale: #fdf3e3;
+      --bg:          #f8f5f0;
+      --card:        #ffffff;
+      --text:        #1e1e1e;
+      --muted:       #7a7068;
+      --border:      #e5ddd4;
+      --radius:      14px;
+      --shadow:      0 2px 14px rgba(0,0,0,0.07);
     }
-
-    /* ── Reset ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     .hidden { display: none !important; }
-
-    /* ── Base ── */
     body {
       font-family: 'Libre Baskerville', serif;
       background: var(--bg);
@@ -41,7 +35,6 @@
     header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: 14px 28px;
       background: var(--card);
       border-bottom: 1px solid var(--border);
@@ -50,43 +43,27 @@
       top: 0;
       z-index: 50;
     }
-    .header-title h1 {
-      font-size: 1.25rem;
-      color: var(--accent);
-      line-height: 1.2;
-    }
+    .header-title h1 { font-size: 1.25rem; color: var(--accent); }
     .header-title .subtitle {
       font-family: 'Noto Serif Tamil', serif;
       font-size: 0.8rem;
       color: var(--muted);
       margin-top: 1px;
     }
-    #settings-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.3rem;
-      color: var(--muted);
-      padding: 6px 8px;
-      border-radius: 8px;
-      transition: background 0.18s, color 0.18s;
-      line-height: 1;
-    }
-    #settings-btn:hover { background: var(--accent-pale); color: var(--accent); }
 
-    /* ── Main grid ── */
+    /* ── Main layout ── */
     main {
       flex: 1;
-      display: grid;
-      grid-template-rows: auto auto auto;
+      display: flex;
+      flex-direction: column;
       gap: 16px;
-      padding: 20px 28px 32px;
+      padding: 20px 28px 40px;
       max-width: 1100px;
       margin: 0 auto;
       width: 100%;
     }
 
-    /* ── Card base ── */
+    /* ── Card ── */
     .card {
       background: var(--card);
       border-radius: var(--radius);
@@ -104,455 +81,435 @@
       display: block;
     }
 
-    /* ── Camera section ── */
-    .camera-section {
-      display: flex;
-      flex-direction: column;
-    }
-    .camera-inner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-    }
+    /* ── Two-column row ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* ── Camera ── */
+    .camera-inner { display: flex; flex-direction: column; align-items: center; gap: 14px; }
     .camera-viewport {
       position: relative;
-      width: 100%;
-      max-width: 520px;
+      width: 100%; max-width: 480px;
       aspect-ratio: 4/3;
       background: #111;
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
     }
-    #video {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: block;
-      transform: scaleX(-1); /* mirror */
-    }
-    #photo-canvas {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: none;
-    }
+    #video { width:100%; height:100%; object-fit:cover; display:block; transform:scaleX(-1); }
+    #photo-canvas { width:100%; height:100%; object-fit:cover; display:none; }
     .cam-placeholder {
-      width: 100%; height: 100%;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      color: #555; gap: 10px;
+      width:100%; height:100%;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      color:#555; gap:10px;
     }
-    .cam-placeholder svg { opacity: 0.4; }
-    .cam-placeholder p { font-size: 0.85rem; font-style: italic; }
-    .camera-controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .cam-placeholder svg { opacity:0.4; }
+    .cam-placeholder p { font-size:0.85rem; font-style:italic; }
+    .camera-controls { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
 
-    /* ── Bottom row ── */
-    .bottom-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    /* ── Tamil keyboard section ── */
-    .draw-section { display: flex; flex-direction: column; gap: 10px; }
-
+    /* ── Tamil keyboard ── */
+    .draw-section { display:flex; flex-direction:column; gap:10px; }
     .tamil-display {
-      font-family: 'Noto Serif Tamil', serif;
-      font-size: 2rem;
-      min-height: 3rem;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 14px;
-      background: #fff;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      line-height: 1.3;
+      font-family:'Noto Serif Tamil', serif;
+      font-size:2rem; min-height:3rem;
+      border:1.5px solid var(--border); border-radius:8px;
+      padding:10px 14px; background:#fff; color:var(--text);
+      display:flex; align-items:center; gap:2px; line-height:1.3;
     }
-    .tamil-display-placeholder { color: var(--border); font-size: 1rem; font-family: 'Libre Baskerville', serif; font-style: italic; }
     .tamil-cursor {
-      display: inline-block;
-      width: 2px; height: 2rem;
-      background: var(--accent);
-      margin-left: 2px;
-      animation: blink 1s step-end infinite;
-      flex-shrink: 0;
+      display:inline-block; width:2px; height:2rem;
+      background:var(--accent); margin-left:2px;
+      animation:blink 1s step-end infinite; flex-shrink:0;
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-    .tamil-keyboard { display: flex; flex-direction: column; gap: 5px; }
+    .tamil-keyboard { display:flex; flex-direction:column; gap:5px; }
     .key-section-label {
-      font-size: 0.62rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin-top: 4px;
+      font-size:0.62rem; text-transform:uppercase;
+      letter-spacing:0.1em; color:var(--muted); margin-top:4px;
     }
-    .key-row { display: flex; flex-wrap: wrap; gap: 4px; }
+    .key-row { display:flex; flex-wrap:wrap; gap:4px; }
     .key {
-      font-family: 'Noto Serif Tamil', serif;
-      font-size: 1rem;
-      padding: 6px 10px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--card);
-      cursor: pointer;
-      color: var(--text);
-      min-width: 38px;
-      text-align: center;
-      transition: background 0.12s, border-color 0.12s;
-      line-height: 1.4;
-      -webkit-tap-highlight-color: transparent;
+      font-family:'Noto Serif Tamil', serif;
+      font-size:1rem; padding:6px 10px;
+      border:1px solid var(--border); border-radius:6px;
+      background:var(--card); cursor:pointer; color:var(--text);
+      min-width:38px; text-align:center;
+      transition:background 0.12s, border-color 0.12s;
+      line-height:1.4; -webkit-tap-highlight-color:transparent;
     }
-    .key:hover  { background: var(--accent-pale); border-color: var(--accent); }
-    .key:active { background: var(--accent); color: #fff; }
-    .key.mark-key { background: #fdf6ee; border-color: #e8d5b0; color: var(--accent); }
-    .key.mark-key:hover { background: var(--accent); color: #fff; }
+    .key:hover  { background:var(--accent-pale); border-color:var(--accent); }
+    .key:active { background:var(--accent); color:#fff; }
+    .key.mark-key { background:#fdf6ee; border-color:#e8d5b0; color:var(--accent); }
+    .key.mark-key:hover { background:var(--accent); color:#fff; }
     .key-utility {
-      font-family: 'Libre Baskerville', serif;
-      font-size: 0.78rem;
-      padding: 6px 14px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      cursor: pointer;
-      color: var(--text);
-      transition: background 0.12s;
+      font-family:'Libre Baskerville', serif; font-size:0.78rem;
+      padding:6px 14px; border-radius:6px; border:1px solid var(--border);
+      background:var(--bg); cursor:pointer; color:var(--text); transition:background 0.12s;
     }
-    .key-utility:hover { background: var(--border); }
+    .key-utility:hover { background:var(--border); }
 
-    /* ── Name preview section ── */
-    .name-section { display: flex; flex-direction: column; gap: 12px; }
-    .name-block {}
-    .name-block .lang-label {
-      font-size: 0.68rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 4px;
+    /* ── Name preview ── */
+    .name-section { display:flex; flex-direction:column; gap:12px; }
+    .lang-label {
+      font-size:0.68rem; letter-spacing:0.1em;
+      text-transform:uppercase; color:var(--muted); margin-bottom:4px;
     }
     .name-english-input {
-      font-family: 'Libre Baskerville', serif;
-      font-size: 2.2rem;
-      font-weight: 700;
-      line-height: 1.1;
-      color: var(--text);
-      letter-spacing: 0.01em;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 12px;
-      background: #fff;
-      width: 100%;
-      box-sizing: border-box;
-      outline: none;
-      transition: border-color 0.15s;
+      font-family:'Libre Baskerville', serif;
+      font-size:2rem; font-weight:700; color:var(--text);
+      border:1.5px solid var(--border); border-radius:8px;
+      padding:6px 12px; background:#fff;
+      width:100%; outline:none; transition:border-color 0.15s;
     }
-    .name-english-input:focus { border-color: var(--accent); }
-    .name-english-input::placeholder { color: var(--border); font-weight: 400; }
+    .name-english-input:focus { border-color:var(--accent); }
+    .name-english-input::placeholder { color:var(--border); font-weight:400; }
     .name-tamil {
-      font-family: 'Noto Serif Tamil', serif;
-      font-size: 2rem;
-      color: var(--accent);
-      min-height: 2.4rem;
-      line-height: 1.2;
+      font-family:'Noto Serif Tamil', serif; font-size:2rem;
+      color:var(--accent); min-height:2.4rem; line-height:1.2;
     }
-    .name-brahmi {
-      font-family: 'Noto Sans Brahmi', 'Segoe UI Historic', 'Noto Sans', serif;
-      font-size: 1.7rem;
-      color: #6b4c1a;
-      min-height: 2rem;
-      line-height: 1.3;
-      letter-spacing: 0.06em;
-    }
-    .em-placeholder { color: var(--border); font-weight: 400; }
-    .syllable-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 4px;
-    }
+    .em-placeholder { color:var(--border); font-weight:400; }
+    .syllable-grid { display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; }
     .syllable-card {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 12px;
-      background: #fdf8f2;
-      text-align: center;
-      min-width: 52px;
+      border:1px solid var(--border); border-radius:8px;
+      padding:6px 12px; background:#fdf8f2; text-align:center; min-width:52px;
     }
-    .syllable-card .sc-tamil {
-      font-family: 'Noto Serif Tamil', serif;
-      font-size: 1.1rem;
-      color: var(--accent);
-      display: block;
-    }
-    .syllable-card .sc-brahmi {
-      font-family: 'Noto Sans Brahmi', 'Segoe UI Historic', 'Noto Sans', serif;
-      font-size: 1.0rem;
-      color: #6b4c1a;
-      display: block;
-      margin-top: 2px;
-    }
-    .syllable-card .sc-roman {
-      font-size: 0.65rem;
-      color: var(--muted);
-      text-transform: lowercase;
-      display: block;
-      margin-top: 3px;
-      letter-spacing: 0.04em;
-    }
-    .generate-area { margin-top: auto; padding-top: 10px; }
-    .sticker-hint {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 8px;
-      font-style: italic;
-    }
-
-    /* ── Sticker section ── */
-    .sticker-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
-
-    /* ── The sticker card itself ── */
-    .sticker-wrap {
-      width: 384px;    /* ~4in @96dpi */
-      height: 288px;   /* ~3in @96dpi */
-      background: #fff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 6px 30px rgba(0,0,0,0.14);
-      display: flex;
-      flex-direction: column;
-      font-family: 'Libre Baskerville', serif;
-      border: 1px solid #ddd;
-    }
-    .sticker-header-bar {
-      background: var(--red);
-      color: #fff;
-      text-align: center;
-      padding: 10px 16px 8px;
-      flex-shrink: 0;
-    }
-    .sticker-hello {
-      font-size: 0.75rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      opacity: 0.88;
-    }
-    .sticker-hello-main {
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      margin-top: 1px;
-    }
-    .sticker-hello-tamil {
-      font-family: 'Noto Serif Tamil', serif;
-      font-size: 0.72rem;
-      opacity: 0.8;
-      margin-top: 1px;
-    }
-    .sticker-body-row {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      padding: 16px 22px;
-      gap: 20px;
-      background: #fff;
-    }
-    .sticker-photo-wrap {
-      flex-shrink: 0;
-      width: 100px; height: 100px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 3px solid var(--red);
-      background: #f0ece6;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .sticker-photo-wrap img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .sticker-name-col { flex: 1; min-width: 0; }
-    .sticker-name-en {
-      font-size: 1.9rem;
-      font-weight: 700;
-      color: #111;
-      line-height: 1.05;
-      word-break: break-word;
-    }
-    .sticker-name-ta {
-      font-family: 'Noto Serif Tamil', serif;
-      font-size: 1.15rem;
-      color: var(--red);
-      margin-top: 4px;
-    }
-    .sticker-name-br {
-      font-family: 'Noto Sans Brahmi', 'Segoe UI Historic', 'Noto Sans', serif;
-      font-size: 0.95rem;
-      color: #8b5e2a;
-      margin-top: 3px;
-      letter-spacing: 0.05em;
-    }
-    .sticker-actions { display: flex; gap: 10px; }
+    .sc-tamil { font-family:'Noto Serif Tamil',serif; font-size:1.1rem; color:var(--accent); display:block; }
+    .sc-brahmi { font-family:'Noto Sans Brahmi','Segoe UI Historic',sans-serif; font-size:1rem; color:#6b4c1a; display:block; margin-top:2px; }
+    .sc-roman { font-size:0.65rem; color:var(--muted); display:block; margin-top:3px; }
 
     /* ── Buttons ── */
     .btn {
-      padding: 9px 22px;
-      border-radius: 9px;
-      border: none;
-      cursor: pointer;
-      font-family: 'Libre Baskerville', serif;
-      font-size: 0.82rem;
-      font-weight: 700;
-      transition: background 0.18s, color 0.18s, border-color 0.18s, opacity 0.18s;
-      display: inline-flex; align-items: center; gap: 6px;
-      white-space: nowrap;
+      padding:9px 22px; border-radius:9px; border:none; cursor:pointer;
+      font-family:'Libre Baskerville',serif; font-size:0.82rem; font-weight:700;
+      transition:background 0.18s, opacity 0.18s;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
     }
-    .btn-primary   { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: var(--accent-h); }
-    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
-    .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
-    .btn-secondary:hover { background: var(--border); }
-    .btn-outline   { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
-    .btn-outline:hover:not(:disabled) { background: var(--accent); color: #fff; }
-    .btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary   { background:var(--accent); color:#fff; }
+    .btn-primary:hover { background:var(--accent-h); }
+    .btn-primary:disabled { opacity:0.45; cursor:not-allowed; }
+    .btn-secondary { background:var(--bg); color:var(--text); border:1px solid var(--border); }
+    .btn-secondary:hover { background:var(--border); }
+    .btn-outline   { background:transparent; color:var(--accent); border:1.5px solid var(--accent); }
+    .btn-outline:hover:not(:disabled) { background:var(--accent); color:#fff; }
+    .btn-outline:disabled { opacity:0.4; cursor:not-allowed; }
+    .btn-dark { background:#1a1a2e; color:#fff; }
+    .btn-dark:hover { background:#2d2d4e; }
 
-    /* ── Spinner ── */
-    .spin {
-      display: inline-block;
-      width: 12px; height: 12px;
-      border: 2px solid rgba(255,255,255,0.35);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spinning 0.65s linear infinite;
+    /* ── Progress dots ── */
+    .progress-bar {
+      display:flex; align-items:center; justify-content:center;
+      gap:8px; padding:12px 0;
     }
-    @keyframes spinning { to { transform: rotate(360deg); } }
+    .prog-dot {
+      width:8px; height:8px; border-radius:50%;
+      background:var(--border); transition:background 0.3s;
+    }
+    .prog-dot.active { background:var(--accent); }
+    .prog-dot.done   { background:#a0c878; }
 
-    /* ── Modal ── */
-    .modal-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(2px);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 200;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.2s;
+    /* ── Signature pad ── */
+    .sig-section { display:flex; flex-direction:column; gap:12px; }
+    .sig-canvas-wrap {
+      border:1.5px solid var(--border); border-radius:10px;
+      overflow:hidden; background:#fff; cursor:crosshair;
+      touch-action:none;
     }
-    .modal-backdrop.open { opacity: 1; pointer-events: all; }
-    .modal-box {
-      background: #fff;
-      border-radius: 18px;
-      padding: 30px;
-      width: 440px;
-      max-width: 92vw;
-      box-shadow: 0 12px 50px rgba(0,0,0,0.22);
-      transform: translateY(14px);
-      transition: transform 0.2s;
-    }
-    .modal-backdrop.open .modal-box { transform: translateY(0); }
-    .modal-box h2 { font-size: 1.15rem; color: var(--accent); margin-bottom: 10px; }
-    .modal-box p  { font-size: 0.83rem; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
-    .modal-box label { font-size: 0.78rem; font-weight: 700; color: var(--muted); display: block; margin-bottom: 5px; }
-    .modal-box input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 9px;
-      font-family: monospace;
-      font-size: 0.88rem;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.18s;
-      margin-bottom: 18px;
-    }
-    .modal-box input:focus { border-color: var(--accent); }
-    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; }
+    #sig-canvas { display:block; width:100%; height:160px; }
+    .sig-hint { font-size:0.78rem; color:var(--muted); font-style:italic; }
 
-    /* ── Fade-in animation ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
+    /* ── Evolution screen ── */
+    .evolution-screen {
+      background:linear-gradient(135deg,#0d0820 0%,#1e0f3a 60%,#0d1520 100%);
+      border-radius:18px; padding:48px 32px 36px;
+      text-align:center; color:#fff; position:relative; overflow:hidden;
     }
-    .fade-up { animation: fadeUp 0.35s ease both; }
+    .evo-stars {
+      position:absolute; inset:0; pointer-events:none;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 70%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 35% 50%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 65% 85%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    }
+    .evo-era {
+      font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase;
+      color:#c9a96e; margin-bottom:6px; position:relative;
+      transition:opacity 0.5s;
+    }
+    .evo-script-name {
+      font-size:1rem; color:rgba(255,255,255,0.45);
+      margin-bottom:24px; position:relative;
+      transition:opacity 0.5s;
+    }
+    .evo-name {
+      min-height:7rem; display:flex; align-items:center; justify-content:center;
+      position:relative; margin-bottom:16px;
+    }
+    .evo-char {
+      font-size:4.5rem; line-height:1.1;
+      transition:opacity 0.6s ease, transform 0.6s ease;
+      position:relative;
+    }
+    .evo-char.fading { opacity:0; transform:scale(1.08) translateY(-6px); }
+    .evo-char.entering { opacity:0; transform:scale(0.92) translateY(6px); }
+    .evo-roman {
+      font-size:0.95rem; color:rgba(255,255,255,0.4);
+      font-style:italic; margin-bottom:28px; position:relative;
+      transition:opacity 0.5s;
+    }
+    .evo-timeline {
+      display:flex; align-items:center; justify-content:center;
+      gap:0; margin-bottom:28px; position:relative;
+    }
+    .evo-node {
+      display:flex; flex-direction:column; align-items:center; gap:4px;
+      width:120px;
+    }
+    .evo-node-dot {
+      width:12px; height:12px; border-radius:50%;
+      background:rgba(255,255,255,0.2);
+      border:2px solid rgba(255,255,255,0.15);
+      transition:all 0.4s;
+    }
+    .evo-node-dot.active { background:#c9a96e; border-color:#c9a96e; box-shadow:0 0 10px #c9a96e; }
+    .evo-node-dot.done   { background:rgba(201,169,110,0.4); border-color:rgba(201,169,110,0.4); }
+    .evo-node-label {
+      font-size:0.58rem; letter-spacing:0.08em; text-transform:uppercase;
+      color:rgba(255,255,255,0.3); text-align:center; transition:color 0.4s;
+    }
+    .evo-node.active .evo-node-label { color:#c9a96e; }
+    .evo-line {
+      flex:1; height:1px; background:rgba(255,255,255,0.1);
+      align-self:center; margin-bottom:20px;
+    }
+    .evo-controls { display:flex; gap:12px; justify-content:center; position:relative; }
 
-    /* ── Print styles ── */
+    /* ── Question screen ── */
+    .question-screen {
+      background:#080c12;
+      border-radius:18px; padding:48px 36px;
+      text-align:center; color:#fff; position:relative; overflow:hidden;
+    }
+    .q-glow {
+      position:absolute; top:-80px; left:50%; transform:translateX(-50%);
+      width:400px; height:400px; border-radius:50%;
+      background:radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .q-label {
+      font-size:0.68rem; letter-spacing:0.25em; text-transform:uppercase;
+      color:rgba(0,229,255,0.5); margin-bottom:20px;
+    }
+    .q-text {
+      font-size:1.3rem; line-height:1.8; color:rgba(255,255,255,0.88);
+      max-width:580px; margin:0 auto 32px; position:relative;
+    }
+    .q-text em { color:#c9a96e; font-style:normal; }
+    .future-display {
+      font-family:monospace; font-size:1.5rem;
+      color:#00e5ff; letter-spacing:0.12em;
+      text-shadow:0 0 18px rgba(0,229,255,0.55), 0 0 40px rgba(0,229,255,0.2);
+      margin:0 auto 16px; max-width:600px;
+      animation:neural-pulse 4s ease-in-out infinite;
+      word-break:break-all; position:relative;
+    }
+    @keyframes neural-pulse {
+      0%,100% { opacity:1; text-shadow:0 0 18px rgba(0,229,255,0.55),0 0 40px rgba(0,229,255,0.2); }
+      50%      { opacity:0.75; text-shadow:0 0 30px rgba(0,229,255,0.8),0 0 60px rgba(0,229,255,0.35); }
+    }
+    .future-sub {
+      font-size:0.75rem; color:rgba(255,255,255,0.3);
+      margin-bottom:32px; letter-spacing:0.1em; font-style:italic;
+    }
+
+    /* ── Palm leaf sticker ── */
+    .palm-section {
+      display:flex; flex-direction:column; align-items:center; gap:20px;
+    }
+    .palm-leaf {
+      width:100%; max-width:760px;
+      background:linear-gradient(160deg, #d9b76e 0%, #c49040 25%, #b8842e 55%, #c9984a 80%, #d9b76e 100%);
+      border-radius:12px 80px 12px 80px;
+      position:relative; overflow:hidden;
+      padding:22px 44px;
+      box-shadow:0 10px 50px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.25);
+      border:2px solid #9a6e20;
+    }
+    /* Horizontal ruled lines like a palm leaf */
+    .palm-leaf::before {
+      content:'';
+      position:absolute; inset:0;
+      background:repeating-linear-gradient(
+        0deg, transparent, transparent 33px,
+        rgba(0,0,0,0.07) 33px, rgba(0,0,0,0.07) 34px
+      );
+      pointer-events:none;
+    }
+    /* Center vein */
+    .palm-leaf::after {
+      content:'';
+      position:absolute; top:50%; left:32px; right:32px; height:1px;
+      background:rgba(0,0,0,0.12);
+      pointer-events:none;
+    }
+    .palm-inner { position:relative; z-index:1; }
+    .palm-header {
+      display:flex; align-items:center; gap:14px; margin-bottom:14px;
+      padding-bottom:12px; border-bottom:1.5px solid rgba(0,0,0,0.18);
+    }
+    .palm-photo-wrap {
+      width:56px; height:56px; border-radius:50%;
+      overflow:hidden; border:2px solid rgba(0,0,0,0.25);
+      flex-shrink:0; background:#c49040;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .palm-photo-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+    .palm-heading {
+      flex:1;
+    }
+    .palm-title-en {
+      font-size:1.5rem; font-weight:700; color:#1a0800; line-height:1.1;
+    }
+    .palm-title-ta {
+      font-family:'Noto Serif Tamil',serif; font-size:0.9rem;
+      color:rgba(0,0,0,0.55); margin-top:2px;
+    }
+    .palm-tagline {
+      font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase;
+      color:rgba(0,0,0,0.4); margin-bottom:2px;
+    }
+
+    /* Each script row */
+    .palm-row {
+      display:flex; align-items:center; gap:10px;
+      padding:5px 0;
+      border-bottom:1px solid rgba(0,0,0,0.1);
+    }
+    .palm-row:last-child { border-bottom:none; }
+    .palm-era-col {
+      width:100px; flex-shrink:0; text-align:right;
+      padding-right:10px; border-right:1px solid rgba(0,0,0,0.18);
+    }
+    .palm-era-period {
+      font-size:0.58rem; color:rgba(0,0,0,0.4);
+      text-transform:uppercase; letter-spacing:0.08em; display:block;
+    }
+    .palm-era-name {
+      font-size:0.65rem; font-weight:700; color:rgba(0,0,0,0.6);
+      display:block; margin-top:1px;
+    }
+    .palm-chars-col { flex:1; }
+    .palm-chars {
+      font-size:1.5rem; color:#1a0800; letter-spacing:0.04em; line-height:1.3;
+    }
+    .palm-chars.brahmi-font   { font-family:'Noto Sans Brahmi','Segoe UI Historic',sans-serif; }
+    .palm-chars.grantha-font  { font-family:'Noto Sans Grantha','Noto Sans',sans-serif; }
+    .palm-chars.tamil-font    { font-family:'Noto Serif Tamil',serif; }
+    .palm-chars.future-font   {
+      font-family:monospace; font-size:0.95rem; color:#0d3a4a;
+      letter-spacing:0.06em;
+    }
+    .palm-roman-col {
+      width:80px; flex-shrink:0; text-align:right;
+      font-size:0.72rem; color:rgba(0,0,0,0.45); font-style:italic;
+    }
+
+    /* Signature row at bottom of leaf */
+    .palm-footer {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-top:10px; padding-top:10px;
+      border-top:1.5px solid rgba(0,0,0,0.18);
+    }
+    .palm-sig-img {
+      height:38px; max-width:160px; object-fit:contain;
+      opacity:0.65; filter:sepia(0.6) brightness(0.6);
+    }
+    .palm-sig-placeholder {
+      font-size:0.7rem; color:rgba(0,0,0,0.35); font-style:italic;
+    }
+    .palm-date { font-size:0.65rem; color:rgba(0,0,0,0.4); text-align:right; }
+
+    /* ── Fade animation ── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation:fadeUp 0.4s ease both; }
+
+    /* ── Print ── */
     @media print {
-      body > * { display: none !important; }
-      #print-area { display: block !important; }
-      #print-area .sticker-wrap {
-        width: 384px;
-        height: 288px;
-        margin: 0 auto;
-        box-shadow: none;
-        border: 1px solid #ccc;
+      body > * { display:none !important; }
+      #print-area { display:block !important; }
+      #print-area .palm-leaf {
+        width:680px; max-width:none;
+        margin:0 auto; box-shadow:none;
+        border:2px solid #9a6e20;
+        border-radius:8px 60px 8px 60px;
       }
-      @page { size: 4in 3in; margin: 0; }
+      @page { size:landscape; margin:0.4in; }
     }
+    #print-area { display:none; }
 
-    #print-area { display: none; }
+    /* ── Responsive ── */
+    @media(max-width:700px) {
+      .two-col { grid-template-columns:1fr; }
+      main { padding:14px 14px 30px; }
+      .evolution-screen { padding:32px 18px 24px; }
+      .evo-char { font-size:3rem; }
+      .evo-node { width:70px; }
+      .evo-node-label { font-size:0.5rem; }
+      .palm-leaf { padding:16px 22px; border-radius:8px 40px 8px 40px; }
+      .palm-era-col { width:72px; }
+    }
   </style>
 </head>
 <body>
 
-<!-- Hidden print target -->
 <div id="print-area"></div>
 
-<!-- ════════════════════════════════════
-     Header
-════════════════════════════════════ -->
 <header>
   <div class="header-title">
-    <h1>Tamil Name Sticker Maker</h1>
-    <div class="subtitle">தமிழ் பெயர் ஸ்டிக்கர் மேக்கர்</div>
+    <h1>Tamil Name Through Time</h1>
+    <div class="subtitle">காலத்தின் வழியாக தமிழ் பெயர்</div>
   </div>
 </header>
 
-<!-- ════════════════════════════════════
-     Main content
-════════════════════════════════════ -->
 <main>
 
-  <!-- ── 1. Camera ── -->
-  <div class="card camera-section">
-    <span class="step-label">Step 1 · Capture Your Photo</span>
-    <div class="camera-inner">
-      <div class="camera-viewport" id="camera-viewport">
-        <!-- placeholder shown before camera starts -->
-        <div class="cam-placeholder" id="cam-placeholder">
-          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-            <circle cx="12" cy="13" r="4"/>
-          </svg>
-          <p>Click "Start Camera" to begin</p>
+  <!-- ═══════════════════════════════════
+       STEP 1+2 — Photo & Name
+  ═══════════════════════════════════ -->
+  <div class="two-col" id="section-input">
+
+    <!-- Camera -->
+    <div class="card" style="display:flex;flex-direction:column;">
+      <span class="step-label">Step 1 · Capture Your Photo</span>
+      <div class="camera-inner">
+        <div class="camera-viewport">
+          <div class="cam-placeholder" id="cam-placeholder">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <p>Click "Start Camera" to begin</p>
+          </div>
+          <video id="video" autoplay playsinline muted></video>
+          <canvas id="photo-canvas"></canvas>
         </div>
-        <video id="video" autoplay playsinline muted></video>
-        <canvas id="photo-canvas"></canvas>
-      </div>
-      <div class="camera-controls">
-        <button class="btn btn-primary" id="start-camera-btn">📷 Start Camera</button>
-        <button class="btn btn-primary hidden" id="capture-btn">Capture Photo</button>
-        <button class="btn btn-secondary hidden" id="retake-btn">↩ Retake</button>
+        <div class="camera-controls">
+          <button class="btn btn-primary" id="start-camera-btn">📷 Start Camera</button>
+          <button class="btn btn-primary hidden" id="capture-btn">Capture Photo</button>
+          <button class="btn btn-secondary hidden" id="retake-btn">↩ Retake</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ── 2 + 3. Bottom row ── -->
-  <div class="bottom-row">
-
-    <!-- ── 2. Tamil keyboard ── -->
+    <!-- Tamil keyboard -->
     <div class="card draw-section">
       <span class="step-label">Step 2 · Type Your Name in Tamil</span>
-
       <div class="tamil-display" id="tamil-display">
         <span id="tamil-typed"></span>
         <span class="tamil-cursor"></span>
       </div>
-
       <div class="tamil-keyboard">
         <div class="key-section-label">Vowels</div>
         <div class="key-row">
@@ -569,7 +526,6 @@
           <button class="key" data-char="ஓ">ஓ</button>
           <button class="key" data-char="ஔ">ஔ</button>
         </div>
-
         <div class="key-section-label">Consonants</div>
         <div class="key-row">
           <button class="key" data-char="க">க</button>
@@ -597,8 +553,7 @@
           <button class="key" data-char="ஸ">ஸ</button>
           <button class="key" data-char="ஹ">ஹ</button>
         </div>
-
-        <div class="key-section-label">Vowel marks (add after a consonant)</div>
+        <div class="key-section-label">Vowel marks</div>
         <div class="key-row">
           <button class="key mark-key" data-char="ா">-ா</button>
           <button class="key mark-key" data-char="ி">-ி</button>
@@ -613,143 +568,158 @@
           <button class="key mark-key" data-char="ௌ">-ௌ</button>
           <button class="key mark-key" data-char="்">-்</button>
         </div>
-
         <div class="key-row" style="margin-top:6px">
           <button class="key-utility" id="key-backspace">⌫ Delete</button>
           <button class="key-utility" id="key-clear">✕ Clear</button>
         </div>
       </div>
-    </div>
 
-    <!-- ── 3. Name display ── -->
-    <div class="card name-section">
-      <span class="step-label">Step 3 · Your Name</span>
-
-      <div class="name-block">
-        <div class="lang-label">English · editable</div>
-        <input type="text" id="name-english" class="name-english-input" placeholder="Type your name here…" autocomplete="off" spellcheck="false">
-      </div>
-
-      <div class="name-block">
-        <div class="lang-label">Tamil · தமிழ்</div>
-        <div class="name-tamil" id="name-tamil">
-          <span class="em-placeholder" style="font-family:inherit;font-size:1rem">—</span>
-        </div>
-      </div>
-
-      <div class="name-block">
-        <div class="lang-label">Ancient Brahmi · 𑀩𑁆𑀭𑀸𑀫𑀺</div>
-        <div class="name-brahmi" id="name-brahmi">
-          <span class="em-placeholder">—</span>
-        </div>
-      </div>
-
-      <div class="syllable-grid" id="syllable-grid"></div>
-
-      <div class="generate-area">
-        <button class="btn btn-outline" id="generate-btn" disabled>Generate Sticker ✦</button>
-        <div class="sticker-hint" id="sticker-hint">Capture a photo and type your name to generate a sticker.</div>
-      </div>
-    </div>
-
-  </div><!-- /bottom-row -->
-
-  <!-- ── 4. Sticker section (hidden until generated) ── -->
-  <div class="card sticker-section hidden" id="sticker-section">
-    <span class="step-label" style="align-self:flex-start">Step 4 · Your Sticker</span>
-
-    <div class="sticker-wrap fade-up" id="sticker-wrap">
-      <!-- Header bar -->
-      <div class="sticker-header-bar">
-        <div class="sticker-hello">Hello,</div>
-        <div class="sticker-hello-main">my name is</div>
-        <div class="sticker-hello-tamil">என் பெயர்</div>
-      </div>
-      <!-- Body -->
-      <div class="sticker-body-row">
-        <div class="sticker-photo-wrap" id="sticker-photo-wrap">
-          <!-- silhouette SVG placeholder -->
-          <svg width="52" height="52" viewBox="0 0 60 60" fill="#bbb">
-            <circle cx="30" cy="21" r="14"/>
-            <path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25" fill-rule="evenodd"/>
-          </svg>
-        </div>
-        <div class="sticker-name-col">
-          <div class="sticker-name-en" id="sticker-name-en">Name</div>
-          <div class="sticker-name-ta" id="sticker-name-ta"></div>
-          <div class="sticker-name-br" id="sticker-name-br"></div>
+      <!-- Name preview + journey trigger -->
+      <div style="margin-top:12px; border-top:1px solid var(--border); padding-top:12px; display:flex; flex-direction:column; gap:8px;">
+        <div class="lang-label">English name (editable)</div>
+        <input type="text" id="name-english" class="name-english-input" placeholder="Auto-fills as you type…" autocomplete="off" spellcheck="false">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:4px;">
+          <button class="btn btn-outline" id="begin-journey-btn" disabled>Begin the Journey ✦</button>
+          <span style="font-size:0.72rem; color:var(--muted); font-style:italic;" id="journey-hint">Capture photo &amp; type name to continue.</span>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="sticker-actions">
-      <button class="btn btn-primary"   id="print-btn">🖨 Print Sticker</button>
-      <button class="btn btn-secondary" id="redo-btn">↺ Redo</button>
+  <!-- ═══════════════════════════════════
+       STEP 3 — Signature
+  ═══════════════════════════════════ -->
+  <div class="card sig-section hidden" id="section-signature">
+    <span class="step-label">Step 3 · Draw Your Signature</span>
+    <p class="sig-hint">Draw your signature below — it will appear on your palm leaf.</p>
+    <div class="sig-canvas-wrap">
+      <canvas id="sig-canvas"></canvas>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;">
+      <button class="btn btn-secondary" id="sig-clear-btn">✕ Clear</button>
+      <button class="btn btn-primary" id="sig-next-btn">Watch Your Name Evolve →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       STEP 4 — Evolution animation
+  ═══════════════════════════════════ -->
+  <div class="evolution-screen hidden" id="section-evolution">
+    <div class="evo-stars"></div>
+    <div class="evo-era" id="evo-era-label">Modern Tamil</div>
+    <div class="evo-script-name" id="evo-script-name">தமிழ் · 19th century standardised</div>
+    <div class="evo-name">
+      <div class="evo-char" id="evo-char"></div>
+    </div>
+    <div class="evo-roman" id="evo-roman"></div>
+
+    <!-- Timeline nodes -->
+    <div class="evo-timeline" id="evo-timeline">
+      <div class="evo-node active" data-stage="0">
+        <div class="evo-node-dot active"></div>
+        <div class="evo-node-label">Modern Tamil</div>
+      </div>
+      <div class="evo-line"></div>
+      <div class="evo-node" data-stage="1">
+        <div class="evo-node-dot"></div>
+        <div class="evo-node-label">Early Print</div>
+      </div>
+      <div class="evo-line"></div>
+      <div class="evo-node" data-stage="2">
+        <div class="evo-node-dot"></div>
+        <div class="evo-node-label">Vatteluttu</div>
+      </div>
+      <div class="evo-line"></div>
+      <div class="evo-node" data-stage="3">
+        <div class="evo-node-dot"></div>
+        <div class="evo-node-label">Brahmi</div>
+      </div>
+    </div>
+
+    <div class="evo-controls">
+      <button class="btn btn-dark" id="evo-next-btn">Next Era →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       STEP 5 — The Question
+  ═══════════════════════════════════ -->
+  <div class="question-screen hidden" id="section-question">
+    <div class="q-glow"></div>
+    <div class="q-label">The Question</div>
+    <div class="q-text">
+      Your name has survived <em>2,300 years</em> of script evolution —<br>
+      from palm leaf to press to pixel.<br><br>
+      Now imagine <em>1,000 years from now.</em><br>
+      All thought is uploaded instantly to the cloud.<br>
+      Language is gone. Only <em>patterns</em> remain.<br><br>
+      This is how your name would look:
+    </div>
+    <div class="future-display" id="future-display"></div>
+    <div class="future-sub" id="future-sub"></div>
+    <button class="btn btn-primary" id="q-continue-btn" style="margin-top:12px;">Receive Your Palm Leaf ✦</button>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       STEP 6 — Palm Leaf Sticker
+  ═══════════════════════════════════ -->
+  <div class="palm-section hidden" id="section-sticker">
+    <div class="palm-leaf fade-up" id="palm-leaf">
+      <div class="palm-inner">
+
+        <!-- Header: photo + name -->
+        <div class="palm-header">
+          <div class="palm-photo-wrap" id="palm-photo-wrap">
+            <svg width="30" height="30" viewBox="0 0 60 60" fill="rgba(0,0,0,0.3)">
+              <circle cx="30" cy="21" r="14"/>
+              <path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25"/>
+            </svg>
+          </div>
+          <div class="palm-heading">
+            <div class="palm-tagline">A name across centuries</div>
+            <div class="palm-title-en" id="palm-name-en">Name</div>
+            <div class="palm-title-ta" id="palm-name-ta"></div>
+          </div>
+        </div>
+
+        <!-- Script rows -->
+        <div id="palm-rows"></div>
+
+        <!-- Footer: signature + date -->
+        <div class="palm-footer">
+          <div id="palm-sig-wrap">
+            <span class="palm-sig-placeholder">No signature drawn</span>
+          </div>
+          <div class="palm-date" id="palm-date"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+      <button class="btn btn-primary" id="print-btn">🖨 Print Palm Leaf</button>
+      <button class="btn btn-secondary" id="redo-btn">↺ Start Over</button>
     </div>
   </div>
 
 </main>
 
 <script>
-/* ════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════
    State
-════════════════════════════════════════════════════════ */
-let capturedDataUrl = null;
-let typedTamil      = '';
-let cameraStream    = null;
+════════════════════════════════════════════ */
+let capturedDataUrl  = null;
+let signatureDataUrl = null;
+let typedTamil       = '';
+let cameraStream     = null;
+let englishEdited    = false;
+let evoStage         = 0;
 
-/* ════════════════════════════════════════════════════════
-   DOM refs
-════════════════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
-const camPlaceholder   = $('cam-placeholder');
-const video            = $('video');
-const photoCanvas      = $('photo-canvas');
-const startCameraBtn   = $('start-camera-btn');
-const captureBtn       = $('capture-btn');
-const retakeBtn        = $('retake-btn');
-const tamilTyped       = $('tamil-typed');
-const nameEnglishInput = $('name-english');   // <input>
-const nameTamil        = $('name-tamil');
-const nameBrahmi       = $('name-brahmi');
-const syllableGrid     = $('syllable-grid');
-const generateBtn      = $('generate-btn');
-const stickerHint      = $('sticker-hint');
-const stickerSection   = $('sticker-section');
-const stickerPhotoWrap = $('sticker-photo-wrap');
-const stickerNameEn    = $('sticker-name-en');
-const stickerNameTa    = $('sticker-name-ta');
-const stickerNameBr    = $('sticker-name-br');
-const printBtn         = $('print-btn');
-const redoBtn          = $('redo-btn');
-const printArea        = $('print-area');
 
-/* ════════════════════════════════════════════════════════
-   Helpers
-════════════════════════════════════════════════════════ */
-function show(el) { el.classList.remove('hidden'); }
-function hide(el) { el.classList.add('hidden'); }
-
-function refreshGenerateBtn() {
-  const ready = !!(capturedDataUrl && typedTamil.trim());
-  generateBtn.disabled = !ready;
-  if (!capturedDataUrl && !typedTamil) {
-    stickerHint.textContent = 'Capture a photo and type your name to generate a sticker.';
-  } else if (!capturedDataUrl) {
-    stickerHint.textContent = 'Also capture a photo to generate your sticker.';
-  } else if (!typedTamil) {
-    stickerHint.textContent = 'Also type your Tamil name to generate your sticker.';
-  } else {
-    stickerHint.textContent = 'Ready! Click "Generate Sticker" above.';
-  }
-}
-
-/* track whether the user has manually edited the English field */
-let englishManuallyEdited = false;
-
-/* ════════════════════════════════════════════════════════
-   Tamil transliteration table (JS — no API needed)
-════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════
+   Transliteration (Roman)
+════════════════════════════════════════════ */
 const CONSONANTS = {
   'க':'k','ங':'ng','ச':'ch','ஞ':'ny','ட':'t','ண':'n',
   'த':'th','ந':'n','ப':'p','ம':'m','ய':'y','ர':'r',
@@ -762,279 +732,463 @@ const VOWELS = {
 };
 const MARKS = {
   'ா':'aa','ி':'i','ீ':'ee','ு':'u','ூ':'oo',
-  'ெ':'e','ே':'ae','ை':'ai','ொ':'o','ோ':'oh','ௌ':'au',
-  '்':''   // pulli – suppresses inherent vowel
+  'ெ':'e','ே':'ae','ை':'ai','ொ':'o','ோ':'oh','ௌ':'au','்':''
 };
-
-/* ════════════════════════════════════════════════════════
-   Brahmi Unicode mapping (BC 3rd century Brahmi ↔ Tamil)
-   All codepoints from Unicode Brahmi block U+11000–U+1107F
-════════════════════════════════════════════════════════ */
-const BRAHMI_CONSONANTS = {
-  'க':'\u{11013}', /* 𑀓 KA  */ 'ங':'\u{11017}', /* 𑀗 NGA */
-  'ச':'\u{11018}', /* 𑀘 CA  */ 'ஞ':'\u{1101C}', /* 𑀜 NYA */
-  'ட':'\u{1101D}', /* 𑀝 TTA */ 'ண':'\u{11021}', /* 𑀡 NNA */
-  'த':'\u{11022}', /* 𑀢 TA  */ 'ந':'\u{11026}', /* 𑀦 NA  */
-  'ப':'\u{11027}', /* 𑀧 PA  */ 'ம':'\u{1102B}', /* 𑀫 MA  */
-  'ய':'\u{1102C}', /* 𑀬 YA  */ 'ர':'\u{1102D}', /* 𑀭 RA  */
-  'ல':'\u{1102E}', /* 𑀮 LA  */ 'வ':'\u{1102F}', /* 𑀯 VA  */
-  'ழ':'\u{11035}', /* 𑀵 OLD TAMIL LLLA */ 'ள':'\u{11034}', /* 𑀴 LLA */
-  'ற':'\u{11036}', /* 𑀶 OLD TAMIL RR  */ 'ன':'\u{11037}', /* 𑀷 OLD TAMIL LLL */
-  'ஜ':'\u{1101A}', /* 𑀚 JA  */ 'ஷ':'\u{11030}', /* 𑀰 SHA */
-  'ஸ':'\u{11032}', /* 𑀲 SA  */ 'ஹ':'\u{11033}', /* 𑀳 HA  */
-};
-const BRAHMI_VOWELS = {
-  'அ':'\u{11005}', /* 𑀅 A   */ 'ஆ':'\u{11006}', /* 𑀆 AA  */
-  'இ':'\u{11007}', /* 𑀇 I   */ 'ஈ':'\u{11008}', /* 𑀈 II  */
-  'உ':'\u{11009}', /* 𑀉 U   */ 'ஊ':'\u{1100A}', /* 𑀊 UU  */
-  'எ':'\u{1100F}', /* 𑀏 E   */ 'ஏ':'\u{11010}', /* 𑀐 AI→EE */
-  'ஐ':'\u{11010}', /* 𑀐 AI  */ 'ஒ':'\u{11011}', /* 𑀑 O   */
-  'ஓ':'\u{11012}', /* 𑀒 OO  */ 'ஔ':'\u{11012}', /* 𑀒 OO→AU */
-};
-const BRAHMI_MARKS = {
-  'ா':'\u{11038}', /* 𑀸 AA  */ 'ி':'\u{11039}', /* 𑀹 I   */
-  'ீ':'\u{1103A}', /* 𑀺 II  */ 'ு':'\u{1103B}', /* 𑀻 U   */
-  'ூ':'\u{1103C}', /* 𑀼 UU  */ 'ெ':'\u{11041}', /* 𑁁 E   */
-  'ே':'\u{11042}', /* 𑁂 AI→EE*/ 'ை':'\u{11042}', /* 𑁂 AI  */
-  'ொ':'\u{11043}', /* 𑁃 O   */ 'ோ':'\u{11044}', /* 𑁄 OO  */
-  'ௌ':'\u{11045}', /* 𑁅 AU  */ '்':'\u{11046}', /* 𑁆 VIRAMA */
-};
-
-function toBrahmiString(tamil) {
-  const chars = [...tamil];
-  let out = '';
-  for (const ch of chars) {
-    out += BRAHMI_CONSONANTS[ch] || BRAHMI_VOWELS[ch] || BRAHMI_MARKS[ch] || '';
-  }
-  return out;
-}
-
-/* Returns array of { tamil, brahmi, roman } per syllable */
-function getSyllables(tamil) {
-  const chars = [...tamil];
-  const result = [];
-  let i = 0;
-  while (i < chars.length) {
-    const ch = chars[i];
-    const next = chars[i + 1];
-    if (CONSONANTS[ch]) {
-      if (next !== undefined && MARKS[next] !== undefined) {
-        result.push({
-          tamil:  ch + next,
-          brahmi: (BRAHMI_CONSONANTS[ch] || '') + (BRAHMI_MARKS[next] || ''),
-          roman:  CONSONANTS[ch] + (MARKS[next] || 'a'),
-        });
-        i += 2;
-      } else {
-        result.push({
-          tamil:  ch,
-          brahmi: BRAHMI_CONSONANTS[ch] || '',
-          roman:  CONSONANTS[ch] + 'a',
-        });
-        i++;
-      }
-    } else if (VOWELS[ch]) {
-      result.push({
-        tamil:  ch,
-        brahmi: BRAHMI_VOWELS[ch] || '',
-        roman:  VOWELS[ch],
-      });
-      i++;
-    } else {
-      i++;
-    }
-  }
-  return result;
-}
 
 function transliterate(tamil) {
   const chars = [...tamil];
   let out = '', i = 0;
   while (i < chars.length) {
-    const ch = chars[i];
+    const ch = chars[i], next = chars[i+1];
     if (CONSONANTS[ch]) {
-      const next = chars[i + 1];
-      if (next !== undefined && MARKS[next] !== undefined) {
-        out += CONSONANTS[ch] + MARKS[next];
-        i += 2;
-      } else {
-        out += CONSONANTS[ch] + 'a';
-        i++;
-      }
-    } else if (VOWELS[ch]) {
-      out += VOWELS[ch]; i++;
-    } else {
-      out += ch; i++;   // space or unknown — pass through
-    }
+      if (next !== undefined && MARKS[next] !== undefined) { out += CONSONANTS[ch] + MARKS[next]; i += 2; }
+      else { out += CONSONANTS[ch] + 'a'; i++; }
+    } else if (VOWELS[ch]) { out += VOWELS[ch]; i++; }
+    else { out += ch; i++; }
   }
   return out.charAt(0).toUpperCase() + out.slice(1);
 }
 
-/* ════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════
+   Brahmi mapping  (U+11000 block)
+════════════════════════════════════════════ */
+const BRAHMI_C = {
+  'க':'\u{11013}','ங':'\u{11017}','ச':'\u{11018}','ஞ':'\u{1101C}',
+  'ட':'\u{1101D}','ண':'\u{11021}','த':'\u{11022}','ந':'\u{11026}',
+  'ப':'\u{11027}','ம':'\u{1102B}','ய':'\u{1102C}','ர':'\u{1102D}',
+  'ல':'\u{1102E}','வ':'\u{1102F}','ழ':'\u{11035}','ள':'\u{11034}',
+  'ற':'\u{11036}','ன':'\u{11037}','ஜ':'\u{1101A}','ஷ':'\u{11030}',
+  'ஸ':'\u{11032}','ஹ':'\u{11033}'
+};
+const BRAHMI_V = {
+  'அ':'\u{11005}','ஆ':'\u{11006}','இ':'\u{11007}','ஈ':'\u{11008}',
+  'உ':'\u{11009}','ஊ':'\u{1100A}','எ':'\u{1100F}','ஏ':'\u{11010}',
+  'ஐ':'\u{11010}','ஒ':'\u{11011}','ஓ':'\u{11012}','ஔ':'\u{11012}'
+};
+const BRAHMI_M = {
+  'ா':'\u{11038}','ி':'\u{11039}','ீ':'\u{1103A}','ு':'\u{1103B}',
+  'ூ':'\u{1103C}','ெ':'\u{11041}','ே':'\u{11042}','ை':'\u{11042}',
+  'ொ':'\u{11043}','ோ':'\u{11044}','ௌ':'\u{11045}','்':'\u{11046}'
+};
+
+function toBrahmi(tamil) {
+  let out = '';
+  for (const ch of [...tamil]) out += BRAHMI_C[ch]||BRAHMI_V[ch]||BRAHMI_M[ch]||'';
+  return out;
+}
+
+/* ════════════════════════════════════════════
+   Grantha mapping  (U+11300 block)
+   — closest Unicode representation of the
+     Vatteluttu / Grantha era (AD 3rd–13th c.)
+   Reference: Unicode Grantha block chart
+════════════════════════════════════════════ */
+const GRANTHA_C = {
+  'க':'\u{11315}','ங':'\u{11319}','ச':'\u{1131A}','ஞ':'\u{1131E}',
+  'ட':'\u{1131F}','ண':'\u{11323}','த':'\u{11324}','ந':'\u{11328}',
+  'ப':'\u{1132A}','ம':'\u{1132E}','ய':'\u{1132F}','ர':'\u{11330}',
+  'ல':'\u{11332}','வ':'\u{11334}','ழ':'\u{11330}','ள':'\u{11333}',
+  'ற':'\u{11330}','ன':'\u{11328}','ஜ':'\u{1131C}','ஷ':'\u{11335}',
+  'ஸ':'\u{11336}','ஹ':'\u{11337}'
+};
+const GRANTHA_V = {
+  'அ':'\u{11305}','ஆ':'\u{11306}','இ':'\u{11307}','ஈ':'\u{11308}',
+  'உ':'\u{11309}','ஊ':'\u{1130A}','எ':'\u{1130F}','ஏ':'\u{11310}',
+  'ஐ':'\u{11310}','ஒ':'\u{11311}','ஓ':'\u{11312}','ஔ':'\u{11312}'
+};
+const GRANTHA_M = {
+  'ா':'\u{1133E}','ி':'\u{1133F}','ீ':'\u{11340}','ு':'\u{11341}',
+  'ூ':'\u{11342}','ெ':'\u{11347}','ே':'\u{11348}','ை':'\u{11348}',
+  'ொ':'\u{1134B}','ோ':'\u{1134C}','ௌ':'\u{1134D}','்':'\u{1134D}'
+};
+
+function toGrantha(tamil) {
+  let out = '';
+  for (const ch of [...tamil]) out += GRANTHA_C[ch]||GRANTHA_V[ch]||GRANTHA_M[ch]||ch;
+  return out;
+}
+
+/* ════════════════════════════════════════════
+   Future "neural upload" hash
+════════════════════════════════════════════ */
+function toFuture(roman) {
+  const name = roman.toLowerCase();
+  let h = 0x5a3f9c1b;
+  for (let i = 0; i < name.length; i++) { h = ((h << 5) - h + name.charCodeAt(i)) >>> 0; }
+  const hex = h.toString(16).padStart(8,'0').toUpperCase();
+  const coords = `${(h % 9000 + 1000)}.${((h >> 8) % 9000 + 1000)}`;
+  return { display:`⟨ψ:${roman}·${hex}⟩`, sub:`Neural coordinate ${coords} · Cloud epoch 3025.07` };
+}
+
+/* ════════════════════════════════════════════
+   Syllable breakdown (for sticker rows)
+════════════════════════════════════════════ */
+function getSyllables(tamil) {
+  const chars = [...tamil], result = [];
+  let i = 0;
+  while (i < chars.length) {
+    const ch = chars[i], next = chars[i+1];
+    if (CONSONANTS[ch]) {
+      if (next !== undefined && MARKS[next] !== undefined) {
+        result.push({ tamil:ch+next, roman:CONSONANTS[ch]+(MARKS[next]||'a'), brahmi:(BRAHMI_C[ch]||'')+(BRAHMI_M[next]||''), grantha:(GRANTHA_C[ch]||'')+(GRANTHA_M[next]||'') });
+        i += 2;
+      } else {
+        result.push({ tamil:ch, roman:CONSONANTS[ch]+'a', brahmi:BRAHMI_C[ch]||'', grantha:GRANTHA_C[ch]||'' });
+        i++;
+      }
+    } else if (VOWELS[ch]) {
+      result.push({ tamil:ch, roman:VOWELS[ch], brahmi:BRAHMI_V[ch]||'', grantha:GRANTHA_V[ch]||'' });
+      i++;
+    } else { i++; }
+  }
+  return result;
+}
+
+/* ════════════════════════════════════════════
+   UI state helpers
+════════════════════════════════════════════ */
+function show(el) { el.classList.remove('hidden'); }
+function hide(el) { el.classList.add('hidden'); }
+
+function refreshJourneyBtn() {
+  const ready = !!(capturedDataUrl && typedTamil.trim());
+  $('begin-journey-btn').disabled = !ready;
+  $('journey-hint').textContent = ready
+    ? 'Ready! Click to watch your name travel through time.'
+    : (!capturedDataUrl ? 'Capture a photo first.' : 'Type your name above.');
+}
+
+/* ════════════════════════════════════════════
    Tamil keyboard
-════════════════════════════════════════════════════════ */
-function updateDisplay() {
-  tamilTyped.textContent = typedTamil;
-
-  /* Tamil display */
-  nameTamil.innerHTML = typedTamil
-    ? typedTamil
-    : '<span class="em-placeholder" style="font-family:inherit;font-size:1rem">—</span>';
-
-  /* Brahmi display */
-  const brahmi = toBrahmiString(typedTamil);
-  nameBrahmi.innerHTML = brahmi
-    ? brahmi
-    : '<span class="em-placeholder">—</span>';
-
-  /* English: only auto-fill when user hasn't typed their own version */
-  if (!englishManuallyEdited) {
-    nameEnglishInput.value = typedTamil ? transliterate(typedTamil) : '';
+════════════════════════════════════════════ */
+function updateNameDisplay() {
+  $('tamil-typed').textContent = typedTamil;
+  if (!englishEdited) {
+    $('name-english').value = typedTamil ? transliterate(typedTamil) : '';
   }
-
-  /* Syllable breakdown cards */
-  if (typedTamil) {
-    const syllables = getSyllables(typedTamil);
-    syllableGrid.innerHTML = syllables.map(s => `
-      <div class="syllable-card">
-        <span class="sc-tamil">${s.tamil}</span>
-        <span class="sc-brahmi">${s.brahmi}</span>
-        <span class="sc-roman">${s.roman}</span>
-      </div>`).join('');
-  } else {
-    syllableGrid.innerHTML = '';
-  }
-
-  refreshGenerateBtn();
+  refreshJourneyBtn();
 }
 
-/* Allow user to freely edit English name without it being overwritten */
-nameEnglishInput.addEventListener('input', () => {
-  englishManuallyEdited = true;
-  refreshGenerateBtn();
-});
-
-/* Reset auto-fill lock when Tamil is cleared so auto-fill works again */
-function resetEnglishEdit() {
-  englishManuallyEdited = false;
-}
+$('name-english').addEventListener('input', () => { englishEdited = true; refreshJourneyBtn(); });
 
 document.querySelectorAll('.key[data-char]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    typedTamil += btn.dataset.char;
-    updateDisplay();
-  });
+  btn.addEventListener('click', () => { typedTamil += btn.dataset.char; updateNameDisplay(); });
 });
-
 $('key-backspace').addEventListener('click', () => {
-  typedTamil = [...typedTamil].slice(0, -1).join('');
-  updateDisplay();
+  typedTamil = [...typedTamil].slice(0,-1).join('');
+  updateNameDisplay();
 });
-
 $('key-clear').addEventListener('click', () => {
-  typedTamil = '';
-  resetEnglishEdit();
-  updateDisplay();
+  typedTamil = ''; englishEdited = false; updateNameDisplay();
 });
 
-/* ════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════
    Camera
-════════════════════════════════════════════════════════ */
+════════════════════════════════════════════ */
 async function startCamera() {
   try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 } }, audio: false });
-    video.srcObject = cameraStream;
-    hide(camPlaceholder);
-    show(video);
-    hide(photoCanvas);
-    hide(startCameraBtn);
-    show(captureBtn);
-  } catch (err) {
-    alert('Camera access denied or unavailable: ' + err.message);
-  }
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video:{facingMode:'user',width:{ideal:1280}}, audio:false });
+    $('video').srcObject = cameraStream;
+    hide($('cam-placeholder')); show($('video')); hide($('photo-canvas'));
+    hide($('start-camera-btn')); show($('capture-btn'));
+  } catch(err) { alert('Camera error: ' + err.message); }
 }
 
 function capturePhoto() {
-  const w = video.videoWidth  || 640;
-  const h = video.videoHeight || 480;
-  photoCanvas.width  = w;
-  photoCanvas.height = h;
-  const pctx = photoCanvas.getContext('2d');
-  pctx.save();
-  pctx.translate(w, 0);
-  pctx.scale(-1, 1);
-  pctx.drawImage(video, 0, 0);
-  pctx.restore();
-
-  capturedDataUrl = photoCanvas.toDataURL('image/jpeg', 0.92);
-  show(photoCanvas);
-  hide(video);
-  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
-  hide(captureBtn);
-  show(retakeBtn);
-  refreshGenerateBtn();
+  const v = $('video');
+  const w = v.videoWidth||640, h = v.videoHeight||480;
+  const c = $('photo-canvas');
+  c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+  ctx.save(); ctx.translate(w,0); ctx.scale(-1,1); ctx.drawImage(v,0,0); ctx.restore();
+  capturedDataUrl = c.toDataURL('image/jpeg', 0.92);
+  show(c); hide(v);
+  if (cameraStream) { cameraStream.getTracks().forEach(t=>t.stop()); cameraStream=null; }
+  hide($('capture-btn')); show($('retake-btn'));
+  refreshJourneyBtn();
 }
 
 async function retakePhoto() {
   capturedDataUrl = null;
-  hide(photoCanvas);
-  hide(retakeBtn);
-  show(captureBtn);
-  hide(stickerSection);
-  refreshGenerateBtn();
+  hide($('photo-canvas')); hide($('retake-btn')); show($('capture-btn'));
+  refreshJourneyBtn();
   await startCamera();
 }
 
-startCameraBtn.addEventListener('click', startCamera);
-captureBtn.addEventListener('click',     capturePhoto);
-retakeBtn.addEventListener('click',      retakePhoto);
+$('start-camera-btn').addEventListener('click', startCamera);
+$('capture-btn').addEventListener('click', capturePhoto);
+$('retake-btn').addEventListener('click', retakePhoto);
 
-/* ════════════════════════════════════════════════════════
-   Sticker – build & print
-════════════════════════════════════════════════════════ */
-function buildSticker() {
-  stickerPhotoWrap.innerHTML = '';
-  if (capturedDataUrl) {
-    const img = document.createElement('img');
-    img.src = capturedDataUrl;
-    img.alt = 'Your photo';
-    stickerPhotoWrap.appendChild(img);
-  } else {
-    stickerPhotoWrap.innerHTML = `
-      <svg width="52" height="52" viewBox="0 0 60 60" fill="#bbb">
-        <circle cx="30" cy="21" r="14"/>
-        <path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25" fill-rule="evenodd"/>
-      </svg>`;
+/* ════════════════════════════════════════════
+   Signature pad
+════════════════════════════════════════════ */
+(function initSigPad() {
+  const canvas = $('sig-canvas');
+  const ctx = canvas.getContext('2d');
+  let drawing = false, lx=0, ly=0;
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width) return;
+    const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    canvas.width  = rect.width  * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0,0,rect.width,rect.height);
+    ctx.putImageData(imgData,0,0);
+    applyPen();
   }
-  stickerNameEn.textContent = nameEnglishInput.value.trim() || transliterate(typedTamil) || 'Your Name';
-  stickerNameTa.textContent = typedTamil || '';
-  stickerNameBr.textContent = toBrahmiString(typedTamil) || '';
+  function applyPen() {
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  }
+  function getXY(e) {
+    const r = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - r.left, y: src.clientY - r.top };
+  }
+  function down(e) {
+    e.preventDefault(); drawing = true;
+    const {x,y} = getXY(e); lx=x; ly=y;
+    ctx.beginPath(); ctx.moveTo(x,y);
+  }
+  function move(e) {
+    e.preventDefault(); if (!drawing) return;
+    const {x,y} = getXY(e);
+    ctx.lineTo(x,y); ctx.stroke();
+    lx=x; ly=y;
+  }
+  function up(e) { e.preventDefault(); drawing=false; ctx.closePath(); }
 
-  show(stickerSection);
-  stickerSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  const wrap = $('sticker-wrap');
-  wrap.classList.remove('fade-up');
-  void wrap.offsetWidth;
-  wrap.classList.add('fade-up');
+  canvas.addEventListener('mousedown', down);
+  canvas.addEventListener('mousemove', move);
+  canvas.addEventListener('mouseup',   up);
+  canvas.addEventListener('mouseleave',up);
+  canvas.addEventListener('touchstart',down,{passive:false});
+  canvas.addEventListener('touchmove', move,{passive:false});
+  canvas.addEventListener('touchend',  up,  {passive:false});
+
+  $('sig-clear-btn').addEventListener('click', () => {
+    const r = canvas.getBoundingClientRect();
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,r.width,r.height); applyPen();
+  });
+
+  window.addEventListener('resize', resize);
+  /* Init after layout */
+  setTimeout(resize, 50);
+})();
+
+/* ════════════════════════════════════════════
+   Flow: Begin Journey
+════════════════════════════════════════════ */
+$('begin-journey-btn').addEventListener('click', () => {
+  show($('section-signature'));
+  $('section-signature').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+$('sig-next-btn').addEventListener('click', () => {
+  /* Save signature */
+  const c = $('sig-canvas');
+  signatureDataUrl = c.toDataURL('image/png');
+  /* Start evolution */
+  show($('section-evolution'));
+  evoStage = 0;
+  renderEvoStage(evoStage, false);
+  $('section-evolution').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* ════════════════════════════════════════════
+   Evolution stages
+   Order: Modern → Early Print → Vatteluttu/Grantha → Brahmi
+════════════════════════════════════════════ */
+const EVO_STAGES = [
+  {
+    era: 'Modern Tamil',
+    script: 'தமிழ் · 19th century standardised',
+    period: 'today',
+    getText: t => t,
+    fontClass: 'tamil-font',
+    fontStyle: "font-family:'Noto Serif Tamil',serif; font-size:4.5rem; color:#f0d090;",
+  },
+  {
+    era: 'Early Printed Tamil',
+    script: 'Letterpress era · 16th–18th century',
+    period: '16th c.',
+    getText: t => t,
+    fontClass: 'tamil-font',
+    fontStyle: "font-family:'Noto Serif Tamil',serif; font-size:4.5rem; color:#d4b87a; filter:blur(0.3px) contrast(1.1); letter-spacing:0.04em;",
+  },
+  {
+    era: 'Vatteluttu · வட்டெழுத்து',
+    script: 'Grantha script era · AD 3rd–13th century',
+    period: '3rd c.',
+    getText: t => toGrantha(t),
+    fontClass: 'grantha-font',
+    fontStyle: "font-family:'Noto Sans Grantha','Noto Sans',sans-serif; font-size:4rem; color:#c9b090;",
+  },
+  {
+    era: 'Brahmi · பிராமி',
+    script: 'Oldest Tamil ancestor · BC 3rd century',
+    period: 'BC 3rd c.',
+    getText: t => toBrahmi(t),
+    fontClass: 'brahmi-font',
+    fontStyle: "font-family:'Noto Sans Brahmi','Segoe UI Historic',sans-serif; font-size:4rem; color:#b8a080; letter-spacing:0.1em;",
+  },
+];
+
+function renderEvoStage(idx, animate) {
+  const stage = EVO_STAGES[idx];
+  const charEl = $('evo-char');
+  const roman  = transliterate(typedTamil);
+
+  /* Update timeline nodes */
+  document.querySelectorAll('.evo-node').forEach((n,i) => {
+    n.classList.remove('active');
+    n.querySelector('.evo-node-dot').classList.remove('active','done');
+    if (i < idx)  { n.querySelector('.evo-node-dot').classList.add('done'); }
+    if (i === idx) { n.classList.add('active'); n.querySelector('.evo-node-dot').classList.add('active'); }
+  });
+
+  if (animate) {
+    charEl.classList.add('fading');
+    setTimeout(() => {
+      $('evo-era-label').textContent   = stage.era;
+      $('evo-script-name').textContent = stage.script;
+      charEl.style.cssText = stage.fontStyle;
+      charEl.textContent   = stage.getText(typedTamil) || '—';
+      $('evo-roman').textContent = roman;
+      charEl.classList.remove('fading');
+      charEl.classList.add('entering');
+      requestAnimationFrame(() => requestAnimationFrame(() => charEl.classList.remove('entering')));
+    }, 600);
+  } else {
+    $('evo-era-label').textContent   = stage.era;
+    $('evo-script-name').textContent = stage.script;
+    charEl.style.cssText = stage.fontStyle;
+    charEl.textContent   = stage.getText(typedTamil) || '—';
+    $('evo-roman').textContent = roman;
+  }
+
+  /* Last stage → change button */
+  const btn = $('evo-next-btn');
+  if (idx >= EVO_STAGES.length - 1) {
+    btn.textContent = 'What does the future hold? →';
+    btn.className   = 'btn btn-primary';
+  } else {
+    btn.textContent = 'Next Era →';
+    btn.className   = 'btn btn-dark';
+  }
 }
 
-generateBtn.addEventListener('click', buildSticker);
-redoBtn.addEventListener('click',     buildSticker);
+$('evo-next-btn').addEventListener('click', () => {
+  if (evoStage < EVO_STAGES.length - 1) {
+    evoStage++;
+    renderEvoStage(evoStage, true);
+  } else {
+    /* Show question screen */
+    const roman  = $('name-english').value.trim() || transliterate(typedTamil);
+    const future = toFuture(roman);
+    $('future-display').textContent = future.display;
+    $('future-sub').textContent     = future.sub;
+    show($('section-question'));
+    $('section-question').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+});
 
-printBtn.addEventListener('click', () => {
-  const clone = $('sticker-wrap').cloneNode(true);
-  printArea.innerHTML = '';
-  printArea.appendChild(clone);
+/* ════════════════════════════════════════════
+   Question → Palm leaf
+════════════════════════════════════════════ */
+$('q-continue-btn').addEventListener('click', buildPalmLeaf);
+
+function buildPalmLeaf() {
+  const english = $('name-english').value.trim() || transliterate(typedTamil);
+  const roman   = english;
+  const future  = toFuture(roman);
+
+  /* Photo */
+  const photoWrap = $('palm-photo-wrap');
+  photoWrap.innerHTML = '';
+  if (capturedDataUrl) {
+    const img = document.createElement('img');
+    img.src = capturedDataUrl; img.alt = 'Photo';
+    photoWrap.appendChild(img);
+  } else {
+    photoWrap.innerHTML = `<svg width="30" height="30" viewBox="0 0 60 60" fill="rgba(0,0,0,0.3)"><circle cx="30" cy="21" r="14"/><path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25"/></svg>`;
+  }
+
+  $('palm-name-en').textContent = english;
+  $('palm-name-ta').textContent = typedTamil;
+
+  /* Script rows */
+  const rowDefs = [
+    { period:'BC 3rd c.', name:'Brahmi', chars:toBrahmi(typedTamil), cls:'brahmi-font' },
+    { period:'AD 3rd–13th c.', name:'Vatteluttu / Grantha', chars:toGrantha(typedTamil), cls:'grantha-font' },
+    { period:'16th–18th c.', name:'Early Print Tamil', chars:typedTamil, cls:'tamil-font' },
+    { period:'19th c.–today', name:'Modern Tamil', chars:typedTamil, cls:'tamil-font' },
+    { period:'~AD 3026', name:'Neural Upload', chars:future.display, cls:'future-font' },
+  ];
+
+  $('palm-rows').innerHTML = rowDefs.map(r => `
+    <div class="palm-row">
+      <div class="palm-era-col">
+        <span class="palm-era-period">${r.period}</span>
+        <span class="palm-era-name">${r.name}</span>
+      </div>
+      <div class="palm-chars-col">
+        <span class="palm-chars ${r.cls}">${r.chars || '—'}</span>
+      </div>
+      <div class="palm-roman-col">${roman}</div>
+    </div>`).join('');
+
+  /* Signature */
+  const sigWrap = $('palm-sig-wrap');
+  if (signatureDataUrl) {
+    const img = document.createElement('img');
+    img.src = signatureDataUrl; img.className = 'palm-sig-img'; img.alt = 'Signature';
+    sigWrap.innerHTML = ''; sigWrap.appendChild(img);
+  } else {
+    sigWrap.innerHTML = '<span class="palm-sig-placeholder">No signature drawn</span>';
+  }
+
+  /* Date */
+  $('palm-date').textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+
+  show($('section-sticker'));
+  $('section-sticker').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ════════════════════════════════════════════
+   Print
+════════════════════════════════════════════ */
+$('print-btn').addEventListener('click', () => {
+  const clone = $('palm-leaf').cloneNode(true);
+  $('print-area').innerHTML = '';
+  $('print-area').appendChild(clone);
   window.print();
 });
 
-/* ════════════════════════════════════════════════════════
+$('redo-btn').addEventListener('click', () => {
+  /* Reset everything */
+  typedTamil = ''; capturedDataUrl = null; signatureDataUrl = null;
+  englishEdited = false; evoStage = 0;
+  $('tamil-typed').textContent = ''; $('name-english').value = '';
+  hide($('photo-canvas')); show($('cam-placeholder'));
+  hide($('capture-btn')); show($('start-camera-btn')); hide($('retake-btn'));
+  ['section-signature','section-evolution','section-question','section-sticker']
+    .forEach(id => hide($(id)));
+  refreshJourneyBtn();
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* ════════════════════════════════════════════
    Init
-════════════════════════════════════════════════════════ */
+════════════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', () => {
-  hide(photoCanvas);
-  hide(video);
-  updateDisplay();
+  hide($('photo-canvas'));
+  hide($('video'));
+  refreshJourneyBtn();
 });
 </script>
 </body>
