@@ -2,463 +2,505 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#000000">
   <title>Tamil Name Through Time</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Noto+Serif+Tamil:wght@400;700&family=Noto+Sans+Brahmi&family=Noto+Sans+Grantha&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+Tamil:wght@300;400;700&family=Noto+Sans+Brahmi&family=Noto+Sans+Grantha&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --accent:      #C97D1A;
-      --accent-h:    #e0941f;
-      --accent-pale: #fdf3e3;
-      --bg:          #f8f5f0;
-      --card:        #ffffff;
-      --text:        #1e1e1e;
-      --muted:       #7a7068;
-      --border:      #e5ddd4;
-      --radius:      14px;
-      --shadow:      0 2px 14px rgba(0,0,0,0.07);
-    }
+    /* ─── Reset ─── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    .hidden { display: none !important; }
-    body {
-      font-family: 'Libre Baskerville', serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+    html, body { height: 100%; overflow: hidden; background: #000; }
+    body { font-family: 'Cormorant Garamond', Georgia, serif; color: #fff; -webkit-font-smoothing: antialiased; }
 
-    /* ── Header ── */
-    header {
-      display: flex;
-      align-items: center;
-      padding: 14px 28px;
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      position: sticky;
-      top: 0;
-      z-index: 50;
+    /* ─── Screen system ─── */
+    .screen {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; flex-direction: column;
+      overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      opacity: 0; pointer-events: none;
+      transform: translateX(60px);
+      transition: opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1);
+      will-change: opacity, transform;
     }
-    .header-title h1 { font-size: 1.25rem; color: var(--accent); }
-    .header-title .subtitle {
-      font-family: 'Noto Serif Tamil', serif;
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 1px;
-    }
+    .screen.active  { opacity: 1; pointer-events: all; transform: translateX(0); }
+    .screen.exiting { opacity: 0; pointer-events: none; transform: translateX(-60px); }
 
-    /* ── Main layout ── */
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      padding: 20px 28px 40px;
-      max-width: 1100px;
-      margin: 0 auto;
-      width: 100%;
+    /* ─── Progress pips ─── */
+    .pips {
+      position: absolute; top: env(safe-area-inset-top, 16px); top: max(16px, env(safe-area-inset-top));
+      left: 50%; transform: translateX(-50%);
+      display: flex; gap: 5px; z-index: 30;
     }
-
-    /* ── Card ── */
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      padding: 22px;
+    .pip {
+      height: 3px; width: 20px; border-radius: 2px;
+      background: rgba(255,255,255,0.22);
+      transition: background .4s, width .4s;
     }
-    .step-label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 14px;
-      display: block;
+    .pip.done   { background: rgba(201,169,110,.55); }
+    .pip.active { background: rgba(255,255,255,.85); width: 34px; }
+
+    /* ══════════════════════════════════════════
+       SCREEN 1 — PHOTO
+    ══════════════════════════════════════════ */
+    #s-photo { background: #000; }
+
+    .photo-viewport {
+      position: absolute; inset: 0;
     }
+    #video, #photo-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    #video { transform: scaleX(-1); }
+    #photo-canvas { display: none; }
 
-    /* ── Two-column row ── */
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-    /* ── Camera ── */
-    .camera-inner { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-    .camera-viewport {
-      position: relative;
-      width: 100%; max-width: 480px;
-      aspect-ratio: 4/3;
+    .cam-idle {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+      color: rgba(255,255,255,.4);
       background: #111;
-      border-radius: 10px;
-      overflow: hidden;
     }
-    #video { width:100%; height:100%; object-fit:cover; display:block; transform:scaleX(-1); }
-    #photo-canvas { width:100%; height:100%; object-fit:cover; display:none; }
-    .cam-placeholder {
-      width:100%; height:100%;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      color:#555; gap:10px;
-    }
-    .cam-placeholder svg { opacity:0.4; }
-    .cam-placeholder p { font-size:0.85rem; font-style:italic; }
-    .camera-controls { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+    .cam-idle svg { opacity: .35; }
+    .cam-idle p { font-size: 1rem; font-weight: 300; letter-spacing: .08em; }
 
-    /* ── Tamil keyboard ── */
-    .draw-section { display:flex; flex-direction:column; gap:10px; }
-    .tamil-display {
-      font-family:'Noto Serif Tamil', serif;
-      font-size:2rem; min-height:3rem;
-      border:1.5px solid var(--border); border-radius:8px;
-      padding:10px 14px; background:#fff; color:var(--text);
-      display:flex; align-items:center; gap:2px; line-height:1.3;
+    /* Photo bottom overlay */
+    .photo-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 32px 24px calc(env(safe-area-inset-bottom, 0px) + 32px);
+      background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 100%);
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
     }
-    .tamil-cursor {
-      display:inline-block; width:2px; height:2rem;
-      background:var(--accent); margin-left:2px;
-      animation:blink 1s step-end infinite; flex-shrink:0;
+    .photo-overlay-title {
+      font-size: .7rem; letter-spacing: .28em; text-transform: uppercase;
+      color: rgba(255,255,255,.5);
+    }
+    .capture-ring {
+      width: 76px; height: 76px; border-radius: 50%;
+      border: 3px solid rgba(255,255,255,.5);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: border-color .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .capture-ring:hover { border-color: rgba(255,255,255,.9); }
+    .capture-ring:active .capture-dot { transform: scale(.88); }
+    .capture-dot {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: #fff; transition: transform .15s;
+    }
+    .retake-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .78rem; letter-spacing: .15em; text-transform: uppercase;
+      color: rgba(255,255,255,.65); background: none; border: none; cursor: pointer;
+      padding: 8px 20px; transition: color .2s;
+    }
+    .retake-btn:hover { color: #fff; }
+    .photo-continue-btn {
+      background: rgba(255,255,255,.12); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,.22); border-radius: 40px;
+      color: #fff; font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; letter-spacing: .12em; padding: 12px 36px;
+      cursor: pointer; transition: background .2s; display: none;
+    }
+    .photo-continue-btn.visible { display: inline-flex; align-items: center; gap: 8px; }
+    .photo-continue-btn:hover { background: rgba(255,255,255,.2); }
+
+    /* ══════════════════════════════════════════
+       SCREEN 2 — SIGNATURE
+    ══════════════════════════════════════════ */
+    #s-sig {
+      background: #f5f0e8;
+      justify-content: space-between;
+    }
+    .sig-top {
+      padding: calc(env(safe-area-inset-top,0px) + 56px) 28px 0;
+      text-align: center;
+    }
+    .sig-heading {
+      font-size: 2.2rem; font-weight: 300; color: #1a0f00; line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .sig-sub {
+      font-size: .85rem; color: #8a7060; font-style: italic; letter-spacing: .04em;
+    }
+    .sig-canvas-area {
+      flex: 1; display: flex; flex-direction: column;
+      margin: 24px 24px 0;
+    }
+    #sig-canvas {
+      flex: 1; width: 100%; display: block;
+      touch-action: none; cursor: crosshair;
+      border-radius: 12px;
+      /* No background — transparent by design */
+    }
+    .sig-divider {
+      width: 60%; height: 1px; background: #c4b099;
+      margin: 0 auto; pointer-events: none;
+    }
+    .sig-controls {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px calc(env(safe-area-inset-bottom,0px) + 24px);
+    }
+    .sig-clear {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .82rem; letter-spacing: .15em; text-transform: uppercase;
+      color: #a08060; background: none; border: none; cursor: pointer;
+      padding: 10px; transition: color .2s;
+    }
+    .sig-clear:hover { color: #6a4030; }
+    .sig-next {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; letter-spacing: .1em;
+      background: #1a0f00; color: #e8d5a0; border: none;
+      border-radius: 40px; padding: 13px 34px;
+      cursor: pointer; transition: background .2s; display: flex; align-items: center; gap: 8px;
+    }
+    .sig-next:hover { background: #2d1f00; }
+    .sig-skip {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
+      color: #b09070; background: none; border: none; cursor: pointer; padding: 8px;
+      text-align: center; display: block; width: 100%;
+      padding-bottom: calc(env(safe-area-inset-bottom,0px) + 8px);
+    }
+
+    /* ══════════════════════════════════════════
+       SCREEN 3 — NAME
+    ══════════════════════════════════════════ */
+    #s-name { background: #0a0812; }
+    .name-top {
+      padding: calc(env(safe-area-inset-top,0px) + 56px) 24px 0;
+      flex-shrink: 0;
+    }
+    .name-label {
+      font-size: .65rem; letter-spacing: .28em; text-transform: uppercase;
+      color: rgba(201,169,110,.6); margin-bottom: 12px;
+    }
+    .name-tamil-display {
+      font-family: 'Noto Serif Tamil', serif;
+      font-size: clamp(2.4rem, 8vw, 3.8rem); font-weight: 300;
+      color: #c9a96e; line-height: 1.2; min-height: 4rem;
+      display: flex; align-items: center; gap: 4px;
+      padding: 12px 0;
+    }
+    .name-cursor {
+      display: inline-block; width: 2px; height: 2.5rem;
+      background: #c9a96e; flex-shrink: 0;
+      animation: blink 1s step-end infinite;
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-    .tamil-keyboard { display:flex; flex-direction:column; gap:5px; }
-    .key-section-label {
-      font-size:0.62rem; text-transform:uppercase;
-      letter-spacing:0.1em; color:var(--muted); margin-top:4px;
-    }
-    .key-row { display:flex; flex-wrap:wrap; gap:4px; }
-    .key {
-      font-family:'Noto Serif Tamil', serif;
-      font-size:1rem; padding:6px 10px;
-      border:1px solid var(--border); border-radius:6px;
-      background:var(--card); cursor:pointer; color:var(--text);
-      min-width:38px; text-align:center;
-      transition:background 0.12s, border-color 0.12s;
-      line-height:1.4; -webkit-tap-highlight-color:transparent;
-    }
-    .key:hover  { background:var(--accent-pale); border-color:var(--accent); }
-    .key:active { background:var(--accent); color:#fff; }
-    .key.mark-key { background:#fdf6ee; border-color:#e8d5b0; color:var(--accent); }
-    .key.mark-key:hover { background:var(--accent); color:#fff; }
-    .key-utility {
-      font-family:'Libre Baskerville', serif; font-size:0.78rem;
-      padding:6px 14px; border-radius:6px; border:1px solid var(--border);
-      background:var(--bg); cursor:pointer; color:var(--text); transition:background 0.12s;
-    }
-    .key-utility:hover { background:var(--border); }
-
-    /* ── Name preview ── */
-    .name-section { display:flex; flex-direction:column; gap:12px; }
-    .lang-label {
-      font-size:0.68rem; letter-spacing:0.1em;
-      text-transform:uppercase; color:var(--muted); margin-bottom:4px;
-    }
     .name-english-input {
-      font-family:'Libre Baskerville', serif;
-      font-size:2rem; font-weight:700; color:var(--text);
-      border:1.5px solid var(--border); border-radius:8px;
-      padding:6px 12px; background:#fff;
-      width:100%; outline:none; transition:border-color 0.15s;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 300; letter-spacing: .04em;
+      color: rgba(255,255,255,.55); background: transparent;
+      border: none; border-bottom: 1px solid rgba(255,255,255,.15);
+      width: 100%; padding: 6px 0; outline: none;
+      transition: border-color .2s; margin-bottom: 4px;
     }
-    .name-english-input:focus { border-color:var(--accent); }
-    .name-english-input::placeholder { color:var(--border); font-weight:400; }
-    .name-tamil {
-      font-family:'Noto Serif Tamil', serif; font-size:2rem;
-      color:var(--accent); min-height:2.4rem; line-height:1.2;
-    }
-    .em-placeholder { color:var(--border); font-weight:400; }
-    .syllable-grid { display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; }
-    .syllable-card {
-      border:1px solid var(--border); border-radius:8px;
-      padding:6px 12px; background:#fdf8f2; text-align:center; min-width:52px;
-    }
-    .sc-tamil { font-family:'Noto Serif Tamil',serif; font-size:1.1rem; color:var(--accent); display:block; }
-    .sc-brahmi { font-family:'Noto Sans Brahmi','Segoe UI Historic',sans-serif; font-size:1rem; color:#6b4c1a; display:block; margin-top:2px; }
-    .sc-roman { font-size:0.65rem; color:var(--muted); display:block; margin-top:3px; }
+    .name-english-input:focus { border-color: rgba(201,169,110,.5); color: rgba(255,255,255,.8); }
+    .name-english-input::placeholder { color: rgba(255,255,255,.2); font-style: italic; }
 
-    /* ── Buttons ── */
-    .btn {
-      padding:9px 22px; border-radius:9px; border:none; cursor:pointer;
-      font-family:'Libre Baskerville',serif; font-size:0.82rem; font-weight:700;
-      transition:background 0.18s, opacity 0.18s;
-      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    /* Keyboard */
+    .kbd-wrap {
+      flex: 1; overflow-y: auto; padding: 12px 16px calc(env(safe-area-inset-bottom,0px) + 80px);
     }
-    .btn-primary   { background:var(--accent); color:#fff; }
-    .btn-primary:hover { background:var(--accent-h); }
-    .btn-primary:disabled { opacity:0.45; cursor:not-allowed; }
-    .btn-secondary { background:var(--bg); color:var(--text); border:1px solid var(--border); }
-    .btn-secondary:hover { background:var(--border); }
-    .btn-outline   { background:transparent; color:var(--accent); border:1.5px solid var(--accent); }
-    .btn-outline:hover:not(:disabled) { background:var(--accent); color:#fff; }
-    .btn-outline:disabled { opacity:0.4; cursor:not-allowed; }
-    .btn-dark { background:#1a1a2e; color:#fff; }
-    .btn-dark:hover { background:#2d2d4e; }
+    .kbd-section-label {
+      font-size: .6rem; letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(255,255,255,.25); margin: 10px 0 5px;
+    }
+    .kbd-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
+    .key {
+      font-family: 'Noto Serif Tamil', serif;
+      font-size: 1rem; padding: 7px 9px; min-width: 38px;
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 7px; color: rgba(255,255,255,.85);
+      cursor: pointer; text-align: center;
+      transition: background .12s, border-color .12s;
+      -webkit-tap-highlight-color: transparent; line-height: 1.3;
+    }
+    .key:hover  { background: rgba(201,169,110,.18); border-color: rgba(201,169,110,.35); }
+    .key:active { background: rgba(201,169,110,.35); }
+    .key.mark-key { background: rgba(201,169,110,.08); border-color: rgba(201,169,110,.2); color: #c9a96e; }
+    .mark-key:hover { background: rgba(201,169,110,.25); }
+    .key-util {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .78rem; letter-spacing: .1em; text-transform: uppercase;
+      padding: 7px 16px; border-radius: 7px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      color: rgba(255,255,255,.5); cursor: pointer; transition: background .12s;
+    }
+    .key-util:hover { background: rgba(255,255,255,.1); }
+    .name-continue-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
+      padding: 12px 20px calc(env(safe-area-inset-bottom,0px) + 12px);
+      background: linear-gradient(to top, #0a0812 60%, transparent);
+    }
+    .name-continue {
+      width: 100%; font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; letter-spacing: .1em;
+      background: #c9a96e; color: #0a0812; border: none;
+      border-radius: 40px; padding: 15px;
+      cursor: pointer; transition: background .2s; font-weight: 600;
+    }
+    .name-continue:hover { background: #e0c080; }
+    .name-continue:disabled { opacity: .35; cursor: not-allowed; }
 
-    /* ── Progress dots ── */
-    .progress-bar {
-      display:flex; align-items:center; justify-content:center;
-      gap:8px; padding:12px 0;
+    /* ══════════════════════════════════════════
+       SCREEN 4 — EVOLUTION
+    ══════════════════════════════════════════ */
+    #s-evo {
+      background: radial-gradient(ellipse at 50% 30%, #1e0f3a 0%, #0a0812 65%);
+      align-items: center; justify-content: center; text-align: center;
+      padding: 0 24px;
     }
-    .prog-dot {
-      width:8px; height:8px; border-radius:50%;
-      background:var(--border); transition:background 0.3s;
-    }
-    .prog-dot.active { background:var(--accent); }
-    .prog-dot.done   { background:#a0c878; }
-
-    /* ── Signature pad ── */
-    .sig-section { display:flex; flex-direction:column; gap:12px; }
-    .sig-canvas-wrap {
-      border:1.5px solid var(--border); border-radius:10px;
-      overflow:hidden; background:#fff; cursor:crosshair;
-      touch-action:none;
-    }
-    #sig-canvas { display:block; width:100%; height:160px; }
-    .sig-hint { font-size:0.78rem; color:var(--muted); font-style:italic; }
-
-    /* ── Evolution screen ── */
-    .evolution-screen {
-      background:linear-gradient(135deg,#0d0820 0%,#1e0f3a 60%,#0d1520 100%);
-      border-radius:18px; padding:48px 32px 36px;
-      text-align:center; color:#fff; position:relative; overflow:hidden;
-    }
-    .evo-stars {
-      position:absolute; inset:0; pointer-events:none;
+    /* Subtle starfield */
+    #s-evo::before {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
       background-image:
-        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 50% 70%, rgba(255,255,255,0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 35% 50%, rgba(255,255,255,0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 65% 85%, rgba(255,255,255,0.5) 0%, transparent 100%);
+        radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,.7) 0%,transparent 100%),
+        radial-gradient(1px 1px at 78% 12%, rgba(255,255,255,.5) 0%,transparent 100%),
+        radial-gradient(1px 1px at 45% 75%, rgba(255,255,255,.6) 0%,transparent 100%),
+        radial-gradient(1px 1px at 88% 55%, rgba(255,255,255,.4) 0%,transparent 100%),
+        radial-gradient(1px 1px at 22% 88%, rgba(255,255,255,.5) 0%,transparent 100%),
+        radial-gradient(1px 1px at 60% 40%, rgba(255,255,255,.3) 0%,transparent 100%),
+        radial-gradient(1px 1px at 5%  50%, rgba(255,255,255,.4) 0%,transparent 100%),
+        radial-gradient(1px 1px at 92% 30%, rgba(255,255,255,.6) 0%,transparent 100%);
     }
-    .evo-era {
-      font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase;
-      color:#c9a96e; margin-bottom:6px; position:relative;
-      transition:opacity 0.5s;
+    .evo-inner { position: relative; z-index: 1; width: 100%; max-width: 560px; }
+    .evo-era-badge {
+      font-size: .65rem; letter-spacing: .3em; text-transform: uppercase;
+      color: #c9a96e; margin-bottom: 8px;
+      transition: opacity .5s;
     }
-    .evo-script-name {
-      font-size:1rem; color:rgba(255,255,255,0.45);
-      margin-bottom:24px; position:relative;
-      transition:opacity 0.5s;
+    .evo-script-desc {
+      font-size: .85rem; color: rgba(255,255,255,.35);
+      margin-bottom: 32px; font-style: italic;
+      transition: opacity .5s;
     }
-    .evo-name {
-      min-height:7rem; display:flex; align-items:center; justify-content:center;
-      position:relative; margin-bottom:16px;
+    .evo-name-wrap {
+      min-height: 9rem; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
     }
-    .evo-char {
-      font-size:4.5rem; line-height:1.1;
-      transition:opacity 0.6s ease, transform 0.6s ease;
-      position:relative;
+    .evo-name-text {
+      font-size: clamp(3.5rem, 12vw, 5.5rem); line-height: 1.1;
+      transition: opacity .5s ease, transform .5s ease;
+      letter-spacing: .04em;
     }
-    .evo-char.fading { opacity:0; transform:scale(1.08) translateY(-6px); }
-    .evo-char.entering { opacity:0; transform:scale(0.92) translateY(6px); }
-    .evo-roman {
-      font-size:0.95rem; color:rgba(255,255,255,0.4);
-      font-style:italic; margin-bottom:28px; position:relative;
-      transition:opacity 0.5s;
+    .evo-name-text.fade-out { opacity: 0; transform: scale(1.06) translateY(-8px); }
+    .evo-name-text.fade-in  { opacity: 0; transform: scale(.94) translateY(8px); }
+    .evo-roman-label {
+      font-size: .9rem; color: rgba(255,255,255,.3);
+      font-style: italic; margin-bottom: 40px;
     }
+    /* Timeline bar */
     .evo-timeline {
-      display:flex; align-items:center; justify-content:center;
-      gap:0; margin-bottom:28px; position:relative;
+      display: flex; align-items: flex-start; justify-content: center;
+      margin-bottom: 36px;
     }
-    .evo-node {
-      display:flex; flex-direction:column; align-items:center; gap:4px;
-      width:120px;
-    }
+    .evo-node { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100px; }
     .evo-node-dot {
-      width:12px; height:12px; border-radius:50%;
-      background:rgba(255,255,255,0.2);
-      border:2px solid rgba(255,255,255,0.15);
-      transition:all 0.4s;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.15);
+      transition: all .4s;
     }
-    .evo-node-dot.active { background:#c9a96e; border-color:#c9a96e; box-shadow:0 0 10px #c9a96e; }
-    .evo-node-dot.done   { background:rgba(201,169,110,0.4); border-color:rgba(201,169,110,0.4); }
-    .evo-node-label {
-      font-size:0.58rem; letter-spacing:0.08em; text-transform:uppercase;
-      color:rgba(255,255,255,0.3); text-align:center; transition:color 0.4s;
+    .evo-node-dot.done   { background: rgba(201,169,110,.4); border-color: rgba(201,169,110,.4); }
+    .evo-node-dot.active { background: #c9a96e; border-color: #c9a96e; box-shadow: 0 0 12px rgba(201,169,110,.6); }
+    .evo-node-lbl {
+      font-size: .55rem; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(255,255,255,.25); text-align: center;
+      transition: color .4s;
     }
-    .evo-node.active .evo-node-label { color:#c9a96e; }
-    .evo-line {
-      flex:1; height:1px; background:rgba(255,255,255,0.1);
-      align-self:center; margin-bottom:20px;
+    .evo-node.active .evo-node-lbl { color: #c9a96e; }
+    .evo-conn { flex: 1; height: 1px; background: rgba(255,255,255,.1); margin-bottom: 22px; }
+    .evo-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; letter-spacing: .1em;
+      background: rgba(255,255,255,.08); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.18); border-radius: 40px;
+      color: #fff; padding: 13px 36px; cursor: pointer; transition: background .2s;
     }
-    .evo-controls { display:flex; gap:12px; justify-content:center; position:relative; }
+    .evo-btn:hover { background: rgba(255,255,255,.15); }
+    .evo-btn.gold { background: #c9a96e; color: #0a0812; border-color: #c9a96e; font-weight: 600; }
+    .evo-btn.gold:hover { background: #e0c080; }
 
-    /* ── Question screen ── */
-    .question-screen {
-      background:#080c12;
-      border-radius:18px; padding:48px 36px;
-      text-align:center; color:#fff; position:relative; overflow:hidden;
+    /* ══════════════════════════════════════════
+       SCREEN 5 — QUESTION
+    ══════════════════════════════════════════ */
+    #s-q {
+      background: #040608;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 0 28px;
     }
-    .q-glow {
-      position:absolute; top:-80px; left:50%; transform:translateX(-50%);
-      width:400px; height:400px; border-radius:50%;
-      background:radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
-      pointer-events:none;
+    .q-inner { position: relative; z-index: 1; max-width: 560px; width: 100%; }
+    .q-eyebrow {
+      font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
+      color: rgba(0,229,255,.4); margin-bottom: 28px;
     }
-    .q-label {
-      font-size:0.68rem; letter-spacing:0.25em; text-transform:uppercase;
-      color:rgba(0,229,255,0.5); margin-bottom:20px;
+    .q-body {
+      font-size: clamp(1.1rem, 3.5vw, 1.35rem); font-weight: 300;
+      line-height: 1.9; color: rgba(255,255,255,.75); margin-bottom: 44px;
     }
-    .q-text {
-      font-size:1.3rem; line-height:1.8; color:rgba(255,255,255,0.88);
-      max-width:580px; margin:0 auto 32px; position:relative;
+    .q-body em { color: #c9a96e; font-style: normal; }
+    .future-glow {
+      font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: clamp(1.1rem, 4vw, 1.5rem); color: #00e5ff;
+      letter-spacing: .08em; word-break: break-all;
+      text-shadow: 0 0 20px rgba(0,229,255,.6), 0 0 50px rgba(0,229,255,.25);
+      margin-bottom: 10px;
+      animation: neural 4s ease-in-out infinite;
     }
-    .q-text em { color:#c9a96e; font-style:normal; }
-    .future-display {
-      font-family:monospace; font-size:1.5rem;
-      color:#00e5ff; letter-spacing:0.12em;
-      text-shadow:0 0 18px rgba(0,229,255,0.55), 0 0 40px rgba(0,229,255,0.2);
-      margin:0 auto 16px; max-width:600px;
-      animation:neural-pulse 4s ease-in-out infinite;
-      word-break:break-all; position:relative;
+    @keyframes neural {
+      0%,100% { opacity:1; }
+      50% { opacity:.7; text-shadow:0 0 32px rgba(0,229,255,.9),0 0 70px rgba(0,229,255,.4); }
     }
-    @keyframes neural-pulse {
-      0%,100% { opacity:1; text-shadow:0 0 18px rgba(0,229,255,0.55),0 0 40px rgba(0,229,255,0.2); }
-      50%      { opacity:0.75; text-shadow:0 0 30px rgba(0,229,255,0.8),0 0 60px rgba(0,229,255,0.35); }
+    .future-coord {
+      font-family: monospace; font-size: .68rem;
+      color: rgba(0,229,255,.25); letter-spacing: .15em; margin-bottom: 44px;
     }
-    .future-sub {
-      font-size:0.75rem; color:rgba(255,255,255,0.3);
-      margin-bottom:32px; letter-spacing:0.1em; font-style:italic;
+    .q-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; letter-spacing: .1em;
+      background: #c9a96e; color: #040608; border: none;
+      border-radius: 40px; padding: 15px 44px;
+      cursor: pointer; font-weight: 600; transition: background .2s;
+    }
+    .q-btn:hover { background: #e0c080; }
+
+    /* ══════════════════════════════════════════
+       SCREEN 6 — STICKER (PALM LEAF)
+    ══════════════════════════════════════════ */
+    #s-sticker {
+      background: #0a0812;
+      align-items: center;
+      padding: calc(env(safe-area-inset-top,0px) + 32px) 16px
+               calc(env(safe-area-inset-bottom,0px) + 24px);
+    }
+    .sticker-eyebrow {
+      font-size: .62rem; letter-spacing: .28em; text-transform: uppercase;
+      color: rgba(255,255,255,.3); margin-bottom: 20px; text-align: center;
     }
 
-    /* ── Palm leaf sticker ── */
-    .palm-section {
-      display:flex; flex-direction:column; align-items:center; gap:20px;
-    }
+    /* Palm leaf */
     .palm-leaf {
-      width:100%; max-width:760px;
-      background:linear-gradient(160deg, #d9b76e 0%, #c49040 25%, #b8842e 55%, #c9984a 80%, #d9b76e 100%);
-      border-radius:12px 80px 12px 80px;
-      position:relative; overflow:hidden;
-      padding:22px 44px;
-      box-shadow:0 10px 50px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.25);
-      border:2px solid #9a6e20;
+      width: 100%; max-width: 680px;
+      position: relative; overflow: hidden;
+      border-radius: 16px 90px 16px 90px;
+      background: linear-gradient(145deg, #e0c070 0%, #c9a040 20%, #b07820 50%, #c49040 78%, #d9b060 100%);
+      box-shadow: 0 20px 70px rgba(0,0,0,.55), 0 4px 20px rgba(0,0,0,.4),
+                  inset 0 1px 0 rgba(255,255,220,.35), inset 0 -1px 0 rgba(0,0,0,.2);
+      border: 1.5px solid #906010;
     }
-    /* Horizontal ruled lines like a palm leaf */
-    .palm-leaf::before {
-      content:'';
-      position:absolute; inset:0;
-      background:repeating-linear-gradient(
-        0deg, transparent, transparent 33px,
-        rgba(0,0,0,0.07) 33px, rgba(0,0,0,0.07) 34px
+    /* Ruled lines */
+    .palm-lines {
+      position: absolute; inset: 0; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 30px,
+        rgba(0,0,0,.055) 30px, rgba(0,0,0,.055) 31px
       );
-      pointer-events:none;
     }
-    /* Center vein */
-    .palm-leaf::after {
-      content:'';
-      position:absolute; top:50%; left:32px; right:32px; height:1px;
-      background:rgba(0,0,0,0.12);
-      pointer-events:none;
-    }
-    .palm-inner { position:relative; z-index:1; }
-    .palm-header {
-      display:flex; align-items:center; gap:14px; margin-bottom:14px;
-      padding-bottom:12px; border-bottom:1.5px solid rgba(0,0,0,0.18);
-    }
-    .palm-photo-wrap {
-      width:56px; height:56px; border-radius:50%;
-      overflow:hidden; border:2px solid rgba(0,0,0,0.25);
-      flex-shrink:0; background:#c49040;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .palm-photo-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
-    .palm-heading {
-      flex:1;
-    }
-    .palm-title-en {
-      font-size:1.5rem; font-weight:700; color:#1a0800; line-height:1.1;
-    }
-    .palm-title-ta {
-      font-family:'Noto Serif Tamil',serif; font-size:0.9rem;
-      color:rgba(0,0,0,0.55); margin-top:2px;
-    }
-    .palm-tagline {
-      font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase;
-      color:rgba(0,0,0,0.4); margin-bottom:2px;
+    /* Subtle grain */
+    .palm-grain {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: .5;
     }
 
-    /* Each script row */
+    .palm-inner { position: relative; z-index: 1; padding: 22px 32px 18px; }
+
+    /* Header row */
+    .palm-hdr {
+      display: flex; align-items: center; gap: 14px;
+      padding-bottom: 14px; margin-bottom: 12px;
+      border-bottom: 1px solid rgba(0,0,0,.2);
+    }
+    .palm-photo {
+      width: 58px; height: 58px; border-radius: 50%; flex-shrink: 0;
+      overflow: hidden; border: 2px solid rgba(0,0,0,.25);
+      background: rgba(0,0,0,.15);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .palm-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+    .palm-hdr-text { flex: 1; }
+    .palm-eyebrow-txt {
+      font-size: .55rem; letter-spacing: .22em; text-transform: uppercase;
+      color: rgba(0,0,0,.38); margin-bottom: 2px;
+    }
+    .palm-name-en {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 600; color: #1a0800; line-height: 1.1;
+    }
+    .palm-name-ta {
+      font-family: 'Noto Serif Tamil', serif;
+      font-size: .85rem; color: rgba(0,0,0,.45); margin-top: 1px;
+    }
+
+    /* Script rows */
     .palm-row {
-      display:flex; align-items:center; gap:10px;
-      padding:5px 0;
-      border-bottom:1px solid rgba(0,0,0,0.1);
+      display: flex; align-items: center; gap: 10px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(0,0,0,.08);
     }
-    .palm-row:last-child { border-bottom:none; }
-    .palm-era-col {
-      width:100px; flex-shrink:0; text-align:right;
-      padding-right:10px; border-right:1px solid rgba(0,0,0,0.18);
+    .palm-row:last-of-type { border-bottom: none; }
+    .palm-era {
+      width: 88px; flex-shrink: 0; text-align: right;
+      padding-right: 10px; border-right: 1px solid rgba(0,0,0,.15);
     }
-    .palm-era-period {
-      font-size:0.58rem; color:rgba(0,0,0,0.4);
-      text-transform:uppercase; letter-spacing:0.08em; display:block;
-    }
-    .palm-era-name {
-      font-size:0.65rem; font-weight:700; color:rgba(0,0,0,0.6);
-      display:block; margin-top:1px;
-    }
-    .palm-chars-col { flex:1; }
+    .palm-era-period { font-size: .52rem; color: rgba(0,0,0,.38); display: block; text-transform: uppercase; letter-spacing: .06em; }
+    .palm-era-name   { font-size: .62rem; font-weight: 600; color: rgba(0,0,0,.55); display: block; margin-top: 1px; }
+    .palm-chars-col  { flex: 1; }
     .palm-chars {
-      font-size:1.5rem; color:#1a0800; letter-spacing:0.04em; line-height:1.3;
+      font-size: 1.45rem; color: #1a0800; letter-spacing: .03em; line-height: 1.3;
     }
-    .palm-chars.brahmi-font   { font-family:'Noto Sans Brahmi','Segoe UI Historic',sans-serif; }
-    .palm-chars.grantha-font  { font-family:'Noto Sans Grantha','Noto Sans',sans-serif; }
-    .palm-chars.tamil-font    { font-family:'Noto Serif Tamil',serif; }
-    .palm-chars.future-font   {
-      font-family:monospace; font-size:0.95rem; color:#0d3a4a;
-      letter-spacing:0.06em;
-    }
-    .palm-roman-col {
-      width:80px; flex-shrink:0; text-align:right;
-      font-size:0.72rem; color:rgba(0,0,0,0.45); font-style:italic;
-    }
+    .f-brahmi  { font-family: 'Noto Sans Brahmi','Segoe UI Historic',sans-serif; }
+    .f-grantha { font-family: 'Noto Sans Grantha','Noto Sans',sans-serif; }
+    .f-tamil   { font-family: 'Noto Serif Tamil',serif; }
+    .f-future  { font-family: 'SF Mono','Fira Code',monospace; font-size: .82rem; color: #2a4050; letter-spacing: .05em; word-break: break-all; }
+    .palm-roman { width: 60px; flex-shrink: 0; text-align: right; font-size: .68rem; color: rgba(0,0,0,.38); font-style: italic; }
 
-    /* Signature row at bottom of leaf */
+    /* Signature overlay */
     .palm-footer {
-      display:flex; align-items:center; justify-content:space-between;
-      margin-top:10px; padding-top:10px;
-      border-top:1.5px solid rgba(0,0,0,0.18);
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-top: 10px; padding-top: 10px;
+      border-top: 1px solid rgba(0,0,0,.15);
     }
+    .palm-sig-wrap { height: 44px; flex: 1; }
     .palm-sig-img {
-      height:38px; max-width:160px; object-fit:contain;
-      opacity:0.65; filter:sepia(0.6) brightness(0.6);
+      height: 44px; max-width: 180px; object-fit: contain;
+      /* signature PNG is transparent — ink shows on warm leaf */
+      mix-blend-mode: multiply;
+      opacity: .65;
     }
-    .palm-sig-placeholder {
-      font-size:0.7rem; color:rgba(0,0,0,0.35); font-style:italic;
+    .palm-date-txt { font-size: .6rem; color: rgba(0,0,0,.35); text-align: right; line-height: 1.5; }
+
+    /* Actions */
+    .sticker-actions {
+      display: flex; gap: 10px; margin-top: 20px;
+      justify-content: center; flex-wrap: wrap;
     }
-    .palm-date { font-size:0.65rem; color:rgba(0,0,0,0.4); text-align:right; }
+    .act-btn {
+      font-family: 'Cormorant Garamond', serif; font-size: .9rem;
+      letter-spacing: .1em; padding: 12px 28px; border-radius: 40px;
+      cursor: pointer; border: none; transition: all .2s;
+    }
+    .act-gold { background: #c9a96e; color: #0a0812; font-weight: 600; }
+    .act-gold:hover { background: #e0c080; }
+    .act-ghost { background: transparent; color: rgba(255,255,255,.4); border: 1px solid rgba(255,255,255,.15); }
+    .act-ghost:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.7); }
 
-    /* ── Fade animation ── */
-    @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-    .fade-up { animation:fadeUp 0.4s ease both; }
-
-    /* ── Print ── */
+    /* ─── Print ─── */
+    #print-area { display: none; }
     @media print {
-      body > * { display:none !important; }
-      #print-area { display:block !important; }
-      #print-area .palm-leaf {
-        width:680px; max-width:none;
-        margin:0 auto; box-shadow:none;
-        border:2px solid #9a6e20;
-        border-radius:8px 60px 8px 60px;
-      }
-      @page { size:landscape; margin:0.4in; }
-    }
-    #print-area { display:none; }
-
-    /* ── Responsive ── */
-    @media(max-width:700px) {
-      .two-col { grid-template-columns:1fr; }
-      main { padding:14px 14px 30px; }
-      .evolution-screen { padding:32px 18px 24px; }
-      .evo-char { font-size:3rem; }
-      .evo-node { width:70px; }
-      .evo-node-label { font-size:0.5rem; }
-      .palm-leaf { padding:16px 22px; border-radius:8px 40px 8px 40px; }
-      .palm-era-col { width:72px; }
+      body > * { display: none !important; }
+      #print-area { display: block !important; }
+      #print-area .palm-leaf { width: 640px; max-width: none; margin: 0 auto;
+        box-shadow: none; border-radius: 12px 70px 12px 70px; }
+      @page { size: landscape; margin: .5in; }
     }
   </style>
 </head>
@@ -466,248 +508,291 @@
 
 <div id="print-area"></div>
 
-<header>
-  <div class="header-title">
-    <h1>Tamil Name Through Time</h1>
-    <div class="subtitle">காலத்தின் வழியாக தமிழ் பெயர்</div>
-  </div>
-</header>
-
-<main>
-
-  <!-- ═══════════════════════════════════
-       STEP 1+2 — Photo & Name
-  ═══════════════════════════════════ -->
-  <div class="two-col" id="section-input">
-
-    <!-- Camera -->
-    <div class="card" style="display:flex;flex-direction:column;">
-      <span class="step-label">Step 1 · Capture Your Photo</span>
-      <div class="camera-inner">
-        <div class="camera-viewport">
-          <div class="cam-placeholder" id="cam-placeholder">
-            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-              <circle cx="12" cy="13" r="4"/>
-            </svg>
-            <p>Click "Start Camera" to begin</p>
-          </div>
-          <video id="video" autoplay playsinline muted></video>
-          <canvas id="photo-canvas"></canvas>
-        </div>
-        <div class="camera-controls">
-          <button class="btn btn-primary" id="start-camera-btn">📷 Start Camera</button>
-          <button class="btn btn-primary hidden" id="capture-btn">Capture Photo</button>
-          <button class="btn btn-secondary hidden" id="retake-btn">↩ Retake</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tamil keyboard -->
-    <div class="card draw-section">
-      <span class="step-label">Step 2 · Type Your Name in Tamil</span>
-      <div class="tamil-display" id="tamil-display">
-        <span id="tamil-typed"></span>
-        <span class="tamil-cursor"></span>
-      </div>
-      <div class="tamil-keyboard">
-        <div class="key-section-label">Vowels</div>
-        <div class="key-row">
-          <button class="key" data-char="அ">அ</button>
-          <button class="key" data-char="ஆ">ஆ</button>
-          <button class="key" data-char="இ">இ</button>
-          <button class="key" data-char="ஈ">ஈ</button>
-          <button class="key" data-char="உ">உ</button>
-          <button class="key" data-char="ஊ">ஊ</button>
-          <button class="key" data-char="எ">எ</button>
-          <button class="key" data-char="ஏ">ஏ</button>
-          <button class="key" data-char="ஐ">ஐ</button>
-          <button class="key" data-char="ஒ">ஒ</button>
-          <button class="key" data-char="ஓ">ஓ</button>
-          <button class="key" data-char="ஔ">ஔ</button>
-        </div>
-        <div class="key-section-label">Consonants</div>
-        <div class="key-row">
-          <button class="key" data-char="க">க</button>
-          <button class="key" data-char="ங">ங</button>
-          <button class="key" data-char="ச">ச</button>
-          <button class="key" data-char="ஞ">ஞ</button>
-          <button class="key" data-char="ட">ட</button>
-          <button class="key" data-char="ண">ண</button>
-          <button class="key" data-char="த">த</button>
-          <button class="key" data-char="ந">ந</button>
-          <button class="key" data-char="ப">ப</button>
-          <button class="key" data-char="ம">ம</button>
-          <button class="key" data-char="ய">ய</button>
-          <button class="key" data-char="ர">ர</button>
-        </div>
-        <div class="key-row">
-          <button class="key" data-char="ல">ல</button>
-          <button class="key" data-char="வ">வ</button>
-          <button class="key" data-char="ழ">ழ</button>
-          <button class="key" data-char="ள">ள</button>
-          <button class="key" data-char="ற">ற</button>
-          <button class="key" data-char="ன">ன</button>
-          <button class="key" data-char="ஜ">ஜ</button>
-          <button class="key" data-char="ஷ">ஷ</button>
-          <button class="key" data-char="ஸ">ஸ</button>
-          <button class="key" data-char="ஹ">ஹ</button>
-        </div>
-        <div class="key-section-label">Vowel marks</div>
-        <div class="key-row">
-          <button class="key mark-key" data-char="ா">-ா</button>
-          <button class="key mark-key" data-char="ி">-ி</button>
-          <button class="key mark-key" data-char="ீ">-ீ</button>
-          <button class="key mark-key" data-char="ு">-ு</button>
-          <button class="key mark-key" data-char="ூ">-ூ</button>
-          <button class="key mark-key" data-char="ெ">-ெ</button>
-          <button class="key mark-key" data-char="ே">-ே</button>
-          <button class="key mark-key" data-char="ை">-ை</button>
-          <button class="key mark-key" data-char="ொ">-ொ</button>
-          <button class="key mark-key" data-char="ோ">-ோ</button>
-          <button class="key mark-key" data-char="ௌ">-ௌ</button>
-          <button class="key mark-key" data-char="்">-்</button>
-        </div>
-        <div class="key-row" style="margin-top:6px">
-          <button class="key-utility" id="key-backspace">⌫ Delete</button>
-          <button class="key-utility" id="key-clear">✕ Clear</button>
-        </div>
-      </div>
-
-      <!-- Name preview + journey trigger -->
-      <div style="margin-top:12px; border-top:1px solid var(--border); padding-top:12px; display:flex; flex-direction:column; gap:8px;">
-        <div class="lang-label">English name (editable)</div>
-        <input type="text" id="name-english" class="name-english-input" placeholder="Auto-fills as you type…" autocomplete="off" spellcheck="false">
-        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:4px;">
-          <button class="btn btn-outline" id="begin-journey-btn" disabled>Begin the Journey ✦</button>
-          <span style="font-size:0.72rem; color:var(--muted); font-style:italic;" id="journey-hint">Capture photo &amp; type name to continue.</span>
-        </div>
-      </div>
-    </div>
+<!-- ═══════════════════════════════════
+     SCREEN 1 · PHOTO
+═══════════════════════════════════ -->
+<div class="screen active" id="s-photo">
+  <div class="pips" id="pips-photo">
+    <div class="pip active"></div><div class="pip"></div><div class="pip"></div>
+    <div class="pip"></div><div class="pip"></div>
   </div>
 
-  <!-- ═══════════════════════════════════
-       STEP 3 — Signature
-  ═══════════════════════════════════ -->
-  <div class="card sig-section hidden" id="section-signature">
-    <span class="step-label">Step 3 · Draw Your Signature</span>
-    <p class="sig-hint">Draw your signature below — it will appear on your palm leaf.</p>
-    <div class="sig-canvas-wrap">
-      <canvas id="sig-canvas"></canvas>
+  <div class="photo-viewport">
+    <div class="cam-idle" id="cam-idle">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      <p>Tap to open camera</p>
     </div>
-    <div style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;">
-      <button class="btn btn-secondary" id="sig-clear-btn">✕ Clear</button>
-      <button class="btn btn-primary" id="sig-next-btn">Watch Your Name Evolve →</button>
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="photo-canvas"></canvas>
+  </div>
+
+  <div class="photo-overlay">
+    <div class="photo-overlay-title">Tamil Name Through Time</div>
+    <div id="capture-ring" class="capture-ring" style="display:none">
+      <div class="capture-dot"></div>
+    </div>
+    <button id="open-camera-btn" style="
+      font-family:'Cormorant Garamond',serif; font-size:1rem; letter-spacing:.12em;
+      background:rgba(255,255,255,.12); backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.22); border-radius:40px;
+      color:#fff; padding:13px 36px; cursor:pointer;">
+      Open Camera
+    </button>
+    <button class="retake-btn hidden" id="retake-btn">↩ Retake</button>
+    <button class="photo-continue-btn" id="photo-continue">
+      Continue <span style="font-size:1.2rem">→</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 2 · SIGNATURE
+═══════════════════════════════════ -->
+<div class="screen" id="s-sig">
+  <div class="pips">
+    <div class="pip done"></div><div class="pip active"></div><div class="pip"></div>
+    <div class="pip"></div><div class="pip"></div>
+  </div>
+
+  <div class="sig-top">
+    <div class="sig-heading">Your signature</div>
+    <div class="sig-sub">Sign below — it will appear on your palm leaf</div>
+  </div>
+
+  <div class="sig-canvas-area">
+    <canvas id="sig-canvas"></canvas>
+    <div class="sig-divider"></div>
+  </div>
+
+  <div class="sig-controls">
+    <button class="sig-clear" id="sig-clear">✕ Clear</button>
+    <button class="sig-next" id="sig-next">Continue →</button>
+  </div>
+  <button class="sig-skip" id="sig-skip">Skip →</button>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 3 · NAME
+═══════════════════════════════════ -->
+<div class="screen" id="s-name">
+  <div class="pips">
+    <div class="pip done"></div><div class="pip done"></div><div class="pip active"></div>
+    <div class="pip"></div><div class="pip"></div>
+  </div>
+
+  <div class="name-top">
+    <div class="name-label">Type your Tamil name</div>
+    <div class="name-tamil-display">
+      <span id="tamil-typed"></span>
+      <span class="name-cursor"></span>
+    </div>
+    <input type="text" id="name-english" class="name-english-input"
+      placeholder="English name (auto-fills)" autocomplete="off" spellcheck="false">
+  </div>
+
+  <div class="kbd-wrap">
+    <div class="kbd-section-label">Vowels</div>
+    <div class="kbd-row">
+      <button class="key" data-char="அ">அ</button>
+      <button class="key" data-char="ஆ">ஆ</button>
+      <button class="key" data-char="இ">இ</button>
+      <button class="key" data-char="ஈ">ஈ</button>
+      <button class="key" data-char="உ">உ</button>
+      <button class="key" data-char="ஊ">ஊ</button>
+      <button class="key" data-char="எ">எ</button>
+      <button class="key" data-char="ஏ">ஏ</button>
+      <button class="key" data-char="ஐ">ஐ</button>
+      <button class="key" data-char="ஒ">ஒ</button>
+      <button class="key" data-char="ஓ">ஓ</button>
+      <button class="key" data-char="ஔ">ஔ</button>
+    </div>
+    <div class="kbd-section-label">Consonants</div>
+    <div class="kbd-row">
+      <button class="key" data-char="க">க</button>
+      <button class="key" data-char="ங">ங</button>
+      <button class="key" data-char="ச">ச</button>
+      <button class="key" data-char="ஞ">ஞ</button>
+      <button class="key" data-char="ட">ட</button>
+      <button class="key" data-char="ண">ண</button>
+      <button class="key" data-char="த">த</button>
+      <button class="key" data-char="ந">ந</button>
+      <button class="key" data-char="ப">ப</button>
+      <button class="key" data-char="ம">ம</button>
+      <button class="key" data-char="ய">ய</button>
+      <button class="key" data-char="ர">ர</button>
+    </div>
+    <div class="kbd-row">
+      <button class="key" data-char="ல">ல</button>
+      <button class="key" data-char="வ">வ</button>
+      <button class="key" data-char="ழ">ழ</button>
+      <button class="key" data-char="ள">ள</button>
+      <button class="key" data-char="ற">ற</button>
+      <button class="key" data-char="ன">ன</button>
+      <button class="key" data-char="ஜ">ஜ</button>
+      <button class="key" data-char="ஷ">ஷ</button>
+      <button class="key" data-char="ஸ">ஸ</button>
+      <button class="key" data-char="ஹ">ஹ</button>
+    </div>
+    <div class="kbd-section-label">Vowel marks</div>
+    <div class="kbd-row">
+      <button class="key mark-key" data-char="ா">-ா</button>
+      <button class="key mark-key" data-char="ி">-ி</button>
+      <button class="key mark-key" data-char="ீ">-ீ</button>
+      <button class="key mark-key" data-char="ு">-ு</button>
+      <button class="key mark-key" data-char="ூ">-ூ</button>
+      <button class="key mark-key" data-char="ெ">-ெ</button>
+      <button class="key mark-key" data-char="ே">-ே</button>
+      <button class="key mark-key" data-char="ை">-ை</button>
+      <button class="key mark-key" data-char="ொ">-ொ</button>
+      <button class="key mark-key" data-char="ோ">-ோ</button>
+      <button class="key mark-key" data-char="ௌ">-ௌ</button>
+      <button class="key mark-key" data-char="்">-்</button>
+    </div>
+    <div class="kbd-row" style="margin-top:6px">
+      <button class="key-util" id="key-backspace">⌫ Delete</button>
+      <button class="key-util" id="key-clear">✕ Clear</button>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════
-       STEP 4 — Evolution animation
-  ═══════════════════════════════════ -->
-  <div class="evolution-screen hidden" id="section-evolution">
-    <div class="evo-stars"></div>
-    <div class="evo-era" id="evo-era-label">Modern Tamil</div>
-    <div class="evo-script-name" id="evo-script-name">தமிழ் · 19th century standardised</div>
-    <div class="evo-name">
-      <div class="evo-char" id="evo-char"></div>
-    </div>
-    <div class="evo-roman" id="evo-roman"></div>
+  <div class="name-continue-bar">
+    <button class="name-continue" id="name-continue" disabled>Watch Your Name Travel Through Time →</button>
+  </div>
+</div>
 
-    <!-- Timeline nodes -->
-    <div class="evo-timeline" id="evo-timeline">
-      <div class="evo-node active" data-stage="0">
+<!-- ═══════════════════════════════════
+     SCREEN 4 · EVOLUTION
+═══════════════════════════════════ -->
+<div class="screen" id="s-evo">
+  <div class="pips">
+    <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div>
+    <div class="pip active"></div><div class="pip"></div>
+  </div>
+
+  <div class="evo-inner">
+    <div class="evo-era-badge" id="evo-era">Modern Tamil</div>
+    <div class="evo-script-desc" id="evo-desc">தமிழ் · 19th century</div>
+
+    <div class="evo-name-wrap">
+      <div class="evo-name-text" id="evo-name"></div>
+    </div>
+
+    <div class="evo-roman-label" id="evo-roman"></div>
+
+    <div class="evo-timeline">
+      <div class="evo-node active" id="en0">
         <div class="evo-node-dot active"></div>
-        <div class="evo-node-label">Modern Tamil</div>
+        <div class="evo-node-lbl">Modern</div>
       </div>
-      <div class="evo-line"></div>
-      <div class="evo-node" data-stage="1">
+      <div class="evo-conn"></div>
+      <div class="evo-node" id="en1">
         <div class="evo-node-dot"></div>
-        <div class="evo-node-label">Early Print</div>
+        <div class="evo-node-lbl">Vatteluttu</div>
       </div>
-      <div class="evo-line"></div>
-      <div class="evo-node" data-stage="2">
+      <div class="evo-conn"></div>
+      <div class="evo-node" id="en2">
         <div class="evo-node-dot"></div>
-        <div class="evo-node-label">Vatteluttu</div>
-      </div>
-      <div class="evo-line"></div>
-      <div class="evo-node" data-stage="3">
-        <div class="evo-node-dot"></div>
-        <div class="evo-node-label">Brahmi</div>
+        <div class="evo-node-lbl">Brahmi</div>
       </div>
     </div>
 
-    <div class="evo-controls">
-      <button class="btn btn-dark" id="evo-next-btn">Next Era →</button>
-    </div>
+    <button class="evo-btn" id="evo-next">Next Era →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 5 · QUESTION
+═══════════════════════════════════ -->
+<div class="screen" id="s-q">
+  <div class="pips">
+    <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div>
+    <div class="pip done"></div><div class="pip active"></div>
   </div>
 
-  <!-- ═══════════════════════════════════
-       STEP 5 — The Question
-  ═══════════════════════════════════ -->
-  <div class="question-screen hidden" id="section-question">
-    <div class="q-glow"></div>
-    <div class="q-label">The Question</div>
-    <div class="q-text">
-      Your name has survived <em>2,300 years</em> of script evolution —<br>
-      from palm leaf to press to pixel.<br><br>
-      Now imagine <em>1,000 years from now.</em><br>
-      All thought is uploaded instantly to the cloud.<br>
-      Language is gone. Only <em>patterns</em> remain.<br><br>
-      This is how your name would look:
+  <div class="q-inner">
+    <div class="q-eyebrow">A question for you</div>
+    <div class="q-body">
+      Your name has survived <em>2,300 years</em> of script.<br>
+      From palm leaf to printing press to pixel.<br><br>
+      Now imagine <em>1,000 years from now</em> —<br>
+      language is gone. All thought uploads instantly.<br>
+      Only <em>patterns</em> remain.<br><br>
+      This is your name then:
     </div>
-    <div class="future-display" id="future-display"></div>
-    <div class="future-sub" id="future-sub"></div>
-    <button class="btn btn-primary" id="q-continue-btn" style="margin-top:12px;">Receive Your Palm Leaf ✦</button>
+    <div class="future-glow" id="future-glow"></div>
+    <div class="future-coord" id="future-coord"></div>
+    <button class="q-btn" id="q-continue">Receive Your Palm Leaf ✦</button>
   </div>
+</div>
 
-  <!-- ═══════════════════════════════════
-       STEP 6 — Palm Leaf Sticker
-  ═══════════════════════════════════ -->
-  <div class="palm-section hidden" id="section-sticker">
-    <div class="palm-leaf fade-up" id="palm-leaf">
-      <div class="palm-inner">
+<!-- ═══════════════════════════════════
+     SCREEN 6 · STICKER
+═══════════════════════════════════ -->
+<div class="screen" id="s-sticker">
+  <div class="sticker-eyebrow">Your Name Through Time</div>
 
-        <!-- Header: photo + name -->
-        <div class="palm-header">
-          <div class="palm-photo-wrap" id="palm-photo-wrap">
-            <svg width="30" height="30" viewBox="0 0 60 60" fill="rgba(0,0,0,0.3)">
-              <circle cx="30" cy="21" r="14"/>
-              <path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25"/>
-            </svg>
-          </div>
-          <div class="palm-heading">
-            <div class="palm-tagline">A name across centuries</div>
-            <div class="palm-title-en" id="palm-name-en">Name</div>
-            <div class="palm-title-ta" id="palm-name-ta"></div>
-          </div>
+  <div class="palm-leaf" id="palm-leaf">
+    <div class="palm-lines"></div>
+    <div class="palm-grain"></div>
+    <div class="palm-inner">
+
+      <div class="palm-hdr">
+        <div class="palm-photo" id="palm-photo">
+          <svg width="28" height="28" viewBox="0 0 60 60" fill="rgba(0,0,0,0.3)">
+            <circle cx="30" cy="21" r="14"/>
+            <path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25"/>
+          </svg>
         </div>
-
-        <!-- Script rows -->
-        <div id="palm-rows"></div>
-
-        <!-- Footer: signature + date -->
-        <div class="palm-footer">
-          <div id="palm-sig-wrap">
-            <span class="palm-sig-placeholder">No signature drawn</span>
-          </div>
-          <div class="palm-date" id="palm-date"></div>
+        <div class="palm-hdr-text">
+          <div class="palm-eyebrow-txt">A name across centuries</div>
+          <div class="palm-name-en" id="palm-name-en">Name</div>
+          <div class="palm-name-ta" id="palm-name-ta"></div>
         </div>
-
       </div>
-    </div>
 
-    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-      <button class="btn btn-primary" id="print-btn">🖨 Print Palm Leaf</button>
-      <button class="btn btn-secondary" id="redo-btn">↺ Start Over</button>
+      <div id="palm-rows"></div>
+
+      <div class="palm-footer">
+        <div class="palm-sig-wrap" id="palm-sig-wrap"></div>
+        <div class="palm-date-txt" id="palm-date"></div>
+      </div>
+
     </div>
   </div>
 
-</main>
+  <div class="sticker-actions">
+    <button class="act-btn act-gold" id="print-btn">🖨 Print</button>
+    <button class="act-btn act-ghost" id="redo-btn">↺ Start Over</button>
+  </div>
+</div>
 
 <script>
-/* ════════════════════════════════════════════
+/* ══════════════════════════════════════════════
+   Helpers
+══════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+function show(el) { el.classList.remove('hidden'); }
+function hide(el) { el.classList.add('hidden');   }
+
+/* Screen manager */
+const SCREENS = ['s-photo','s-sig','s-name','s-evo','s-q','s-sticker'];
+let current = 0;
+function goTo(idx) {
+  SCREENS.forEach((id, i) => {
+    const el = $(id);
+    el.classList.remove('active','exiting');
+    if (i === idx) { el.classList.add('active'); }
+    else if (i < idx) { el.classList.add('exiting'); }
+  });
+  current = idx;
+  window.scrollTo(0, 0);
+}
+
+/* ══════════════════════════════════════════════
    State
-════════════════════════════════════════════ */
+══════════════════════════════════════════════ */
 let capturedDataUrl  = null;
 let signatureDataUrl = null;
 let typedTamil       = '';
@@ -715,11 +800,9 @@ let cameraStream     = null;
 let englishEdited    = false;
 let evoStage         = 0;
 
-const $ = id => document.getElementById(id);
-
-/* ════════════════════════════════════════════
-   Transliteration (Roman)
-════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   Script tables
+══════════════════════════════════════════════ */
 const CONSONANTS = {
   'க':'k','ங':'ng','ச':'ch','ஞ':'ny','ட':'t','ண':'n',
   'த':'th','ந':'n','ப':'p','ம':'m','ய':'y','ர':'r',
@@ -735,433 +818,394 @@ const MARKS = {
   'ெ':'e','ே':'ae','ை':'ai','ொ':'o','ோ':'oh','ௌ':'au','்':''
 };
 
-function transliterate(tamil) {
-  const chars = [...tamil];
-  let out = '', i = 0;
-  while (i < chars.length) {
-    const ch = chars[i], next = chars[i+1];
-    if (CONSONANTS[ch]) {
-      if (next !== undefined && MARKS[next] !== undefined) { out += CONSONANTS[ch] + MARKS[next]; i += 2; }
-      else { out += CONSONANTS[ch] + 'a'; i++; }
-    } else if (VOWELS[ch]) { out += VOWELS[ch]; i++; }
-    else { out += ch; i++; }
+function transliterate(t) {
+  const ch = [...t]; let out = '', i = 0;
+  while (i < ch.length) {
+    const c = ch[i], n = ch[i+1];
+    if (CONSONANTS[c]) {
+      if (n !== undefined && MARKS[n] !== undefined) { out += CONSONANTS[c]+MARKS[n]; i+=2; }
+      else { out += CONSONANTS[c]+'a'; i++; }
+    } else if (VOWELS[c]) { out += VOWELS[c]; i++; }
+    else { out += c; i++; }
   }
-  return out.charAt(0).toUpperCase() + out.slice(1);
+  return out.charAt(0).toUpperCase()+out.slice(1);
 }
 
-/* ════════════════════════════════════════════
-   Brahmi mapping  (U+11000 block)
-════════════════════════════════════════════ */
-const BRAHMI_C = {
-  'க':'\u{11013}','ங':'\u{11017}','ச':'\u{11018}','ஞ':'\u{1101C}',
-  'ட':'\u{1101D}','ண':'\u{11021}','த':'\u{11022}','ந':'\u{11026}',
-  'ப':'\u{11027}','ம':'\u{1102B}','ய':'\u{1102C}','ர':'\u{1102D}',
-  'ல':'\u{1102E}','வ':'\u{1102F}','ழ':'\u{11035}','ள':'\u{11034}',
-  'ற':'\u{11036}','ன':'\u{11037}','ஜ':'\u{1101A}','ஷ':'\u{11030}',
-  'ஸ':'\u{11032}','ஹ':'\u{11033}'
-};
-const BRAHMI_V = {
-  'அ':'\u{11005}','ஆ':'\u{11006}','இ':'\u{11007}','ஈ':'\u{11008}',
-  'உ':'\u{11009}','ஊ':'\u{1100A}','எ':'\u{1100F}','ஏ':'\u{11010}',
-  'ஐ':'\u{11010}','ஒ':'\u{11011}','ஓ':'\u{11012}','ஔ':'\u{11012}'
-};
-const BRAHMI_M = {
-  'ா':'\u{11038}','ி':'\u{11039}','ீ':'\u{1103A}','ு':'\u{1103B}',
-  'ூ':'\u{1103C}','ெ':'\u{11041}','ே':'\u{11042}','ை':'\u{11042}',
-  'ொ':'\u{11043}','ோ':'\u{11044}','ௌ':'\u{11045}','்':'\u{11046}'
-};
+/* Brahmi U+11000 */
+const BC={'க':'\u{11013}','ங':'\u{11017}','ச':'\u{11018}','ஞ':'\u{1101C}','ட':'\u{1101D}','ண':'\u{11021}','த':'\u{11022}','ந':'\u{11026}','ப':'\u{11027}','ம':'\u{1102B}','ய':'\u{1102C}','ர':'\u{1102D}','ல':'\u{1102E}','வ':'\u{1102F}','ழ':'\u{11035}','ள':'\u{11034}','ற':'\u{11036}','ன':'\u{11037}','ஜ':'\u{1101A}','ஷ':'\u{11030}','ஸ':'\u{11032}','ஹ':'\u{11033}'};
+const BV={'அ':'\u{11005}','ஆ':'\u{11006}','இ':'\u{11007}','ஈ':'\u{11008}','உ':'\u{11009}','ஊ':'\u{1100A}','எ':'\u{1100F}','ஏ':'\u{11010}','ஐ':'\u{11010}','ஒ':'\u{11011}','ஓ':'\u{11012}','ஔ':'\u{11012}'};
+const BM={'ா':'\u{11038}','ி':'\u{11039}','ீ':'\u{1103A}','ு':'\u{1103B}','ூ':'\u{1103C}','ெ':'\u{11041}','ே':'\u{11042}','ை':'\u{11042}','ொ':'\u{11043}','ோ':'\u{11044}','ௌ':'\u{11045}','்':'\u{11046}'};
+function toBrahmi(t) { return [...t].map(c=>BC[c]||BV[c]||BM[c]||'').join(''); }
 
-function toBrahmi(tamil) {
-  let out = '';
-  for (const ch of [...tamil]) out += BRAHMI_C[ch]||BRAHMI_V[ch]||BRAHMI_M[ch]||'';
-  return out;
-}
+/* Grantha U+11300 — Vatteluttu era */
+const GC={'க':'\u{11315}','ங':'\u{11319}','ச':'\u{1131A}','ஞ':'\u{1131E}','ட':'\u{1131F}','ண':'\u{11323}','த':'\u{11324}','ந':'\u{11328}','ப':'\u{1132A}','ம':'\u{1132E}','ய':'\u{1132F}','ர':'\u{11330}','ல':'\u{11332}','வ':'\u{11334}','ழ':'\u{11330}','ள':'\u{11333}','ற':'\u{11330}','ன':'\u{11328}','ஜ':'\u{1131C}','ஷ':'\u{11335}','ஸ':'\u{11336}','ஹ':'\u{11337}'};
+const GV={'அ':'\u{11305}','ஆ':'\u{11306}','இ':'\u{11307}','ஈ':'\u{11308}','உ':'\u{11309}','ஊ':'\u{1130A}','எ':'\u{1130F}','ஏ':'\u{11310}','ஐ':'\u{11310}','ஒ':'\u{11311}','ஓ':'\u{11312}','ஔ':'\u{11312}'};
+const GM={'ா':'\u{1133E}','ி':'\u{1133F}','ீ':'\u{11340}','ு':'\u{11341}','ூ':'\u{11342}','ெ':'\u{11347}','ே':'\u{11348}','ை':'\u{11348}','ொ':'\u{1134B}','ோ':'\u{1134C}','ௌ':'\u{1134D}','்':'\u{1134D}'};
+function toGrantha(t) { return [...t].map(c=>GC[c]||GV[c]||GM[c]||c).join(''); }
 
-/* ════════════════════════════════════════════
-   Grantha mapping  (U+11300 block)
-   — closest Unicode representation of the
-     Vatteluttu / Grantha era (AD 3rd–13th c.)
-   Reference: Unicode Grantha block chart
-════════════════════════════════════════════ */
-const GRANTHA_C = {
-  'க':'\u{11315}','ங':'\u{11319}','ச':'\u{1131A}','ஞ':'\u{1131E}',
-  'ட':'\u{1131F}','ண':'\u{11323}','த':'\u{11324}','ந':'\u{11328}',
-  'ப':'\u{1132A}','ம':'\u{1132E}','ய':'\u{1132F}','ர':'\u{11330}',
-  'ல':'\u{11332}','வ':'\u{11334}','ழ':'\u{11330}','ள':'\u{11333}',
-  'ற':'\u{11330}','ன':'\u{11328}','ஜ':'\u{1131C}','ஷ':'\u{11335}',
-  'ஸ':'\u{11336}','ஹ':'\u{11337}'
-};
-const GRANTHA_V = {
-  'அ':'\u{11305}','ஆ':'\u{11306}','இ':'\u{11307}','ஈ':'\u{11308}',
-  'உ':'\u{11309}','ஊ':'\u{1130A}','எ':'\u{1130F}','ஏ':'\u{11310}',
-  'ஐ':'\u{11310}','ஒ':'\u{11311}','ஓ':'\u{11312}','ஔ':'\u{11312}'
-};
-const GRANTHA_M = {
-  'ா':'\u{1133E}','ி':'\u{1133F}','ீ':'\u{11340}','ு':'\u{11341}',
-  'ூ':'\u{11342}','ெ':'\u{11347}','ே':'\u{11348}','ை':'\u{11348}',
-  'ொ':'\u{1134B}','ோ':'\u{1134C}','ௌ':'\u{1134D}','்':'\u{1134D}'
-};
-
-function toGrantha(tamil) {
-  let out = '';
-  for (const ch of [...tamil]) out += GRANTHA_C[ch]||GRANTHA_V[ch]||GRANTHA_M[ch]||ch;
-  return out;
-}
-
-/* ════════════════════════════════════════════
-   Future "neural upload" hash
-════════════════════════════════════════════ */
+/* Future "neural upload" */
 function toFuture(roman) {
-  const name = roman.toLowerCase();
   let h = 0x5a3f9c1b;
-  for (let i = 0; i < name.length; i++) { h = ((h << 5) - h + name.charCodeAt(i)) >>> 0; }
+  for (const c of roman.toLowerCase()) h = ((h<<5)-h+c.charCodeAt(0))>>>0;
   const hex = h.toString(16).padStart(8,'0').toUpperCase();
-  const coords = `${(h % 9000 + 1000)}.${((h >> 8) % 9000 + 1000)}`;
-  return { display:`⟨ψ:${roman}·${hex}⟩`, sub:`Neural coordinate ${coords} · Cloud epoch 3025.07` };
+  return {
+    glow: `⟨ψ:${roman}·${hex}⟩`,
+    coord: `Neural coordinate ${(h%9000+1000)}.${((h>>8)%9000+1000)} · Cloud epoch 3025.07`
+  };
 }
 
-/* ════════════════════════════════════════════
-   Syllable breakdown (for sticker rows)
-════════════════════════════════════════════ */
-function getSyllables(tamil) {
-  const chars = [...tamil], result = [];
-  let i = 0;
-  while (i < chars.length) {
-    const ch = chars[i], next = chars[i+1];
-    if (CONSONANTS[ch]) {
-      if (next !== undefined && MARKS[next] !== undefined) {
-        result.push({ tamil:ch+next, roman:CONSONANTS[ch]+(MARKS[next]||'a'), brahmi:(BRAHMI_C[ch]||'')+(BRAHMI_M[next]||''), grantha:(GRANTHA_C[ch]||'')+(GRANTHA_M[next]||'') });
-        i += 2;
-      } else {
-        result.push({ tamil:ch, roman:CONSONANTS[ch]+'a', brahmi:BRAHMI_C[ch]||'', grantha:GRANTHA_C[ch]||'' });
-        i++;
-      }
-    } else if (VOWELS[ch]) {
-      result.push({ tamil:ch, roman:VOWELS[ch], brahmi:BRAHMI_V[ch]||'', grantha:GRANTHA_V[ch]||'' });
-      i++;
-    } else { i++; }
-  }
-  return result;
-}
+/* ══════════════════════════════════════════════
+   SCREEN 1 — Camera
+══════════════════════════════════════════════ */
+$('open-camera-btn').addEventListener('click', startCamera);
 
-/* ════════════════════════════════════════════
-   UI state helpers
-════════════════════════════════════════════ */
-function show(el) { el.classList.remove('hidden'); }
-function hide(el) { el.classList.add('hidden'); }
-
-function refreshJourneyBtn() {
-  const ready = !!(capturedDataUrl && typedTamil.trim());
-  $('begin-journey-btn').disabled = !ready;
-  $('journey-hint').textContent = ready
-    ? 'Ready! Click to watch your name travel through time.'
-    : (!capturedDataUrl ? 'Capture a photo first.' : 'Type your name above.');
-}
-
-/* ════════════════════════════════════════════
-   Tamil keyboard
-════════════════════════════════════════════ */
-function updateNameDisplay() {
-  $('tamil-typed').textContent = typedTamil;
-  if (!englishEdited) {
-    $('name-english').value = typedTamil ? transliterate(typedTamil) : '';
-  }
-  refreshJourneyBtn();
-}
-
-$('name-english').addEventListener('input', () => { englishEdited = true; refreshJourneyBtn(); });
-
-document.querySelectorAll('.key[data-char]').forEach(btn => {
-  btn.addEventListener('click', () => { typedTamil += btn.dataset.char; updateNameDisplay(); });
-});
-$('key-backspace').addEventListener('click', () => {
-  typedTamil = [...typedTamil].slice(0,-1).join('');
-  updateNameDisplay();
-});
-$('key-clear').addEventListener('click', () => {
-  typedTamil = ''; englishEdited = false; updateNameDisplay();
-});
-
-/* ════════════════════════════════════════════
-   Camera
-════════════════════════════════════════════ */
 async function startCamera() {
   try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({ video:{facingMode:'user',width:{ideal:1280}}, audio:false });
-    $('video').srcObject = cameraStream;
-    hide($('cam-placeholder')); show($('video')); hide($('photo-canvas'));
-    hide($('start-camera-btn')); show($('capture-btn'));
-  } catch(err) { alert('Camera error: ' + err.message); }
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 1920 }, height: { ideal: 1080 } },
+      audio: false
+    });
+    const v = $('video');
+    v.srcObject = cameraStream;
+    hide($('cam-idle'));
+    show(v);
+    hide($('open-camera-btn'));
+    $('capture-ring').style.display = 'flex';
+  } catch(e) { alert('Camera: ' + e.message); }
 }
+
+$('capture-ring').addEventListener('click', capturePhoto);
 
 function capturePhoto() {
   const v = $('video');
-  const w = v.videoWidth||640, h = v.videoHeight||480;
+  const w = v.videoWidth || 1280, h = v.videoHeight || 720;
   const c = $('photo-canvas');
   c.width = w; c.height = h;
   const ctx = c.getContext('2d');
   ctx.save(); ctx.translate(w,0); ctx.scale(-1,1); ctx.drawImage(v,0,0); ctx.restore();
   capturedDataUrl = c.toDataURL('image/jpeg', 0.92);
-  show(c); hide(v);
+  c.style.display = 'block'; hide($('video'));
   if (cameraStream) { cameraStream.getTracks().forEach(t=>t.stop()); cameraStream=null; }
-  hide($('capture-btn')); show($('retake-btn'));
-  refreshJourneyBtn();
+  $('capture-ring').style.display = 'none';
+  show($('retake-btn'));
+  $('photo-continue').classList.add('visible');
 }
 
-async function retakePhoto() {
+$('retake-btn').addEventListener('click', async () => {
   capturedDataUrl = null;
-  hide($('photo-canvas')); hide($('retake-btn')); show($('capture-btn'));
-  refreshJourneyBtn();
+  $('photo-canvas').style.display = 'none';
+  hide($('retake-btn'));
+  $('photo-continue').classList.remove('visible');
   await startCamera();
-}
+});
 
-$('start-camera-btn').addEventListener('click', startCamera);
-$('capture-btn').addEventListener('click', capturePhoto);
-$('retake-btn').addEventListener('click', retakePhoto);
+$('photo-continue').addEventListener('click', () => goTo(1));
 
-/* ════════════════════════════════════════════
-   Signature pad
-════════════════════════════════════════════ */
-(function initSigPad() {
+/* ══════════════════════════════════════════════
+   SCREEN 2 — Smooth Signature
+══════════════════════════════════════════════ */
+(function() {
   const canvas = $('sig-canvas');
-  const ctx = canvas.getContext('2d');
-  let drawing = false, lx=0, ly=0;
+  const ctx    = canvas.getContext('2d');
+  let pts = [], isDown = false, lastMX = 0, lastMY = 0, lastW = 2;
 
-  function resize() {
-    const dpr = window.devicePixelRatio || 1;
+  function initCanvas() {
+    const dpr  = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
-    if (!rect.width) return;
-    const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
-    canvas.width  = rect.width  * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0,0,rect.width,rect.height);
-    ctx.putImageData(imgData,0,0);
-    applyPen();
+    if (!rect.width || !rect.height) return;
+    canvas.width  = Math.round(rect.width  * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    applyStyle();
   }
-  function applyPen() {
-    ctx.strokeStyle = '#111'; ctx.lineWidth = 2.2;
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  function applyStyle() {
+    const dpr = window.devicePixelRatio || 1;
+    ctx.scale(1, 1); /* no ctx scale — work in physical px */
+    ctx.lineCap   = 'round';
+    ctx.lineJoin  = 'round';
+    ctx.strokeStyle = 'rgba(20, 8, 0, 0.88)';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
+
   function getXY(e) {
-    const r = canvas.getBoundingClientRect();
-    const src = e.touches ? e.touches[0] : e;
-    return { x: src.clientX - r.left, y: src.clientY - r.top };
+    const dpr  = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const src  = e.touches ? e.touches[0] : e;
+    return {
+      x: (src.clientX - rect.left) * dpr,
+      y: (src.clientY - rect.top)  * dpr,
+      t: e.timeStamp || performance.now()
+    };
   }
-  function down(e) {
-    e.preventDefault(); drawing = true;
-    const {x,y} = getXY(e); lx=x; ly=y;
-    ctx.beginPath(); ctx.moveTo(x,y);
-  }
-  function move(e) {
-    e.preventDefault(); if (!drawing) return;
-    const {x,y} = getXY(e);
-    ctx.lineTo(x,y); ctx.stroke();
-    lx=x; ly=y;
-  }
-  function up(e) { e.preventDefault(); drawing=false; ctx.closePath(); }
 
-  canvas.addEventListener('mousedown', down);
-  canvas.addEventListener('mousemove', move);
-  canvas.addEventListener('mouseup',   up);
-  canvas.addEventListener('mouseleave',up);
-  canvas.addEventListener('touchstart',down,{passive:false});
-  canvas.addEventListener('touchmove', move,{passive:false});
-  canvas.addEventListener('touchend',  up,  {passive:false});
+  function onDown(e) {
+    e.preventDefault();
+    isDown = true;
+    const p = getXY(e);
+    pts = [p];
+    lastMX = p.x; lastMY = p.y; lastW = 2;
+  }
 
-  $('sig-clear-btn').addEventListener('click', () => {
-    const r = canvas.getBoundingClientRect();
-    ctx.fillStyle='#fff'; ctx.fillRect(0,0,r.width,r.height); applyPen();
+  function onMove(e) {
+    if (!isDown) return;
+    e.preventDefault();
+    const p = getXY(e);
+    pts.push(p);
+
+    if (pts.length < 3) return;
+    const p0 = pts[pts.length - 3];
+    const p1 = pts[pts.length - 2];
+    const p2 = pts[pts.length - 1];
+
+    /* Speed → width (fast = thin, slow = thick — ink pressure feel) */
+    const dt    = Math.max(p2.t - p1.t, 1);
+    const dist  = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+    const speed = dist / dt;
+    const targetW = Math.max(1.2, Math.min(4.2, 4.5 - speed * 18));
+    lastW = lastW * 0.65 + targetW * 0.35;   /* smooth width lerp */
+
+    /* Midpoints for smooth quadratic bezier */
+    const mid01x = (p0.x + p1.x) / 2, mid01y = (p0.y + p1.y) / 2;
+    const mid12x = (p1.x + p2.x) / 2, mid12y = (p1.y + p2.y) / 2;
+
+    ctx.beginPath();
+    ctx.moveTo(lastMX, lastMY);
+    ctx.quadraticCurveTo(p0.x, p0.y, mid01x, mid01y);
+    ctx.quadraticCurveTo(p1.x, p1.y, mid12x, mid12y);
+    ctx.lineWidth = lastW;
+    ctx.stroke();
+
+    lastMX = mid12x; lastMY = mid12y;
+  }
+
+  function onUp(e) {
+    if (!isDown) return;
+    e.preventDefault();
+    /* Finish to final point */
+    if (pts.length > 0) {
+      const last = pts[pts.length - 1];
+      ctx.beginPath();
+      ctx.moveTo(lastMX, lastMY);
+      ctx.lineTo(last.x, last.y);
+      ctx.lineWidth = lastW;
+      ctx.stroke();
+    }
+    isDown = false; pts = [];
+  }
+
+  canvas.addEventListener('mousedown',  onDown);
+  canvas.addEventListener('mousemove',  onMove);
+  canvas.addEventListener('mouseup',    onUp);
+  canvas.addEventListener('mouseleave', onUp);
+  canvas.addEventListener('touchstart', onDown, { passive: false });
+  canvas.addEventListener('touchmove',  onMove, { passive: false });
+  canvas.addEventListener('touchend',   onUp,   { passive: false });
+
+  $('sig-clear').addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   });
 
-  window.addEventListener('resize', resize);
-  /* Init after layout */
-  setTimeout(resize, 50);
+  function proceed() {
+    /* Check if anything drawn */
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let hasInk = false;
+    for (let i = 3; i < data.length; i += 4) { if (data[i] > 10) { hasInk = true; break; } }
+    if (hasInk) signatureDataUrl = canvas.toDataURL('image/png');
+    goTo(2);
+  }
+
+  $('sig-next').addEventListener('click', proceed);
+  $('sig-skip').addEventListener('click', () => { signatureDataUrl = null; goTo(2); });
+
+  /* Init once screen is shown */
+  const obs = new MutationObserver(() => {
+    if ($('s-sig').classList.contains('active')) {
+      setTimeout(initCanvas, 80);
+    }
+  });
+  obs.observe($('s-sig'), { attributes: true, attributeFilter: ['class'] });
+
+  window.addEventListener('resize', () => {
+    if ($('s-sig').classList.contains('active')) initCanvas();
+  });
 })();
 
-/* ════════════════════════════════════════════
-   Flow: Begin Journey
-════════════════════════════════════════════ */
-$('begin-journey-btn').addEventListener('click', () => {
-  show($('section-signature'));
-  $('section-signature').scrollIntoView({behavior:'smooth', block:'start'});
+/* ══════════════════════════════════════════════
+   SCREEN 3 — Tamil keyboard
+══════════════════════════════════════════════ */
+function updateNameDisplay() {
+  $('tamil-typed').textContent = typedTamil;
+  if (!englishEdited) $('name-english').value = typedTamil ? transliterate(typedTamil) : '';
+  $('name-continue').disabled = !typedTamil.trim();
+}
+
+$('name-english').addEventListener('input', () => { englishEdited = true; });
+
+document.querySelectorAll('.key[data-char]').forEach(btn => {
+  btn.addEventListener('click', () => { typedTamil += btn.dataset.char; updateNameDisplay(); });
+});
+$('key-backspace').addEventListener('click', () => {
+  typedTamil = [...typedTamil].slice(0,-1).join(''); updateNameDisplay();
+});
+$('key-clear').addEventListener('click', () => {
+  typedTamil = ''; englishEdited = false; updateNameDisplay();
 });
 
-$('sig-next-btn').addEventListener('click', () => {
-  /* Save signature */
-  const c = $('sig-canvas');
-  signatureDataUrl = c.toDataURL('image/png');
+$('name-continue').addEventListener('click', () => {
   /* Start evolution */
-  show($('section-evolution'));
+  const roman = $('name-english').value.trim() || transliterate(typedTamil);
   evoStage = 0;
-  renderEvoStage(evoStage, false);
-  $('section-evolution').scrollIntoView({behavior:'smooth', block:'start'});
+  renderEvo(0, false);
+  goTo(3);
 });
 
-/* ════════════════════════════════════════════
-   Evolution stages
-   Order: Modern → Early Print → Vatteluttu/Grantha → Brahmi
-════════════════════════════════════════════ */
-const EVO_STAGES = [
+/* ══════════════════════════════════════════════
+   SCREEN 4 — Evolution (3 stages)
+══════════════════════════════════════════════ */
+const EVO = [
   {
     era: 'Modern Tamil',
-    script: 'தமிழ் · 19th century standardised',
-    period: 'today',
+    desc: 'தமிழ் · 19th century standardised',
     getText: t => t,
-    fontClass: 'tamil-font',
-    fontStyle: "font-family:'Noto Serif Tamil',serif; font-size:4.5rem; color:#f0d090;",
-  },
-  {
-    era: 'Early Printed Tamil',
-    script: 'Letterpress era · 16th–18th century',
-    period: '16th c.',
-    getText: t => t,
-    fontClass: 'tamil-font',
-    fontStyle: "font-family:'Noto Serif Tamil',serif; font-size:4.5rem; color:#d4b87a; filter:blur(0.3px) contrast(1.1); letter-spacing:0.04em;",
+    style: "font-family:'Noto Serif Tamil',serif; color:#f0d090;",
   },
   {
     era: 'Vatteluttu · வட்டெழுத்து',
-    script: 'Grantha script era · AD 3rd–13th century',
-    period: '3rd c.',
+    desc: 'Grantha script era · AD 3rd – 13th century',
     getText: t => toGrantha(t),
-    fontClass: 'grantha-font',
-    fontStyle: "font-family:'Noto Sans Grantha','Noto Sans',sans-serif; font-size:4rem; color:#c9b090;",
+    style: "font-family:'Noto Sans Grantha','Noto Sans',sans-serif; color:#c9b090; letter-spacing:.06em;",
   },
   {
     era: 'Brahmi · பிராமி',
-    script: 'Oldest Tamil ancestor · BC 3rd century',
-    period: 'BC 3rd c.',
+    desc: 'Oldest Tamil ancestor · BC 3rd century',
     getText: t => toBrahmi(t),
-    fontClass: 'brahmi-font',
-    fontStyle: "font-family:'Noto Sans Brahmi','Segoe UI Historic',sans-serif; font-size:4rem; color:#b8a080; letter-spacing:0.1em;",
+    style: "font-family:'Noto Sans Brahmi','Segoe UI Historic',sans-serif; color:#b8a080; letter-spacing:.1em;",
   },
 ];
 
-function renderEvoStage(idx, animate) {
-  const stage = EVO_STAGES[idx];
-  const charEl = $('evo-char');
-  const roman  = transliterate(typedTamil);
+function renderEvo(idx, animate) {
+  const s = EVO[idx];
+  const nameEl = $('evo-name');
+  const roman  = $('name-english').value.trim() || transliterate(typedTamil);
 
-  /* Update timeline nodes */
-  document.querySelectorAll('.evo-node').forEach((n,i) => {
+  /* Timeline nodes */
+  [0,1,2].forEach(i => {
+    const n  = $('en'+i);
+    const d  = n.querySelector('.evo-node-dot');
     n.classList.remove('active');
-    n.querySelector('.evo-node-dot').classList.remove('active','done');
-    if (i < idx)  { n.querySelector('.evo-node-dot').classList.add('done'); }
-    if (i === idx) { n.classList.add('active'); n.querySelector('.evo-node-dot').classList.add('active'); }
+    d.classList.remove('active','done');
+    if (i < idx)  d.classList.add('done');
+    if (i === idx){ n.classList.add('active'); d.classList.add('active'); }
   });
 
-  if (animate) {
-    charEl.classList.add('fading');
-    setTimeout(() => {
-      $('evo-era-label').textContent   = stage.era;
-      $('evo-script-name').textContent = stage.script;
-      charEl.style.cssText = stage.fontStyle;
-      charEl.textContent   = stage.getText(typedTamil) || '—';
-      $('evo-roman').textContent = roman;
-      charEl.classList.remove('fading');
-      charEl.classList.add('entering');
-      requestAnimationFrame(() => requestAnimationFrame(() => charEl.classList.remove('entering')));
-    }, 600);
-  } else {
-    $('evo-era-label').textContent   = stage.era;
-    $('evo-script-name').textContent = stage.script;
-    charEl.style.cssText = stage.fontStyle;
-    charEl.textContent   = stage.getText(typedTamil) || '—';
-    $('evo-roman').textContent = roman;
-  }
-
-  /* Last stage → change button */
-  const btn = $('evo-next-btn');
-  if (idx >= EVO_STAGES.length - 1) {
+  /* Next button */
+  const btn = $('evo-next');
+  if (idx >= EVO.length - 1) {
     btn.textContent = 'What does the future hold? →';
-    btn.className   = 'btn btn-primary';
+    btn.className   = 'evo-btn gold';
   } else {
     btn.textContent = 'Next Era →';
-    btn.className   = 'btn btn-dark';
+    btn.className   = 'evo-btn';
+  }
+
+  if (animate) {
+    nameEl.classList.add('fade-out');
+    setTimeout(() => {
+      setEvoContent(s, roman, nameEl);
+      nameEl.classList.remove('fade-out');
+      nameEl.classList.add('fade-in');
+      requestAnimationFrame(() => requestAnimationFrame(() => nameEl.classList.remove('fade-in')));
+    }, 500);
+  } else {
+    setEvoContent(s, roman, nameEl);
   }
 }
 
-$('evo-next-btn').addEventListener('click', () => {
-  if (evoStage < EVO_STAGES.length - 1) {
+function setEvoContent(s, roman, nameEl) {
+  $('evo-era').textContent  = s.era;
+  $('evo-desc').textContent = s.desc;
+  nameEl.style.cssText = s.style;
+  nameEl.textContent   = s.getText(typedTamil) || '—';
+  $('evo-roman').textContent = roman;
+}
+
+$('evo-next').addEventListener('click', () => {
+  if (evoStage < EVO.length - 1) {
     evoStage++;
-    renderEvoStage(evoStage, true);
+    renderEvo(evoStage, true);
   } else {
-    /* Show question screen */
+    /* Show question */
     const roman  = $('name-english').value.trim() || transliterate(typedTamil);
     const future = toFuture(roman);
-    $('future-display').textContent = future.display;
-    $('future-sub').textContent     = future.sub;
-    show($('section-question'));
-    $('section-question').scrollIntoView({behavior:'smooth', block:'start'});
+    $('future-glow').textContent  = future.glow;
+    $('future-coord').textContent = future.coord;
+    goTo(4);
   }
 });
 
-/* ════════════════════════════════════════════
-   Question → Palm leaf
-════════════════════════════════════════════ */
-$('q-continue-btn').addEventListener('click', buildPalmLeaf);
+/* ══════════════════════════════════════════════
+   SCREEN 5 — Question
+══════════════════════════════════════════════ */
+$('q-continue').addEventListener('click', buildPalmLeaf);
 
+/* ══════════════════════════════════════════════
+   SCREEN 6 — Palm leaf builder
+══════════════════════════════════════════════ */
 function buildPalmLeaf() {
   const english = $('name-english').value.trim() || transliterate(typedTamil);
-  const roman   = english;
-  const future  = toFuture(roman);
+  const future  = toFuture(english);
 
   /* Photo */
-  const photoWrap = $('palm-photo-wrap');
-  photoWrap.innerHTML = '';
+  const wrap = $('palm-photo');
+  wrap.innerHTML = '';
   if (capturedDataUrl) {
-    const img = document.createElement('img');
-    img.src = capturedDataUrl; img.alt = 'Photo';
-    photoWrap.appendChild(img);
+    const img = document.createElement('img'); img.src = capturedDataUrl;
+    wrap.appendChild(img);
   } else {
-    photoWrap.innerHTML = `<svg width="30" height="30" viewBox="0 0 60 60" fill="rgba(0,0,0,0.3)"><circle cx="30" cy="21" r="14"/><path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25"/></svg>`;
+    wrap.innerHTML = `<svg width="28" height="28" viewBox="0 0 60 60" fill="rgba(0,0,0,0.3)"><circle cx="30" cy="21" r="14"/><path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25"/></svg>`;
   }
 
   $('palm-name-en').textContent = english;
   $('palm-name-ta').textContent = typedTamil;
 
-  /* Script rows */
-  const rowDefs = [
-    { period:'BC 3rd c.', name:'Brahmi', chars:toBrahmi(typedTamil), cls:'brahmi-font' },
-    { period:'AD 3rd–13th c.', name:'Vatteluttu / Grantha', chars:toGrantha(typedTamil), cls:'grantha-font' },
-    { period:'16th–18th c.', name:'Early Print Tamil', chars:typedTamil, cls:'tamil-font' },
-    { period:'19th c.–today', name:'Modern Tamil', chars:typedTamil, cls:'tamil-font' },
-    { period:'~AD 3026', name:'Neural Upload', chars:future.display, cls:'future-font' },
+  /* Rows: oldest → newest → future */
+  const rows = [
+    { period:'BC 3rd c.',     name:'Brahmi',           chars:toBrahmi(typedTamil),  cls:'f-brahmi'  },
+    { period:'AD 3rd–13th c.',name:'Vatteluttu / Grantha', chars:toGrantha(typedTamil), cls:'f-grantha' },
+    { period:'19th c.–today', name:'Modern Tamil',     chars:typedTamil,            cls:'f-tamil'   },
+    { period:'~AD 3026',      name:'Neural Upload',    chars:future.glow,           cls:'f-future'  },
   ];
 
-  $('palm-rows').innerHTML = rowDefs.map(r => `
+  $('palm-rows').innerHTML = rows.map(r => `
     <div class="palm-row">
-      <div class="palm-era-col">
+      <div class="palm-era">
         <span class="palm-era-period">${r.period}</span>
         <span class="palm-era-name">${r.name}</span>
       </div>
       <div class="palm-chars-col">
         <span class="palm-chars ${r.cls}">${r.chars || '—'}</span>
       </div>
-      <div class="palm-roman-col">${roman}</div>
+      <div class="palm-roman">${english}</div>
     </div>`).join('');
 
-  /* Signature */
+  /* Signature — transparent PNG overlaid via mix-blend-mode:multiply */
   const sigWrap = $('palm-sig-wrap');
   if (signatureDataUrl) {
     const img = document.createElement('img');
     img.src = signatureDataUrl; img.className = 'palm-sig-img'; img.alt = 'Signature';
-    sigWrap.innerHTML = ''; sigWrap.appendChild(img);
-  } else {
-    sigWrap.innerHTML = '<span class="palm-sig-placeholder">No signature drawn</span>';
+    sigWrap.appendChild(img);
   }
 
-  /* Date */
-  $('palm-date').textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  $('palm-date').innerHTML =
+    new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})
+    + '<br>தமிழ் பெயர்';
 
-  show($('section-sticker'));
-  $('section-sticker').scrollIntoView({behavior:'smooth', block:'start'});
+  goTo(5);
 }
 
-/* ════════════════════════════════════════════
-   Print
-════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   Print / Redo
+══════════════════════════════════════════════ */
 $('print-btn').addEventListener('click', () => {
   const clone = $('palm-leaf').cloneNode(true);
   $('print-area').innerHTML = '';
@@ -1170,25 +1214,17 @@ $('print-btn').addEventListener('click', () => {
 });
 
 $('redo-btn').addEventListener('click', () => {
-  /* Reset everything */
   typedTamil = ''; capturedDataUrl = null; signatureDataUrl = null;
   englishEdited = false; evoStage = 0;
   $('tamil-typed').textContent = ''; $('name-english').value = '';
-  hide($('photo-canvas')); show($('cam-placeholder'));
-  hide($('capture-btn')); show($('start-camera-btn')); hide($('retake-btn'));
-  ['section-signature','section-evolution','section-question','section-sticker']
-    .forEach(id => hide($(id)));
-  refreshJourneyBtn();
-  window.scrollTo({top:0, behavior:'smooth'});
-});
-
-/* ════════════════════════════════════════════
-   Init
-════════════════════════════════════════════ */
-window.addEventListener('DOMContentLoaded', () => {
-  hide($('photo-canvas'));
-  hide($('video'));
-  refreshJourneyBtn();
+  $('photo-canvas').style.display = 'none';
+  hide($('video')); show($('cam-idle'));
+  hide($('retake-btn')); $('photo-continue').classList.remove('visible');
+  $('capture-ring').style.display = 'none';
+  $('open-camera-btn').style.display = '';
+  $('name-continue').disabled = true;
+  $('palm-rows').innerHTML = ''; $('palm-sig-wrap').innerHTML = '';
+  goTo(0);
 });
 </script>
 </body>
