@@ -115,36 +115,43 @@
     ══════════════════════════════════════════ */
     #s-sig {
       background: #f5f0e8;
-      justify-content: space-between;
+      overflow: hidden;          /* never scroll — everything must fit */
+      height: 100%;              /* fill fixed container */
     }
     .sig-top {
-      padding: calc(env(safe-area-inset-top,0px) + 56px) 28px 0;
+      flex-shrink: 0;
+      padding: calc(env(safe-area-inset-top,0px) + 44px) 28px 10px;
       text-align: center;
     }
     .sig-heading {
-      font-size: 2.2rem; font-weight: 300; color: #1a0f00; line-height: 1.2;
-      margin-bottom: 6px;
+      font-size: 1.9rem; font-weight: 300; color: #1a0f00; line-height: 1.2;
+      margin-bottom: 4px;
     }
     .sig-sub {
-      font-size: .85rem; color: #8a7060; font-style: italic; letter-spacing: .04em;
+      font-size: .82rem; color: #8a7060; font-style: italic; letter-spacing: .04em;
     }
     .sig-canvas-area {
-      flex: 1; display: flex; flex-direction: column;
-      margin: 24px 24px 0;
+      flex: 1;
+      min-height: 0;             /* critical: lets flex child shrink below content size */
+      display: flex; flex-direction: column;
+      margin: 12px 24px 0;
     }
     #sig-canvas {
-      flex: 1; width: 100%; display: block;
+      flex: 1;
+      min-height: 0;             /* same fix for nested flex */
+      width: 100%; display: block;
       touch-action: none; cursor: crosshair;
       border-radius: 12px;
-      /* No background — transparent by design */
     }
     .sig-divider {
+      flex-shrink: 0;
       width: 60%; height: 1px; background: #c4b099;
       margin: 0 auto; pointer-events: none;
     }
     .sig-controls {
+      flex-shrink: 0;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 24px calc(env(safe-area-inset-bottom,0px) + 24px);
+      padding: 10px 24px 6px;
     }
     .sig-clear {
       font-family: 'Cormorant Garamond', serif;
@@ -162,11 +169,12 @@
     }
     .sig-next:hover { background: #2d1f00; }
     .sig-skip {
+      flex-shrink: 0;
       font-family: 'Cormorant Garamond', serif;
-      font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
-      color: #b09070; background: none; border: none; cursor: pointer; padding: 8px;
+      font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+      color: #b09070; background: none; border: none; cursor: pointer;
       text-align: center; display: block; width: 100%;
-      padding-bottom: calc(env(safe-area-inset-bottom,0px) + 8px);
+      padding: 4px 8px calc(env(safe-area-inset-bottom,0px) + 10px);
     }
 
     /* ══════════════════════════════════════════
@@ -373,114 +381,139 @@
     .q-btn:hover { background: #e0c080; }
 
     /* ══════════════════════════════════════════
-       SCREEN 6 — STICKER (PALM LEAF)
+       SCREEN 6 — PASSPORT (palm leaf)
     ══════════════════════════════════════════ */
     #s-sticker {
-      background: #0a0812;
-      align-items: center;
-      padding: calc(env(safe-area-inset-top,0px) + 32px) 16px
-               calc(env(safe-area-inset-bottom,0px) + 24px);
+      background: #0d0a10;
+      align-items: center; justify-content: flex-start;
+      padding: calc(env(safe-area-inset-top,0px) + 24px) 20px
+               calc(env(safe-area-inset-bottom,0px) + 28px);
+      gap: 20px;
     }
     .sticker-eyebrow {
-      font-size: .62rem; letter-spacing: .28em; text-transform: uppercase;
-      color: rgba(255,255,255,.3); margin-bottom: 20px; text-align: center;
+      font-size: .58rem; letter-spacing: .3em; text-transform: uppercase;
+      color: rgba(255,255,255,.25); text-align: center; flex-shrink: 0;
     }
 
-    /* Palm leaf */
-    .palm-leaf {
-      width: 100%; max-width: 680px;
+    /* ── Passport card ── */
+    .passport {
+      width: 100%; max-width: 340px;
       position: relative; overflow: hidden;
-      border-radius: 16px 90px 16px 90px;
-      background: linear-gradient(145deg, #e0c070 0%, #c9a040 20%, #b07820 50%, #c49040 78%, #d9b060 100%);
-      box-shadow: 0 20px 70px rgba(0,0,0,.55), 0 4px 20px rgba(0,0,0,.4),
-                  inset 0 1px 0 rgba(255,255,220,.35), inset 0 -1px 0 rgba(0,0,0,.2);
-      border: 1.5px solid #906010;
+      border-radius: 14px;
+      background: linear-gradient(160deg,
+        #ddb96a 0%, #c8992e 18%, #b07318 42%,
+        #bf8a28 65%, #d4a84a 82%, #ddb96a 100%);
+      box-shadow:
+        0 30px 80px rgba(0,0,0,.65),
+        0 6px 24px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,240,160,.4),
+        inset 0 -1px 0 rgba(0,0,0,.25);
+      border: 1.5px solid #8a5c08;
     }
-    /* Ruled lines */
-    .palm-lines {
-      position: absolute; inset: 0; pointer-events: none;
+    /* Horizontal palm-leaf ruled lines */
+    .passport::before {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
       background: repeating-linear-gradient(
-        0deg, transparent, transparent 30px,
-        rgba(0,0,0,.055) 30px, rgba(0,0,0,.055) 31px
+        0deg, transparent, transparent 26px,
+        rgba(0,0,0,.06) 26px, rgba(0,0,0,.06) 27px
       );
     }
-    /* Subtle grain */
-    .palm-grain {
-      position: absolute; inset: 0; pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      opacity: .5;
+    /* Subtle longitudinal grain */
+    .passport::after {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      background: repeating-linear-gradient(
+        90deg, transparent, transparent 3px,
+        rgba(0,0,0,.015) 3px, rgba(0,0,0,.015) 4px
+      );
     }
 
-    .palm-inner { position: relative; z-index: 1; padding: 22px 32px 18px; }
-
-    /* Header row */
-    .palm-hdr {
-      display: flex; align-items: center; gap: 14px;
-      padding-bottom: 14px; margin-bottom: 12px;
-      border-bottom: 1px solid rgba(0,0,0,.2);
+    /* Cover band at top — like a passport country bar */
+    .pp-band {
+      position: relative; z-index: 1;
+      background: linear-gradient(90deg, #5a3200 0%, #7a4800 50%, #5a3200 100%);
+      padding: 10px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(0,0,0,.35);
     }
-    .palm-photo {
-      width: 58px; height: 58px; border-radius: 50%; flex-shrink: 0;
-      overflow: hidden; border: 2px solid rgba(0,0,0,.25);
-      background: rgba(0,0,0,.15);
+    .pp-band-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .65rem; letter-spacing: .28em; text-transform: uppercase;
+      color: #e8c870; line-height: 1.4;
+    }
+    .pp-band-tamil {
+      font-family: 'Noto Serif Tamil', serif;
+      font-size: .7rem; color: rgba(232,200,112,.6);
+    }
+
+    .pp-body { position: relative; z-index: 1; padding: 20px 22px 16px; }
+
+    /* Passport photo — rectangular, centered */
+    .pp-photo-wrap {
+      width: 110px; height: 140px;
+      margin: 0 auto 16px;
+      border-radius: 4px; overflow: hidden;
+      border: 2px solid rgba(0,0,0,.3);
+      box-shadow: 0 4px 16px rgba(0,0,0,.3);
+      background: rgba(0,0,0,.18);
       display: flex; align-items: center; justify-content: center;
     }
-    .palm-photo img { width:100%; height:100%; object-fit:cover; display:block; }
-    .palm-hdr-text { flex: 1; }
-    .palm-eyebrow-txt {
-      font-size: .55rem; letter-spacing: .22em; text-transform: uppercase;
-      color: rgba(0,0,0,.38); margin-bottom: 2px;
-    }
-    .palm-name-en {
+    .pp-photo-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* Name block under photo */
+    .pp-name-en {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.6rem; font-weight: 600; color: #1a0800; line-height: 1.1;
+      font-size: 1.9rem; font-weight: 600; color: #1a0800;
+      text-align: center; line-height: 1.1; margin-bottom: 3px;
     }
-    .palm-name-ta {
+    .pp-name-ta {
       font-family: 'Noto Serif Tamil', serif;
-      font-size: .85rem; color: rgba(0,0,0,.45); margin-top: 1px;
+      font-size: 1rem; color: rgba(0,0,0,.5);
+      text-align: center; margin-bottom: 14px;
+    }
+
+    /* Divider */
+    .pp-rule {
+      height: 1px; background: rgba(0,0,0,.2);
+      margin: 0 0 10px;
     }
 
     /* Script rows */
-    .palm-row {
-      display: flex; align-items: center; gap: 10px;
+    .pp-row {
+      display: flex; align-items: baseline; gap: 8px;
       padding: 5px 0;
-      border-bottom: 1px solid rgba(0,0,0,.08);
+      border-bottom: 1px solid rgba(0,0,0,.07);
     }
-    .palm-row:last-of-type { border-bottom: none; }
-    .palm-era {
-      width: 88px; flex-shrink: 0; text-align: right;
-      padding-right: 10px; border-right: 1px solid rgba(0,0,0,.15);
-    }
-    .palm-era-period { font-size: .52rem; color: rgba(0,0,0,.38); display: block; text-transform: uppercase; letter-spacing: .06em; }
-    .palm-era-name   { font-size: .62rem; font-weight: 600; color: rgba(0,0,0,.55); display: block; margin-top: 1px; }
-    .palm-chars-col  { flex: 1; }
-    .palm-chars {
-      font-size: 1.45rem; color: #1a0800; letter-spacing: .03em; line-height: 1.3;
+    .pp-row:last-of-type { border-bottom: none; }
+    .pp-era-col { width: 80px; flex-shrink: 0; }
+    .pp-era-name   { font-size: .58rem; font-weight: 700; color: rgba(0,0,0,.45); text-transform: uppercase; letter-spacing: .07em; display: block; }
+    .pp-era-period { font-size: .52rem; color: rgba(0,0,0,.3); display: block; }
+    .pp-chars {
+      flex: 1; font-size: 1.3rem; color: #1a0800;
+      letter-spacing: .04em; line-height: 1.3;
     }
     .f-brahmi  { font-family: 'Noto Sans Brahmi','Segoe UI Historic',sans-serif; }
     .f-grantha { font-family: 'Noto Sans Grantha','Noto Sans',sans-serif; }
     .f-tamil   { font-family: 'Noto Serif Tamil',serif; }
-    .f-future  { font-family: 'SF Mono','Fira Code',monospace; font-size: .82rem; color: #2a4050; letter-spacing: .05em; word-break: break-all; }
-    .palm-roman { width: 60px; flex-shrink: 0; text-align: right; font-size: .68rem; color: rgba(0,0,0,.38); font-style: italic; }
 
-    /* Signature overlay */
-    .palm-footer {
+    /* Footer: signature + date */
+    .pp-footer {
       display: flex; align-items: flex-end; justify-content: space-between;
-      margin-top: 10px; padding-top: 10px;
-      border-top: 1px solid rgba(0,0,0,.15);
+      margin-top: 12px; padding-top: 10px;
+      border-top: 1px solid rgba(0,0,0,.18);
     }
-    .palm-sig-wrap { height: 44px; flex: 1; }
-    .palm-sig-img {
-      height: 44px; max-width: 180px; object-fit: contain;
-      /* signature PNG is transparent — ink shows on warm leaf */
-      mix-blend-mode: multiply;
-      opacity: .65;
+    .pp-sig-img {
+      height: 40px; max-width: 150px; object-fit: contain;
+      mix-blend-mode: multiply; opacity: .6;
+      display: block;
     }
-    .palm-date-txt { font-size: .6rem; color: rgba(0,0,0,.35); text-align: right; line-height: 1.5; }
+    .pp-sig-empty { font-size: .65rem; color: rgba(0,0,0,.3); font-style: italic; }
+    .pp-date { font-size: .56rem; color: rgba(0,0,0,.35); text-align: right; line-height: 1.6; }
 
     /* Actions */
     .sticker-actions {
-      display: flex; gap: 10px; margin-top: 20px;
+      display: flex; gap: 10px; flex-shrink: 0;
       justify-content: center; flex-wrap: wrap;
     }
     .act-btn {
@@ -488,7 +521,7 @@
       letter-spacing: .1em; padding: 12px 28px; border-radius: 40px;
       cursor: pointer; border: none; transition: all .2s;
     }
-    .act-gold { background: #c9a96e; color: #0a0812; font-weight: 600; }
+    .act-gold  { background: #c9a96e; color: #0a0812; font-weight: 600; }
     .act-gold:hover { background: #e0c080; }
     .act-ghost { background: transparent; color: rgba(255,255,255,.4); border: 1px solid rgba(255,255,255,.15); }
     .act-ghost:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.7); }
@@ -497,10 +530,10 @@
     #print-area { display: none; }
     @media print {
       body > * { display: none !important; }
-      #print-area { display: block !important; }
-      #print-area .palm-leaf { width: 640px; max-width: none; margin: 0 auto;
-        box-shadow: none; border-radius: 12px 70px 12px 70px; }
-      @page { size: landscape; margin: .5in; }
+      #print-area { display: block !important; text-align: center; padding: .4in; }
+      #print-area .passport { width: 340px; max-width: none; margin: 0 auto;
+        box-shadow: none; border: 2px solid #8a5c08; }
+      @page { size: portrait; margin: 0; }
     }
   </style>
 </head>
@@ -728,35 +761,45 @@
 </div>
 
 <!-- ═══════════════════════════════════
-     SCREEN 6 · STICKER
+     SCREEN 6 · PASSPORT
 ═══════════════════════════════════ -->
 <div class="screen" id="s-sticker">
-  <div class="sticker-eyebrow">Your Name Through Time</div>
+  <div class="sticker-eyebrow">A name across centuries</div>
 
-  <div class="palm-leaf" id="palm-leaf">
-    <div class="palm-lines"></div>
-    <div class="palm-grain"></div>
-    <div class="palm-inner">
+  <div class="passport" id="palm-leaf">
 
-      <div class="palm-hdr">
-        <div class="palm-photo" id="palm-photo">
-          <svg width="28" height="28" viewBox="0 0 60 60" fill="rgba(0,0,0,0.3)">
-            <circle cx="30" cy="21" r="14"/>
-            <path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25"/>
-          </svg>
-        </div>
-        <div class="palm-hdr-text">
-          <div class="palm-eyebrow-txt">A name across centuries</div>
-          <div class="palm-name-en" id="palm-name-en">Name</div>
-          <div class="palm-name-ta" id="palm-name-ta"></div>
-        </div>
+    <!-- Cover band -->
+    <div class="pp-band">
+      <div>
+        <div class="pp-band-title">Identity of Name</div>
+        <div class="pp-band-title" style="letter-spacing:.05em; opacity:.7;">Tamil Heritage Document</div>
+      </div>
+      <div class="pp-band-tamil">தமிழ்</div>
+    </div>
+
+    <div class="pp-body">
+
+      <!-- Passport photo -->
+      <div class="pp-photo-wrap" id="palm-photo">
+        <svg width="40" height="50" viewBox="0 0 60 70" fill="rgba(0,0,0,0.25)">
+          <circle cx="30" cy="22" r="16"/>
+          <path d="M2 68c0-15.5 12.5-28 28-28s28 12.5 28 28"/>
+        </svg>
       </div>
 
+      <!-- Name -->
+      <div class="pp-name-en" id="palm-name-en">Name</div>
+      <div class="pp-name-ta" id="palm-name-ta"></div>
+
+      <div class="pp-rule"></div>
+
+      <!-- Script rows — built by JS, no future row -->
       <div id="palm-rows"></div>
 
-      <div class="palm-footer">
-        <div class="palm-sig-wrap" id="palm-sig-wrap"></div>
-        <div class="palm-date-txt" id="palm-date"></div>
+      <!-- Signature + date -->
+      <div class="pp-footer">
+        <div id="palm-sig-wrap"></div>
+        <div class="pp-date" id="palm-date"></div>
       </div>
 
     </div>
@@ -1149,55 +1192,53 @@ $('evo-next').addEventListener('click', () => {
 $('q-continue').addEventListener('click', buildPalmLeaf);
 
 /* ══════════════════════════════════════════════
-   SCREEN 6 — Palm leaf builder
+   SCREEN 6 — Passport builder
 ══════════════════════════════════════════════ */
 function buildPalmLeaf() {
   const english = $('name-english').value.trim() || transliterate(typedTamil);
-  const future  = toFuture(english);
 
-  /* Photo */
-  const wrap = $('palm-photo');
-  wrap.innerHTML = '';
+  /* Photo — passport-sized rectangle */
+  const photoWrap = $('palm-photo');
+  photoWrap.innerHTML = '';
   if (capturedDataUrl) {
     const img = document.createElement('img'); img.src = capturedDataUrl;
-    wrap.appendChild(img);
+    photoWrap.appendChild(img);
   } else {
-    wrap.innerHTML = `<svg width="28" height="28" viewBox="0 0 60 60" fill="rgba(0,0,0,0.3)"><circle cx="30" cy="21" r="14"/><path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25"/></svg>`;
+    photoWrap.innerHTML = `<svg width="40" height="50" viewBox="0 0 60 70" fill="rgba(0,0,0,0.25)"><circle cx="30" cy="22" r="16"/><path d="M2 68c0-15.5 12.5-28 28-28s28 12.5 28 28"/></svg>`;
   }
 
   $('palm-name-en').textContent = english;
   $('palm-name-ta').textContent = typedTamil;
 
-  /* Rows: oldest → newest → future */
+  /* Three script rows — oldest to newest, no future */
   const rows = [
-    { period:'BC 3rd c.',     name:'Brahmi',           chars:toBrahmi(typedTamil),  cls:'f-brahmi'  },
-    { period:'AD 3rd–13th c.',name:'Vatteluttu / Grantha', chars:toGrantha(typedTamil), cls:'f-grantha' },
-    { period:'19th c.–today', name:'Modern Tamil',     chars:typedTamil,            cls:'f-tamil'   },
-    { period:'~AD 3026',      name:'Neural Upload',    chars:future.glow,           cls:'f-future'  },
+    { period:'BC 3rd c.',      name:'Brahmi',             chars: toBrahmi(typedTamil),  cls:'f-brahmi'  },
+    { period:'AD 3rd–13th c.', name:'Vatteluttu / Grantha', chars: toGrantha(typedTamil), cls:'f-grantha' },
+    { period:'19th c.–today',  name:'Modern Tamil',        chars: typedTamil,             cls:'f-tamil'   },
   ];
 
   $('palm-rows').innerHTML = rows.map(r => `
-    <div class="palm-row">
-      <div class="palm-era">
-        <span class="palm-era-period">${r.period}</span>
-        <span class="palm-era-name">${r.name}</span>
+    <div class="pp-row">
+      <div class="pp-era-col">
+        <span class="pp-era-name">${r.name}</span>
+        <span class="pp-era-period">${r.period}</span>
       </div>
-      <div class="palm-chars-col">
-        <span class="palm-chars ${r.cls}">${r.chars || '—'}</span>
-      </div>
-      <div class="palm-roman">${english}</div>
+      <span class="pp-chars ${r.cls}">${r.chars || '—'}</span>
     </div>`).join('');
 
-  /* Signature — transparent PNG overlaid via mix-blend-mode:multiply */
+  /* Signature — transparent PNG, multiply blend on warm leaf background */
   const sigWrap = $('palm-sig-wrap');
+  sigWrap.innerHTML = '';
   if (signatureDataUrl) {
     const img = document.createElement('img');
-    img.src = signatureDataUrl; img.className = 'palm-sig-img'; img.alt = 'Signature';
+    img.src = signatureDataUrl; img.className = 'pp-sig-img'; img.alt = 'Signature';
     sigWrap.appendChild(img);
+  } else {
+    sigWrap.innerHTML = '<span class="pp-sig-empty">No signature</span>';
   }
 
   $('palm-date').innerHTML =
-    new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})
+    new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })
     + '<br>தமிழ் பெயர்';
 
   goTo(5);
