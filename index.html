@@ -153,28 +153,74 @@
       gap: 16px;
     }
 
-    /* ── Drawing canvas section ── */
-    .draw-section { display: flex; flex-direction: column; }
-    #draw-canvas {
-      width: 100%;
-      height: 200px;
+    /* ── Tamil keyboard section ── */
+    .draw-section { display: flex; flex-direction: column; gap: 10px; }
+
+    .tamil-display {
+      font-family: 'Noto Serif Tamil', serif;
+      font-size: 2rem;
+      min-height: 3rem;
       border: 1.5px solid var(--border);
       border-radius: 8px;
+      padding: 10px 14px;
       background: #fff;
-      cursor: crosshair;
-      touch-action: none;
-      display: block;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      line-height: 1.3;
     }
-    .draw-controls { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-    .status-line {
-      font-size: 0.8rem;
+    .tamil-display-placeholder { color: var(--border); font-size: 1rem; font-family: 'Libre Baskerville', serif; font-style: italic; }
+    .tamil-cursor {
+      display: inline-block;
+      width: 2px; height: 2rem;
+      background: var(--accent);
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+      flex-shrink: 0;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .tamil-keyboard { display: flex; flex-direction: column; gap: 5px; }
+    .key-section-label {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
       color: var(--muted);
-      min-height: 1.2em;
-      margin-top: 8px;
-      transition: color 0.2s;
+      margin-top: 4px;
     }
-    .status-line.error { color: #c0392b; }
-    .status-line.ok    { color: #1a7a3a; }
+    .key-row { display: flex; flex-wrap: wrap; gap: 4px; }
+    .key {
+      font-family: 'Noto Serif Tamil', serif;
+      font-size: 1rem;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--card);
+      cursor: pointer;
+      color: var(--text);
+      min-width: 38px;
+      text-align: center;
+      transition: background 0.12s, border-color 0.12s;
+      line-height: 1.4;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .key:hover  { background: var(--accent-pale); border-color: var(--accent); }
+    .key:active { background: var(--accent); color: #fff; }
+    .key.mark-key { background: #fdf6ee; border-color: #e8d5b0; color: var(--accent); }
+    .key.mark-key:hover { background: var(--accent); color: #fff; }
+    .key-utility {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.78rem;
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      color: var(--text);
+      transition: background 0.12s;
+    }
+    .key-utility:hover { background: var(--border); }
 
     /* ── Name preview section ── */
     .name-section { display: flex; flex-direction: column; gap: 12px; }
@@ -438,16 +484,81 @@
   <!-- ── 2 + 3. Bottom row ── -->
   <div class="bottom-row">
 
-    <!-- ── 2. Drawing canvas ── -->
+    <!-- ── 2. Tamil keyboard ── -->
     <div class="card draw-section">
-      <span class="step-label">Step 2 · Write Your Name in Tamil</span>
-      <canvas id="draw-canvas"></canvas>
-      <div class="draw-controls">
-        <button class="btn btn-secondary" id="clear-btn">✕ Clear</button>
-        <button class="btn btn-secondary" id="undo-btn">↩ Undo</button>
-        <button class="btn btn-primary"   id="recognize-btn">✦ Recognize</button>
+      <span class="step-label">Step 2 · Type Your Name in Tamil</span>
+
+      <div class="tamil-display" id="tamil-display">
+        <span id="tamil-typed"></span>
+        <span class="tamil-cursor"></span>
       </div>
-      <div class="status-line" id="status-line">Draw Tamil letters above, then click Recognize.</div>
+
+      <div class="tamil-keyboard">
+        <div class="key-section-label">Vowels</div>
+        <div class="key-row">
+          <button class="key" data-char="அ">அ</button>
+          <button class="key" data-char="ஆ">ஆ</button>
+          <button class="key" data-char="இ">இ</button>
+          <button class="key" data-char="ஈ">ஈ</button>
+          <button class="key" data-char="உ">உ</button>
+          <button class="key" data-char="ஊ">ஊ</button>
+          <button class="key" data-char="எ">எ</button>
+          <button class="key" data-char="ஏ">ஏ</button>
+          <button class="key" data-char="ஐ">ஐ</button>
+          <button class="key" data-char="ஒ">ஒ</button>
+          <button class="key" data-char="ஓ">ஓ</button>
+          <button class="key" data-char="ஔ">ஔ</button>
+        </div>
+
+        <div class="key-section-label">Consonants</div>
+        <div class="key-row">
+          <button class="key" data-char="க">க</button>
+          <button class="key" data-char="ங">ங</button>
+          <button class="key" data-char="ச">ச</button>
+          <button class="key" data-char="ஞ">ஞ</button>
+          <button class="key" data-char="ட">ட</button>
+          <button class="key" data-char="ண">ண</button>
+          <button class="key" data-char="த">த</button>
+          <button class="key" data-char="ந">ந</button>
+          <button class="key" data-char="ப">ப</button>
+          <button class="key" data-char="ம">ம</button>
+          <button class="key" data-char="ய">ய</button>
+          <button class="key" data-char="ர">ர</button>
+        </div>
+        <div class="key-row">
+          <button class="key" data-char="ல">ல</button>
+          <button class="key" data-char="வ">வ</button>
+          <button class="key" data-char="ழ">ழ</button>
+          <button class="key" data-char="ள">ள</button>
+          <button class="key" data-char="ற">ற</button>
+          <button class="key" data-char="ன">ன</button>
+          <button class="key" data-char="ஜ">ஜ</button>
+          <button class="key" data-char="ஷ">ஷ</button>
+          <button class="key" data-char="ஸ">ஸ</button>
+          <button class="key" data-char="ஹ">ஹ</button>
+        </div>
+
+        <div class="key-section-label">Vowel marks (add after a consonant)</div>
+        <div class="key-row">
+          <button class="key mark-key" data-char="ா">-ா</button>
+          <button class="key mark-key" data-char="ி">-ி</button>
+          <button class="key mark-key" data-char="ீ">-ீ</button>
+          <button class="key mark-key" data-char="ு">-ு</button>
+          <button class="key mark-key" data-char="ூ">-ூ</button>
+          <button class="key mark-key" data-char="ெ">-ெ</button>
+          <button class="key mark-key" data-char="ே">-ே</button>
+          <button class="key mark-key" data-char="ை">-ை</button>
+          <button class="key mark-key" data-char="ொ">-ொ</button>
+          <button class="key mark-key" data-char="ோ">-ோ</button>
+          <button class="key mark-key" data-char="ௌ">-ௌ</button>
+          <button class="key mark-key" data-char="்">-்</button>
+        </div>
+
+        <div class="key-row" style="margin-top:6px">
+          <button class="key-utility" id="key-backspace">⌫ Delete</button>
+          <button class="key-utility" id="key-clear">✕ Clear</button>
+        </div>
+      </div>
     </div>
 
     <!-- ── 3. Name display ── -->
@@ -470,7 +581,7 @@
 
       <div class="generate-area">
         <button class="btn btn-outline" id="generate-btn" disabled>Generate Sticker ✦</button>
-        <div class="sticker-hint" id="sticker-hint">Capture a photo and recognize your name to generate a sticker.</div>
+        <div class="sticker-hint" id="sticker-hint">Capture a photo and type your name to generate a sticker.</div>
       </div>
     </div>
 
@@ -515,40 +626,32 @@
 /* ════════════════════════════════════════════════════════
    State
 ════════════════════════════════════════════════════════ */
-let capturedDataUrl   = null;
-let recognizedName    = { english: '', tamil: '' };
-let cameraStream      = null;
-let drawingUndoStack  = [];
-let isDrawing         = false;
-let lastX = 0, lastY = 0;
+let capturedDataUrl = null;
+let typedTamil      = '';
+let cameraStream    = null;
 
 /* ════════════════════════════════════════════════════════
    DOM refs
 ════════════════════════════════════════════════════════ */
-const $  = id => document.getElementById(id);
-const camPlaceholder    = $('cam-placeholder');
-const video             = $('video');
-const photoCanvas       = $('photo-canvas');
-const startCameraBtn    = $('start-camera-btn');
-const captureBtn        = $('capture-btn');
-const retakeBtn         = $('retake-btn');
-const drawCanvas        = $('draw-canvas');
-const dc                = drawCanvas.getContext('2d');
-const clearBtn          = $('clear-btn');
-const undoBtn           = $('undo-btn');
-const recognizeBtn      = $('recognize-btn');
-const statusLine        = $('status-line');
-const nameEnglish       = $('name-english');
-const nameTamil         = $('name-tamil');
-const generateBtn       = $('generate-btn');
-const stickerHint       = $('sticker-hint');
-const stickerSection    = $('sticker-section');
-const stickerPhotoWrap  = $('sticker-photo-wrap');
-const stickerNameEn     = $('sticker-name-en');
-const stickerNameTa     = $('sticker-name-ta');
-const printBtn          = $('print-btn');
-const redoBtn           = $('redo-btn');
-const printArea         = $('print-area');
+const $ = id => document.getElementById(id);
+const camPlaceholder = $('cam-placeholder');
+const video          = $('video');
+const photoCanvas    = $('photo-canvas');
+const startCameraBtn = $('start-camera-btn');
+const captureBtn     = $('capture-btn');
+const retakeBtn      = $('retake-btn');
+const tamilTyped     = $('tamil-typed');
+const nameEnglish    = $('name-english');
+const nameTamil      = $('name-tamil');
+const generateBtn    = $('generate-btn');
+const stickerHint    = $('sticker-hint');
+const stickerSection = $('sticker-section');
+const stickerPhotoWrap = $('sticker-photo-wrap');
+const stickerNameEn  = $('sticker-name-en');
+const stickerNameTa  = $('sticker-name-ta');
+const printBtn       = $('print-btn');
+const redoBtn        = $('redo-btn');
+const printArea      = $('print-area');
 
 /* ════════════════════════════════════════════════════════
    Helpers
@@ -556,24 +659,96 @@ const printArea         = $('print-area');
 function show(el) { el.classList.remove('hidden'); }
 function hide(el) { el.classList.add('hidden'); }
 
-function setStatus(msg, cls = '') {
-  statusLine.textContent = msg;
-  statusLine.className = 'status-line' + (cls ? ' ' + cls : '');
-}
-
 function refreshGenerateBtn() {
-  const ready = !!(capturedDataUrl && (recognizedName.english || recognizedName.tamil));
+  const ready = !!(capturedDataUrl && typedTamil.trim());
   generateBtn.disabled = !ready;
-  if (!capturedDataUrl && !(recognizedName.english || recognizedName.tamil)) {
-    stickerHint.textContent = 'Capture a photo and recognize your name to generate a sticker.';
+  if (!capturedDataUrl && !typedTamil) {
+    stickerHint.textContent = 'Capture a photo and type your name to generate a sticker.';
   } else if (!capturedDataUrl) {
     stickerHint.textContent = 'Also capture a photo to generate your sticker.';
-  } else if (!(recognizedName.english || recognizedName.tamil)) {
-    stickerHint.textContent = 'Also recognize your handwritten name to generate your sticker.';
+  } else if (!typedTamil) {
+    stickerHint.textContent = 'Also type your Tamil name to generate your sticker.';
   } else {
     stickerHint.textContent = 'Ready! Click "Generate Sticker" above.';
   }
 }
+
+/* ════════════════════════════════════════════════════════
+   Tamil transliteration table (JS — no API needed)
+════════════════════════════════════════════════════════ */
+const CONSONANTS = {
+  'க':'k','ங':'ng','ச':'ch','ஞ':'ny','ட':'t','ண':'n',
+  'த':'th','ந':'n','ப':'p','ம':'m','ய':'y','ர':'r',
+  'ல':'l','வ':'v','ழ':'zh','ள':'l','ற':'r','ன':'n',
+  'ஜ':'j','ஷ':'sh','ஸ':'s','ஹ':'h'
+};
+const VOWELS = {
+  'அ':'a','ஆ':'aa','இ':'i','ஈ':'ee','உ':'u','ஊ':'oo',
+  'எ':'e','ஏ':'ae','ஐ':'ai','ஒ':'o','ஓ':'oh','ஔ':'au'
+};
+const MARKS = {
+  'ா':'aa','ி':'i','ீ':'ee','ு':'u','ூ':'oo',
+  'ெ':'e','ே':'ae','ை':'ai','ொ':'o','ோ':'oh','ௌ':'au',
+  '்':''   // pulli – suppresses inherent vowel
+};
+
+function transliterate(tamil) {
+  const chars = [...tamil];
+  let out = '', i = 0;
+  while (i < chars.length) {
+    const ch = chars[i];
+    if (CONSONANTS[ch]) {
+      const next = chars[i + 1];
+      if (next !== undefined && MARKS[next] !== undefined) {
+        out += CONSONANTS[ch] + MARKS[next];
+        i += 2;
+      } else {
+        out += CONSONANTS[ch] + 'a';
+        i++;
+      }
+    } else if (VOWELS[ch]) {
+      out += VOWELS[ch]; i++;
+    } else {
+      out += ch; i++;   // space or unknown — pass through
+    }
+  }
+  return out.charAt(0).toUpperCase() + out.slice(1);
+}
+
+/* ════════════════════════════════════════════════════════
+   Tamil keyboard
+════════════════════════════════════════════════════════ */
+function updateDisplay() {
+  tamilTyped.textContent = typedTamil;
+
+  const english = typedTamil ? transliterate(typedTamil) : '';
+  nameEnglish.innerHTML = english
+    ? english
+    : '<span class="em-placeholder">—</span>';
+  nameTamil.innerHTML = typedTamil
+    ? typedTamil
+    : '<span class="em-placeholder" style="font-family:inherit;font-size:1rem">—</span>';
+
+  refreshGenerateBtn();
+}
+
+document.querySelectorAll('.key[data-char]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    typedTamil += btn.dataset.char;
+    updateDisplay();
+  });
+});
+
+$('key-backspace').addEventListener('click', () => {
+  // Remove last Unicode code point (handles multi-byte Tamil chars)
+  typedTamil = [...typedTamil].slice(0, -1).join('');
+  updateDisplay();
+});
+
+$('key-clear').addEventListener('click', () => {
+  typedTamil = '';
+  updateDisplay();
+});
 
 /* ════════════════════════════════════════════════════════
    Camera
@@ -598,7 +773,6 @@ function capturePhoto() {
   photoCanvas.width  = w;
   photoCanvas.height = h;
   const pctx = photoCanvas.getContext('2d');
-  // Un-mirror for the saved image
   pctx.save();
   pctx.translate(w, 0);
   pctx.scale(-1, 1);
@@ -606,14 +780,9 @@ function capturePhoto() {
   pctx.restore();
 
   capturedDataUrl = photoCanvas.toDataURL('image/jpeg', 0.92);
-
-  // Show canvas, hide live video
   show(photoCanvas);
   hide(video);
-
-  // Stop stream
   if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
-
   hide(captureBtn);
   show(retakeBtn);
   refreshGenerateBtn();
@@ -624,7 +793,7 @@ async function retakePhoto() {
   hide(photoCanvas);
   hide(retakeBtn);
   show(captureBtn);
-  stickerSection.classList.add('hidden');
+  hide(stickerSection);
   refreshGenerateBtn();
   await startCamera();
 }
@@ -634,220 +803,9 @@ captureBtn.addEventListener('click',     capturePhoto);
 retakeBtn.addEventListener('click',      retakePhoto);
 
 /* ════════════════════════════════════════════════════════
-   Drawing canvas
-════════════════════════════════════════════════════════ */
-function initDrawCanvas() {
-  const parent = drawCanvas.parentElement;
-  const w = parent.clientWidth - 44;   // account for card padding
-  const h = Math.min(210, Math.round(w * 0.48));
-  drawCanvas.width  = w;
-  drawCanvas.height = h;
-  dc.fillStyle = '#ffffff';
-  dc.fillRect(0, 0, w, h);
-  applyPenStyle();
-  drawingUndoStack = [];
-}
-
-function applyPenStyle() {
-  dc.strokeStyle = '#111111';
-  dc.lineWidth   = 3.5;
-  dc.lineCap     = 'round';
-  dc.lineJoin    = 'round';
-}
-
-function saveUndo() {
-  drawingUndoStack.push(dc.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
-  if (drawingUndoStack.length > 60) drawingUndoStack.shift();
-}
-
-function canvasXY(e) {
-  const r = drawCanvas.getBoundingClientRect();
-  const sx = drawCanvas.width  / r.width;
-  const sy = drawCanvas.height / r.height;
-  const src = e.touches ? e.touches[0] : e;
-  return { x: (src.clientX - r.left) * sx, y: (src.clientY - r.top) * sy };
-}
-
-function onPointerDown(e) {
-  e.preventDefault();
-  isDrawing = true;
-  const { x, y } = canvasXY(e);
-  lastX = x; lastY = y;
-  saveUndo();
-  dc.beginPath();
-  dc.moveTo(x, y);
-}
-function onPointerMove(e) {
-  e.preventDefault();
-  if (!isDrawing) return;
-  const { x, y } = canvasXY(e);
-  dc.lineTo(x, y);
-  dc.stroke();
-  lastX = x; lastY = y;
-}
-function onPointerUp(e) {
-  e.preventDefault();
-  if (!isDrawing) return;
-  isDrawing = false;
-  dc.closePath();
-}
-
-drawCanvas.addEventListener('mousedown',  onPointerDown);
-drawCanvas.addEventListener('mousemove',  onPointerMove);
-drawCanvas.addEventListener('mouseup',    onPointerUp);
-drawCanvas.addEventListener('mouseleave', onPointerUp);
-drawCanvas.addEventListener('touchstart', onPointerDown, { passive: false });
-drawCanvas.addEventListener('touchmove',  onPointerMove, { passive: false });
-drawCanvas.addEventListener('touchend',   onPointerUp,   { passive: false });
-
-clearBtn.addEventListener('click', () => {
-  saveUndo();
-  dc.fillStyle = '#fff';
-  dc.fillRect(0, 0, drawCanvas.width, drawCanvas.height);
-  applyPenStyle();
-});
-
-undoBtn.addEventListener('click', () => {
-  if (drawingUndoStack.length > 0) {
-    dc.putImageData(drawingUndoStack.pop(), 0, 0);
-  }
-});
-
-/* ════════════════════════════════════════════════════════
-   Canvas segmentation — splits drawing into one crop per
-   Tamil character using vertical ink column analysis
-════════════════════════════════════════════════════════ */
-function segmentCanvas() {
-  const { width, height } = drawCanvas;
-  const data = drawCanvas.getContext('2d').getImageData(0, 0, width, height).data;
-
-  // Mark which columns contain ink (pixel brightness < 200)
-  const hasInk = new Uint8Array(width);
-  for (let x = 0; x < width; x++) {
-    for (let y = 0; y < height; y++) {
-      const i = (y * width + x) * 4;
-      if ((data[i] + data[i+1] + data[i+2]) / 3 < 200) { hasInk[x] = 1; break; }
-    }
-  }
-
-  // Find vertical ink extent (to trim blank rows top/bottom)
-  let inkTop = height, inkBottom = 0;
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const i = (y * width + x) * 4;
-      if ((data[i] + data[i+1] + data[i+2]) / 3 < 200) {
-        if (y < inkTop) inkTop = y;
-        if (y > inkBottom) inkBottom = y;
-      }
-    }
-  }
-  if (inkTop > inkBottom) return []; // nothing drawn
-
-  const PAD = 10, MIN_GAP = 10, MIN_W = 8;
-  const cropY = Math.max(0, inkTop - PAD);
-  const cropH = Math.min(height, inkBottom + PAD + 1) - cropY;
-
-  // Detect character boundaries via column gaps
-  const chars = [];
-  let start = -1, gap = 0;
-  for (let x = 0; x <= width; x++) {
-    if (x < width && hasInk[x]) {
-      if (start < 0) start = x;
-      gap = 0;
-    } else if (start >= 0) {
-      if (++gap >= MIN_GAP || x === width) {
-        const end = x - gap;
-        if (end - start >= MIN_W) chars.push([Math.max(0, start - PAD), Math.min(width, end + PAD)]);
-        start = -1; gap = 0;
-      }
-    }
-  }
-
-  if (!chars.length) return [];
-
-  // Crop each character to its own canvas and encode as PNG
-  return chars.slice(0, 5).map(([x1, x2]) => {
-    const c = document.createElement('canvas');
-    c.width = x2 - x1; c.height = cropH;
-    const cx = c.getContext('2d');
-    cx.fillStyle = '#fff';
-    cx.fillRect(0, 0, c.width, c.height);
-    cx.drawImage(drawCanvas, x1, cropY, x2 - x1, cropH, 0, 0, c.width, c.height);
-    return c.toDataURL('image/png').split(',')[1];
-  });
-}
-
-/* ════════════════════════════════════════════════════════
-   Tamil recognition — calls our Vercel serverless function
-   which holds the API key server-side
-════════════════════════════════════════════════════════ */
-recognizeBtn.addEventListener('click', async () => {
-  const segments = segmentCanvas();
-  if (!segments.length) {
-    setStatus('Nothing drawn — draw your Tamil name first.', 'error');
-    return;
-  }
-
-  recognizeBtn.disabled = true;
-  recognizeBtn.innerHTML = '<span class="spin"></span>Recognizing…';
-  setStatus(`Analyzing ${segments.length} character${segments.length > 1 ? 's' : ''}…`);
-
-  try {
-    const res = await fetch('/api/recognize', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ segments })
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || `Server error ${res.status}`);
-    }
-
-    const { text: raw } = await res.json();
-
-    // Extract JSON even if wrapped in markdown fences
-    const jsonMatch = raw.match(/\{[\s\S]*?\}/);
-    if (!jsonMatch) throw new Error('Unexpected response format. Please try again.');
-
-    let parsed;
-    try { parsed = JSON.parse(jsonMatch[0]); }
-    catch { throw new Error('Could not parse JSON from response.'); }
-
-    const english = (parsed.english || '').trim();
-    const tamil   = (parsed.tamil   || '').trim();
-
-    if (!english && !tamil) throw new Error('No name detected — try drawing the letters larger and more clearly.');
-
-    recognizedName = { english, tamil };
-
-    nameEnglish.innerHTML = english
-      ? english
-      : '<span class="em-placeholder">—</span>';
-    nameTamil.innerHTML = tamil
-      ? tamil
-      : '<span class="em-placeholder" style="font-family:inherit;font-size:1rem">—</span>';
-
-    nameEnglish.classList.add('fade-up');
-    nameTamil.classList.add('fade-up');
-    setTimeout(() => { nameEnglish.classList.remove('fade-up'); nameTamil.classList.remove('fade-up'); }, 400);
-
-    setStatus(`✓ Recognized: "${english}"${tamil ? ' · ' + tamil : ''}`, 'ok');
-    refreshGenerateBtn();
-
-  } catch (err) {
-    setStatus('✕ ' + err.message, 'error');
-  } finally {
-    recognizeBtn.disabled = false;
-    recognizeBtn.innerHTML = '✦ Recognize';
-  }
-});
-
-/* ════════════════════════════════════════════════════════
    Sticker – build & print
 ════════════════════════════════════════════════════════ */
 function buildSticker() {
-  // Photo
   stickerPhotoWrap.innerHTML = '';
   if (capturedDataUrl) {
     const img = document.createElement('img');
@@ -861,15 +819,14 @@ function buildSticker() {
         <path d="M5 57c0-13.8 11.2-25 25-25s25 11.2 25 25" fill-rule="evenodd"/>
       </svg>`;
   }
-
-  stickerNameEn.textContent = recognizedName.english || 'Your Name';
-  stickerNameTa.textContent = recognizedName.tamil   || '';
+  stickerNameEn.textContent = transliterate(typedTamil) || 'Your Name';
+  stickerNameTa.textContent = typedTamil || '';
 
   show(stickerSection);
   stickerSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   const wrap = $('sticker-wrap');
   wrap.classList.remove('fade-up');
-  void wrap.offsetWidth; // reflow to re-trigger animation
+  void wrap.offsetWidth;
   wrap.classList.add('fade-up');
 }
 
@@ -889,13 +846,7 @@ printBtn.addEventListener('click', () => {
 window.addEventListener('DOMContentLoaded', () => {
   hide(photoCanvas);
   hide(video);
-  initDrawCanvas();
-  refreshGenerateBtn();
-});
-
-window.addEventListener('resize', () => {
-  // Re-init canvas on resize (clears drawing — acceptable trade-off for single-page tool)
-  initDrawCanvas();
+  updateDisplay();
 });
 </script>
 </body>
