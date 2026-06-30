@@ -192,7 +192,54 @@
     }
 
     /* ══════════════════════════════════════════
-       SCREEN 3 — NAME
+       SCREEN 3 — ENGLISH NAME
+    ══════════════════════════════════════════ */
+    #s-english {
+      background: #0a0812;
+      align-items: center; justify-content: center;
+      padding: 0 24px;
+    }
+    .english-inner {
+      max-width: 420px; width: 100%;
+      position: relative; z-index: 1;
+    }
+    .english-label {
+      font-size: .7rem; letter-spacing: .28em; text-transform: uppercase;
+      color: rgba(201,169,110,.6); margin-bottom: 20px;
+      text-align: center; display: block;
+    }
+    .english-display {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 8vw, 3rem); font-weight: 300;
+      color: #c9a96e; line-height: 1.2; min-height: 3rem;
+      text-align: center; margin-bottom: 24px;
+      word-break: break-word;
+    }
+    .english-input-wrap {
+      margin-bottom: 32px;
+    }
+    .english-input-wrap input {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 300; letter-spacing: .04em;
+      color: rgba(255,255,255,.8); background: transparent;
+      border: none; border-bottom: 2px solid rgba(201,169,110,.3);
+      width: 100%; padding: 12px 0; outline: none;
+      transition: border-color .2s;
+    }
+    .english-input-wrap input:focus { border-color: rgba(201,169,110,.7); }
+    .english-input-wrap input::placeholder { color: rgba(255,255,255,.25); font-style: italic; }
+    .english-next-btn {
+      width: 100%; font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; letter-spacing: .1em;
+      background: #c9a96e; color: #0a0812; border: none;
+      border-radius: 40px; padding: 15px;
+      cursor: pointer; transition: background .2s; font-weight: 600;
+    }
+    .english-next-btn:hover { background: #e0c080; }
+    .english-next-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ══════════════════════════════════════════
+       SCREEN 4 — TAMIL NAME
     ══════════════════════════════════════════ */
     #s-name { background: #0a0812; }
     .name-top {
@@ -395,10 +442,10 @@
     .q-btn:hover { background: #e0c080; }
 
     /* ══════════════════════════════════════════
-       SCREEN 6 — PASSPORT (palm leaf)
+       SCREEN 8 — CLAY TABLET
     ══════════════════════════════════════════ */
     #s-sticker {
-      background: #0d0a10;
+      background: #f4eae1;
       align-items: center; justify-content: flex-start;
       padding: calc(env(safe-area-inset-top,0px) + 24px) 20px
                calc(env(safe-area-inset-bottom,0px) + 28px);
@@ -537,8 +584,8 @@
       border-top: 1px solid rgba(0,0,0,.18);
     }
     .pp-sig-img {
-      height: 40px; max-width: 150px; object-fit: contain;
-      mix-blend-mode: multiply; opacity: .8;
+      height: 50px; max-width: 180px; object-fit: contain;
+      filter: brightness(0.8) contrast(1.2);
       display: block;
     }
     .pp-sig-empty { font-size: .65rem; color: rgba(0,0,0,.3); font-style: italic; }
@@ -722,7 +769,7 @@
   <button class="back-btn hidden" onclick="goBack()">← Back</button>
   <div class="pips" id="pips-photo">
     <div class="pip active"></div><div class="pip"></div><div class="pip"></div>
-    <div class="pip"></div><div class="pip"></div>
+    <div class="pip"></div><div class="pip"></div><div class="pip"></div>
   </div>
 
   <div class="photo-viewport">
@@ -757,13 +804,33 @@
 </div>
 
 <!-- ═══════════════════════════════════
-     SCREEN 2 · SIGNATURE
+     SCREEN 3 · ENGLISH NAME
+═══════════════════════════════════ -->
+<div class="screen" id="s-english">
+  <div class="pips">
+    <div class="pip done"></div><div class="pip done"></div><div class="pip active"></div>
+    <div class="pip"></div><div class="pip"></div><div class="pip"></div>
+  </div>
+
+  <div class="english-inner">
+    <span class="english-label">Type your name in English</span>
+    <div class="english-display" id="english-display"></div>
+    <div class="english-input-wrap">
+      <input type="text" id="english-input"
+        placeholder="Your English name" autocomplete="off" spellcheck="false">
+    </div>
+    <button class="english-next-btn" id="english-next" disabled>Continue to Tamil Name →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 4 · SIGNATURE (moved after English)
 ═══════════════════════════════════ -->
 <div class="screen" id="s-sig">
   <button class="back-btn" onclick="goBack()">← Back</button>
   <div class="pips">
-    <div class="pip done"></div><div class="pip active"></div><div class="pip"></div>
-    <div class="pip"></div><div class="pip"></div>
+    <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div>
+    <div class="pip active"></div><div class="pip"></div><div class="pip"></div>
   </div>
 
   <div class="sig-top">
@@ -789,8 +856,8 @@
 <div class="screen" id="s-name">
   <button class="back-btn" onclick="goBack()">← Back</button>
   <div class="pips">
-    <div class="pip done"></div><div class="pip done"></div><div class="pip active"></div>
-    <div class="pip"></div><div class="pip"></div>
+    <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div>
+    <div class="pip done"></div><div class="pip active"></div><div class="pip"></div>
   </div>
 
   <div class="name-top">
@@ -798,11 +865,6 @@
     <div class="name-tamil-display">
       <span id="tamil-typed"></span>
       <span class="name-cursor"></span>
-    </div>
-    <div style="display: flex; align-items: center; gap: 6px;">
-      <input type="text" id="name-english" class="name-english-input"
-        placeholder="English name (auto-fills)" autocomplete="off" spellcheck="false">
-      <span style="font-size: .65rem; color: rgba(255,255,255,.35); white-space: nowrap; flex-shrink: 0;">editable</span>
     </div>
   </div>
 
@@ -885,7 +947,7 @@
   <button class="back-btn" onclick="goBack()">← Back</button>
   <div class="pips">
     <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div>
-    <div class="pip active"></div><div class="pip"></div>
+    <div class="pip done"></div><div class="pip active"></div><div class="pip"></div>
   </div>
 
   <div class="evo-inner">
@@ -926,7 +988,7 @@
   <button class="back-btn" onclick="goBack()">← Back</button>
   <div class="pips">
     <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div>
-    <div class="pip done"></div><div class="pip active"></div>
+    <div class="pip done"></div><div class="pip done"></div><div class="pip active"></div>
   </div>
 
   <div class="q-inner">
@@ -950,49 +1012,44 @@
 ═══════════════════════════════════ -->
 <div class="screen" id="s-sticker">
   <button class="back-btn" onclick="goBack()" style="top: 20px; left: 20px; position: fixed;">← Back</button>
-  <div class="sticker-eyebrow">A name across centuries</div>
 
-  <div class="passport" id="palm-leaf">
+  <div class="clay-tablet" id="palm-leaf">
 
-    <!-- Cover band -->
-    <div class="pp-band">
-      <div class="pp-band-title">2,000 ஆண்டுகள் பழமையான தமிழ் எழுத்தில் உங்கள் பெயர்!</div>
-      <div class="pp-band-school">ஸ்ரீ குருவாயூரப்பன் தமிழ் பள்ளி</div>
-      <div class="pp-band-edu-tag">கல்வி நோக்கத்திற்காக மட்டுமே</div>
+    <div class="tablet-header">
+      <h1>2,000 ஆண்டுகள் பழமையான தமிழ் எழுத்தில் உங்கள் பெயர்!</h1>
+      <h2>ஸ்ரீ குருவாயூரப்பன் தமிழ் பள்ளி</h2>
+      <p>கல்வி நோக்கத்திற்காக மட்டுமே</p>
     </div>
 
-    <div class="pp-body">
+    <div class="tablet-body">
 
-      <!-- Passport photo -->
-      <div class="pp-photo-wrap" id="palm-photo">
-        <svg width="40" height="50" viewBox="0 0 60 70" fill="rgba(0,0,0,0.25)">
-          <circle cx="30" cy="22" r="16"/>
-          <path d="M2 68c0-15.5 12.5-28 28-28s28 12.5 28 28"/>
-        </svg>
+      <!-- Profile Section -->
+      <div class="profile-section">
+        <div class="photo-slot" id="palm-photo">
+          <div class="photo-placeholder">உங்கள் படம்</div>
+        </div>
+        <label id="palm-name-en">பெயர்</label>
       </div>
 
-      <!-- Name -->
-      <div class="pp-name-en" id="palm-name-en">Name</div>
-      <div class="pp-name-ta" id="palm-name-ta"></div>
+      <div class="divider"></div>
 
-      <div class="pp-rule"></div>
+      <!-- Data Table -->
+      <div class="data-table">
+        <div class="data-header">Script Era</div>
+        <div class="data-header">Timeline</div>
+        <div class="data-header" style="text-align: center;">Glyph</div>
 
-      <!-- Script rows — built by JS, no future row -->
-      <div id="palm-rows"></div>
-
-      <!-- Signature + date -->
-      <div class="pp-footer">
-        <div id="palm-sig-wrap"></div>
-        <div class="pp-date" id="palm-date"></div>
-      </div>
-
-      <!-- Educational disclaimer -->
-      <div class="pp-disclaimer">
-        <p>இது ஸ்ரீ குருவாயூரப்பன் தமிழ் பள்ளி தயாரித்த கல்வி நோக்கக் காட்சிப் பொருள்.</p>
-        <p>இங்கு காணப்படும் பண்டைய எழுத்து வடிவங்கள் ஆய்வுகளின் அடிப்படையில் உருவாக்கப்பட்ட கல்வி மாதிரிகள் மட்டுமே. அவை வரலாற்றுக் கல்வெட்டுகளில் காணப்படும் எழுத்து வடிவங்களிலிருந்து மாறுபடக்கூடும்.</p>
+        <div id="palm-rows"></div>
       </div>
 
     </div>
+
+    <!-- Footer -->
+    <div class="tablet-footer">
+      <div class="sig-footer" id="palm-sig-wrap"></div>
+      <div class="date-footer" id="palm-date">தமிழ் பெயர்</div>
+    </div>
+
   </div>
 
   <div class="sticker-actions">
@@ -1011,7 +1068,7 @@ function show(el) { el.classList.remove('hidden'); }
 function hide(el) { el.classList.add('hidden');   }
 
 /* Screen manager */
-const SCREENS = ['s-welcome','s-photo','s-sig','s-name','s-evo','s-q','s-sticker'];
+const SCREENS = ['s-welcome','s-photo','s-english','s-name','s-sig','s-evo','s-q','s-sticker'];
 let current = 0;
 function goTo(idx) {
   SCREENS.forEach((id, i) => {
@@ -1145,6 +1202,24 @@ $('wlc-begin-btn').addEventListener('click', () => goTo(1));
 $('photo-continue').addEventListener('click', () => goTo(2));
 
 /* ══════════════════════════════════════════════
+   SCREEN 3 — English Name input
+══════════════════════════════════════════════ */
+let englishName = '';
+const englishInput = $('english-input');
+const englishDisplay = $('english-display');
+const englishNextBtn = $('english-next');
+
+englishInput.addEventListener('input', (e) => {
+  englishName = e.target.value.trim();
+  englishDisplay.textContent = englishName || '—';
+  englishNextBtn.disabled = !englishName;
+});
+
+englishNextBtn.addEventListener('click', () => {
+  goTo(3);
+});
+
+/* ══════════════════════════════════════════════
    SCREEN 2 — Smooth Signature
 ══════════════════════════════════════════════ */
 (function() {
@@ -1254,11 +1329,14 @@ $('photo-continue').addEventListener('click', () => goTo(2));
     let hasInk = false;
     for (let i = 3; i < data.length; i += 4) { if (data[i] > 10) { hasInk = true; break; } }
     if (hasInk) signatureDataUrl = canvas.toDataURL('image/png');
-    goTo(3);
+    /* Start evolution */
+    evoStage = 0;
+    renderEvo(0, false);
+    goTo(5);
   }
 
   $('sig-next').addEventListener('click', proceed);
-  $('sig-skip').addEventListener('click', () => { signatureDataUrl = null; goTo(3); });
+  $('sig-skip').addEventListener('click', () => { signatureDataUrl = null; evoStage = 0; renderEvo(0, false); goTo(5); });
 
   /* Init once screen is shown */
   const obs = new MutationObserver(() => {
@@ -1278,11 +1356,8 @@ $('photo-continue').addEventListener('click', () => goTo(2));
 ══════════════════════════════════════════════ */
 function updateNameDisplay() {
   $('tamil-typed').textContent = typedTamil;
-  if (!englishEdited) $('name-english').value = typedTamil ? transliterate(typedTamil) : '';
   $('name-continue').disabled = !typedTamil.trim();
 }
-
-$('name-english').addEventListener('input', () => { englishEdited = true; });
 
 document.querySelectorAll('.key[data-char]').forEach(btn => {
   btn.addEventListener('click', () => { typedTamil += btn.dataset.char; updateNameDisplay(); });
@@ -1298,10 +1373,7 @@ $('key-clear').addEventListener('click', () => {
 });
 
 $('name-continue').addEventListener('click', () => {
-  /* Start evolution */
-  const roman = $('name-english').value.trim() || transliterate(typedTamil);
-  evoStage = 0;
-  renderEvo(0, false);
+  /* Go to signature screen */
   goTo(4);
 });
 
@@ -1332,7 +1404,7 @@ const EVO = [
 function renderEvo(idx, animate) {
   const s = EVO[idx];
   const nameEl = $('evo-name');
-  const roman  = $('name-english').value.trim() || transliterate(typedTamil);
+  const roman  = englishName.trim() || transliterate(typedTamil);
 
   /* Timeline nodes */
   [0,1,2].forEach(i => {
@@ -1381,11 +1453,11 @@ $('evo-next').addEventListener('click', () => {
     renderEvo(evoStage, true);
   } else {
     /* Show question */
-    const roman  = $('name-english').value.trim() || transliterate(typedTamil);
+    const roman  = englishName.trim() || transliterate(typedTamil);
     const future = toFuture(roman);
     $('future-glow').textContent  = future.glow;
     $('future-coord').textContent = future.coord;
-    goTo(5);
+    goTo(6);
   }
 });
 
@@ -1398,22 +1470,21 @@ $('q-continue').addEventListener('click', buildPalmLeaf);
    SCREEN 6 — Passport builder
 ══════════════════════════════════════════════ */
 function buildPalmLeaf() {
-  const english = $('name-english').value.trim() || transliterate(typedTamil);
+  const english = englishName.trim() || transliterate(typedTamil);
 
-  /* Photo — passport-sized rectangle */
+  /* Photo */
   const photoWrap = $('palm-photo');
   photoWrap.innerHTML = '';
   if (capturedDataUrl) {
     const img = document.createElement('img'); img.src = capturedDataUrl;
     photoWrap.appendChild(img);
   } else {
-    photoWrap.innerHTML = `<svg width="40" height="50" viewBox="0 0 60 70" fill="rgba(0,0,0,0.25)"><circle cx="30" cy="22" r="16"/><path d="M2 68c0-15.5 12.5-28 28-28s28 12.5 28 28"/></svg>`;
+    photoWrap.innerHTML = `<div class="photo-placeholder">உங்கள் படம்</div>`;
   }
 
   $('palm-name-en').textContent = english;
-  $('palm-name-ta').textContent = typedTamil;
 
-  /* Three script rows — oldest to newest, no future */
+  /* Three script rows — clay tablet format */
   const rows = [
     { period:'BC 3rd c.',      name:'Brahmi',             chars: toBrahmi(typedTamil),  cls:'f-brahmi'  },
     { period:'AD 3rd–13th c.', name:'Vatteluttu / Grantha', chars: toGrantha(typedTamil), cls:'f-grantha' },
@@ -1421,30 +1492,26 @@ function buildPalmLeaf() {
   ];
 
   $('palm-rows').innerHTML = rows.map(r => `
-    <div class="pp-row">
-      <div class="pp-era-col">
-        <span class="pp-era-name">${r.name}</span>
-        <span class="pp-era-period">${r.period}</span>
-      </div>
-      <span class="pp-chars ${r.cls}">${r.chars || '—'}</span>
-    </div>`).join('');
+    <div class="script-row">${r.name}</div>
+    <div>${r.period}</div>
+    <div class="glyph f-${r.cls === 'f-brahmi' ? 'brahmi' : r.cls === 'f-grantha' ? 'grantha' : 'tamil'}">${r.chars || '—'}</div>`).join('');
 
-  /* Signature — transparent PNG, multiply blend on warm leaf background */
+  /* Signature */
   const sigWrap = $('palm-sig-wrap');
   sigWrap.innerHTML = '';
   if (signatureDataUrl) {
     const img = document.createElement('img');
-    img.src = signatureDataUrl; img.className = 'pp-sig-img'; img.alt = 'Signature';
+    img.src = signatureDataUrl;
+    img.alt = 'Signature';
+    img.style.height = '35px';
+    img.style.maxWidth = '100px';
+    img.style.objectFit = 'contain';
     sigWrap.appendChild(img);
-  } else {
-    sigWrap.innerHTML = '<span class="pp-sig-empty">No signature</span>';
   }
 
-  $('palm-date').innerHTML =
-    new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })
-    + '<br>தமிழ் பெயர்';
+  $('palm-date').textContent = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
 
-  goTo(6);
+  goTo(7);
 }
 
 /* ══════════════════════════════════════════════
@@ -1496,9 +1563,10 @@ $('print-btn').addEventListener('click', () => {
 });
 
 $('redo-btn').addEventListener('click', () => {
-  typedTamil = ''; capturedDataUrl = null; signatureDataUrl = null;
-  englishEdited = false; evoStage = 0;
-  $('tamil-typed').textContent = ''; $('name-english').value = '';
+  typedTamil = ''; englishName = ''; capturedDataUrl = null; signatureDataUrl = null;
+  evoStage = 0;
+  $('tamil-typed').textContent = ''; $('english-input').value = ''; $('english-display').textContent = '—';
+  $('english-next').disabled = true;
   $('photo-canvas').style.display = 'none';
   hide($('video')); show($('cam-idle'));
   hide($('retake-btn')); $('photo-continue').classList.remove('visible');
