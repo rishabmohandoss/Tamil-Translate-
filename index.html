@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#000000">
   <title>Tamil Name Through Time</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+Tamil:wght@300;400;700&family=Noto+Sans+Brahmi&family=Noto+Sans+Grantha&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
@@ -1141,7 +1141,7 @@
         </div>
         <div style="text-align: center;">
           <div style="font-size: 13px; font-weight: 600;" id="palm-name-en">Name</div>
-          <div style="font-size: 11px; opacity: 0.8; margin-top: 2px;">English & Modern Tamil</div>
+          <div style="font-size: 11px; opacity: 0.8; margin-top: 2px;"></div>
         </div>
       </div>
 
@@ -1496,7 +1496,7 @@ const EVO = [
   },
   {
     era: 'Vatteluttu · வட்டெழுத்து',
-    desc: 'Grantha script era · AD 3rd – 13th century',
+    desc: 'Pallava script era · AD 3rd – 13th century',
     getText: t => toGrantha(t),
     style: "font-family:'Noto Sans Grantha','Noto Sans',sans-serif; color:#c9b090; letter-spacing:.06em;",
   },
@@ -1594,7 +1594,7 @@ function buildPalmLeaf() {
   /* Three script rows with textured backgrounds */
   const rows = [
     { period:'BC 3rd c.',      name:'Brahmi',             chars: toBrahmi(typedTamil),  cls:'f-brahmi',  bg:'script-row-stone'    },
-    { period:'AD 3rd–13th c.', name:'Vatteluttu / Grantha', chars: toGrantha(typedTamil), cls:'f-grantha', bg:'script-row-palmleaf' },
+    { period:'AD 3rd–13th c.', name:'Vatteluttu', chars: toGrantha(typedTamil), cls:'f-grantha', bg:'script-row-palmleaf' },
     { period:'19th c.–today',  name:'Modern Tamil',        chars: typedTamil,             cls:'f-tamil',   bg:'script-row-paper'   },
   ];
 
