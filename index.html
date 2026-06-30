@@ -36,6 +36,19 @@
       left: 50%; transform: translateX(-50%);
       display: flex; gap: 5px; z-index: 30;
     }
+    .back-btn {
+      position: absolute; top: env(safe-area-inset-top, 16px); top: max(16px, env(safe-area-inset-top));
+      left: 20px; z-index: 31;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .85rem; letter-spacing: .1em;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+      color: rgba(255,255,255,.6); border-radius: 40px;
+      padding: 8px 16px; cursor: pointer;
+      transition: background .2s, color .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .back-btn:hover { background: rgba(255,255,255,.15); color: rgba(255,255,255,.85); }
+    .back-btn.hidden { display: none; }
     .pip {
       height: 3px; width: 20px; border-radius: 2px;
       background: rgba(255,255,255,0.22);
@@ -349,7 +362,7 @@
     .q-inner { position: relative; z-index: 1; max-width: 560px; width: 100%; }
     .q-eyebrow {
       font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
-      color: rgba(0,229,255,.4); margin-bottom: 28px;
+      color: rgba(0,229,255,.65); margin-bottom: 28px;
     }
     .q-body {
       font-size: clamp(1.1rem, 3.5vw, 1.35rem); font-weight: 300;
@@ -370,7 +383,7 @@
     }
     .future-coord {
       font-family: monospace; font-size: .68rem;
-      color: rgba(0,229,255,.25); letter-spacing: .15em; margin-bottom: 44px;
+      color: rgba(0,229,255,.45); letter-spacing: .15em; margin-bottom: 44px;
     }
     .q-btn {
       font-family: 'Cormorant Garamond', serif;
@@ -525,11 +538,11 @@
     }
     .pp-sig-img {
       height: 40px; max-width: 150px; object-fit: contain;
-      mix-blend-mode: multiply; opacity: .6;
+      mix-blend-mode: multiply; opacity: .8;
       display: block;
     }
     .pp-sig-empty { font-size: .65rem; color: rgba(0,0,0,.3); font-style: italic; }
-    .pp-date { font-size: .56rem; color: rgba(0,0,0,.35); text-align: right; line-height: 1.6; }
+    .pp-date { font-size: .56rem; color: rgba(0,0,0,.35); text-align: right; line-height: 1.6; word-break: break-word; flex-shrink: 0; max-width: 80px; }
 
     /* Actions */
     .sticker-actions {
@@ -706,6 +719,7 @@
      SCREEN 1 · PHOTO
 ═══════════════════════════════════ -->
 <div class="screen" id="s-photo">
+  <button class="back-btn hidden" onclick="goBack()">← Back</button>
   <div class="pips" id="pips-photo">
     <div class="pip active"></div><div class="pip"></div><div class="pip"></div>
     <div class="pip"></div><div class="pip"></div>
@@ -746,6 +760,7 @@
      SCREEN 2 · SIGNATURE
 ═══════════════════════════════════ -->
 <div class="screen" id="s-sig">
+  <button class="back-btn" onclick="goBack()">← Back</button>
   <div class="pips">
     <div class="pip done"></div><div class="pip active"></div><div class="pip"></div>
     <div class="pip"></div><div class="pip"></div>
@@ -772,6 +787,7 @@
      SCREEN 3 · NAME
 ═══════════════════════════════════ -->
 <div class="screen" id="s-name">
+  <button class="back-btn" onclick="goBack()">← Back</button>
   <div class="pips">
     <div class="pip done"></div><div class="pip done"></div><div class="pip active"></div>
     <div class="pip"></div><div class="pip"></div>
@@ -783,8 +799,11 @@
       <span id="tamil-typed"></span>
       <span class="name-cursor"></span>
     </div>
-    <input type="text" id="name-english" class="name-english-input"
-      placeholder="English name (auto-fills)" autocomplete="off" spellcheck="false">
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <input type="text" id="name-english" class="name-english-input"
+        placeholder="English name (auto-fills)" autocomplete="off" spellcheck="false">
+      <span style="font-size: .65rem; color: rgba(255,255,255,.35); white-space: nowrap; flex-shrink: 0;">editable</span>
+    </div>
   </div>
 
   <div class="kbd-wrap">
@@ -846,6 +865,9 @@
       <button class="key mark-key" data-char="்">-்</button>
     </div>
     <div class="kbd-row" style="margin-top:6px">
+      <button class="key-util" id="key-space" style="flex: 1; padding: 7px 16px;">Space</button>
+    </div>
+    <div class="kbd-row" style="gap: 5px;">
       <button class="key-util" id="key-backspace">⌫ Delete</button>
       <button class="key-util" id="key-clear">✕ Clear</button>
     </div>
@@ -860,6 +882,7 @@
      SCREEN 4 · EVOLUTION
 ═══════════════════════════════════ -->
 <div class="screen" id="s-evo">
+  <button class="back-btn" onclick="goBack()">← Back</button>
   <div class="pips">
     <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div>
     <div class="pip active"></div><div class="pip"></div>
@@ -900,6 +923,7 @@
      SCREEN 5 · QUESTION
 ═══════════════════════════════════ -->
 <div class="screen" id="s-q">
+  <button class="back-btn" onclick="goBack()">← Back</button>
   <div class="pips">
     <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div>
     <div class="pip done"></div><div class="pip active"></div>
@@ -925,6 +949,7 @@
      SCREEN 6 · PASSPORT
 ═══════════════════════════════════ -->
 <div class="screen" id="s-sticker">
+  <button class="back-btn" onclick="goBack()" style="top: 20px; left: 20px; position: fixed;">← Back</button>
   <div class="sticker-eyebrow">A name across centuries</div>
 
   <div class="passport" id="palm-leaf">
@@ -994,9 +1019,18 @@ function goTo(idx) {
     el.classList.remove('active','exiting');
     if (i === idx) { el.classList.add('active'); }
     else if (i < idx) { el.classList.add('exiting'); }
+    /* Handle back button visibility */
+    const backBtn = el.querySelector('.back-btn');
+    if (backBtn) {
+      if (i === idx && i > 0) backBtn.classList.remove('hidden');
+      else if (i === idx) backBtn.classList.add('hidden');
+    }
   });
   current = idx;
   window.scrollTo(0, 0);
+}
+function goBack() {
+  if (current > 0) goTo(current - 1);
 }
 
 /* ══════════════════════════════════════════════
@@ -1255,6 +1289,9 @@ document.querySelectorAll('.key[data-char]').forEach(btn => {
 });
 $('key-backspace').addEventListener('click', () => {
   typedTamil = [...typedTamil].slice(0,-1).join(''); updateNameDisplay();
+});
+$('key-space').addEventListener('click', () => {
+  typedTamil += ' '; updateNameDisplay();
 });
 $('key-clear').addEventListener('click', () => {
   typedTamil = ''; englishEdited = false; updateNameDisplay();
