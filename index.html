@@ -451,6 +451,100 @@
                calc(env(safe-area-inset-bottom,0px) + 32px);
     }
 
+    /* Script Row Textures */
+    .script-row-stone {
+      background: linear-gradient(135deg, #8b8680 0%, #9a938c 25%, #7f7973 50%, #8e8782 75%, #9a938c 100%);
+      background-size: 200% 200%;
+      position: relative;
+      padding: 12px 14px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: inset 1px 1px 3px rgba(255,255,255,0.2), inset -1px -1px 3px rgba(0,0,0,0.3);
+    }
+    .script-row-stone::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(0,0,0,0.15) 1px, transparent 1px),
+        radial-gradient(circle at 45% 60%, rgba(255,255,255,0.1) 1px, transparent 1px),
+        radial-gradient(circle at 75% 35%, rgba(0,0,0,0.1) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+    }
+    .script-row-palmleaf {
+      background: linear-gradient(90deg, #d4a574 0%, #c8955a 50%, #d4a574 100%);
+      position: relative;
+      padding: 12px 14px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: inset 1px 1px 3px rgba(255,255,255,0.15), inset -1px -1px 3px rgba(0,0,0,0.2);
+    }
+    .script-row-palmleaf::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(0,0,0,0.03) 20px, rgba(0,0,0,0.03) 21px);
+      pointer-events: none;
+    }
+    .script-row-paper {
+      background: linear-gradient(135deg, #f5f0e8 0%, #efe5d8 50%, #f5f0e8 100%);
+      position: relative;
+      padding: 12px 14px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: inset 1px 1px 3px rgba(255,255,255,0.5), inset -1px -1px 3px rgba(0,0,0,0.1);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .script-row-paper::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" /><feDisplacementMap in="SourceGraphic" scale="0.5" /></filter><rect width="100" height="100" fill="rgba(0,0,0,0.02)" filter="url(%23n)"/></svg>');
+      background-size: 100px 100px;
+      pointer-events: none;
+    }
+    .script-row-techno {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      position: relative;
+      padding: 12px 14px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: inset 1px 1px 3px rgba(0,229,255,0.2), inset -1px -1px 3px rgba(0,0,0,0.5);
+    }
+    .script-row-techno::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(0deg, transparent 24%, rgba(0,229,255,0.05) 25%, rgba(0,229,255,0.05) 26%, transparent 27%, transparent 74%, rgba(0,229,255,0.05) 75%, rgba(0,229,255,0.05) 76%, transparent 77%, transparent),
+        linear-gradient(90deg, transparent 24%, rgba(0,229,255,0.05) 25%, rgba(0,229,255,0.05) 26%, transparent 27%, transparent 74%, rgba(0,229,255,0.05) 75%, rgba(0,229,255,0.05) 76%, transparent 77%, transparent);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+    .script-row-content {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 0.7fr;
+      gap: 12px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .script-row-era {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .script-row-time {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .script-row-glyph {
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1;
+    }
+
     /* Clay Tablet Styling */
     .passport {
       width: 100%; max-width: 520px;
@@ -1051,14 +1145,8 @@
         </div>
       </div>
 
-      <!-- Right: Script Table -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr 0.6fr; gap: 12px 16px; align-items: center;">
-        <div style="font-size: 12px; font-weight: 600; opacity: 0.7; border-bottom: 1px solid rgba(0,0,0,0.15); padding-bottom: 4px;">Script</div>
-        <div style="font-size: 12px; font-weight: 600; opacity: 0.7; border-bottom: 1px solid rgba(0,0,0,0.15); padding-bottom: 4px;">Timeline</div>
-        <div style="font-size: 12px; font-weight: 600; opacity: 0.7; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.15); padding-bottom: 4px;">Glyph</div>
-
-        <div id="palm-rows" style="display: contents;"></div>
-      </div>
+      <!-- Right: Script Sections with Textures -->
+      <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;" id="palm-rows"></div>
 
     </div>
 
@@ -1503,17 +1591,21 @@ function buildPalmLeaf() {
 
   $('palm-name-en').textContent = english;
 
-  /* Three script rows — clay tablet format */
+  /* Three script rows with textured backgrounds */
   const rows = [
-    { period:'BC 3rd c.',      name:'Brahmi',             chars: toBrahmi(typedTamil),  cls:'f-brahmi'  },
-    { period:'AD 3rd–13th c.', name:'Vatteluttu / Grantha', chars: toGrantha(typedTamil), cls:'f-grantha' },
-    { period:'19th c.–today',  name:'Modern Tamil',        chars: typedTamil,             cls:'f-tamil'   },
+    { period:'BC 3rd c.',      name:'Brahmi',             chars: toBrahmi(typedTamil),  cls:'f-brahmi',  bg:'script-row-stone'    },
+    { period:'AD 3rd–13th c.', name:'Vatteluttu / Grantha', chars: toGrantha(typedTamil), cls:'f-grantha', bg:'script-row-palmleaf' },
+    { period:'19th c.–today',  name:'Modern Tamil',        chars: typedTamil,             cls:'f-tamil',   bg:'script-row-paper'   },
   ];
 
   $('palm-rows').innerHTML = rows.map(r => `
-    <div style="font-size: 14px; font-weight: 500;">${r.name}</div>
-    <div style="font-size: 13px;">${r.period}</div>
-    <div style="font-size: 24px; font-weight: 600; text-align: center; ${r.cls === 'f-brahmi' ? "font-family: 'Noto Sans Brahmi','Segoe UI Historic',sans-serif;" : r.cls === 'f-grantha' ? "font-family: 'Noto Sans Grantha','Noto Sans',sans-serif;" : "font-family: 'Noto Serif Tamil',serif;"}">${r.chars || '—'}</div>`).join('');
+    <div class="${r.bg}">
+      <div class="script-row-content">
+        <div class="script-row-era">${r.name}</div>
+        <div class="script-row-time">${r.period}</div>
+        <div class="script-row-glyph" style="${r.cls === 'f-brahmi' ? "font-family: 'Noto Sans Brahmi','Segoe UI Historic',sans-serif;" : r.cls === 'f-grantha' ? "font-family: 'Noto Sans Grantha','Noto Sans',sans-serif;" : "font-family: 'Noto Serif Tamil',serif;"}">${r.chars || '—'}</div>
+      </div>
+    </div>`).join('');
 
   /* Signature */
   const sigWrap = $('palm-sig-wrap');
