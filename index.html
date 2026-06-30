@@ -906,7 +906,7 @@
   </div>
 
   <div class="q-inner">
-    <div class="q-eyebrow">A question for you</div>
+    <div class="q-body">A question for you</div>
     <div class="q-body">
       Your name has survived <em>2,300 years</em> of script.<br>
       From palm leaf to printing press to pixel.<br><br>
@@ -1059,8 +1059,7 @@ function toFuture(roman) {
   const hex = h.toString(16).padStart(8,'0').toUpperCase();
   return {
     glow: `⟨ψ:${roman}·${hex}⟩`,
-    coord: `Neural coordinate ${(h%9000+1000)}.${((h>>8)%9000+1000)} · Cloud epoch 3025.07`
-  };
+    coord: `⟨Neural coordinate ${(h%9000+1000)}.${((h>>8)%9000+1000)} · Cloud epoch 3025.07⟩`  };
 }
 
 /* ══════════════════════════════════════════════
