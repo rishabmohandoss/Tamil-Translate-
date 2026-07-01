@@ -1316,7 +1316,7 @@
 
     <!-- Disclaimer Footer -->
     <div style="margin-top: 12px; padding: 10px 0; border-top: 1px solid rgba(0,0,0,0.1); font-size: 9px; line-height: 1.6; color: rgba(0,0,0,0.65); text-align: center;">
-      <p style="margin: 0;"><strong>தமிழின் நிரந்தரமான தன்மை:</strong> தமிழ் எழுத்து தொழில்நுட்பத்துடன் வளர்ந்தாலும், தமிழ் மொழியின் சாரம் மற்றும் உச்சரிப்பு என்றென்றும் நிரந்தரமாக இருக்கிறது. இந்த தனித்தன்மையே தமிழை என்றுமாக நீடிக்க வைக்கிறது.</p>
+      <p style="margin: 0;"><strong>தமிழின் நிரந்தரமான தன்மை:</strong> தமிழ் எழுத்து தொழில்நுட்பத்துடன் வளர்ந்தாலும், தமிழ் மொழியின் சாரம் மற்றும் உச்சரிப்பு என்றென்றும் நிரந்தரமாக இருக்கிறது. இந்த தனித்தன்மையே தமிழை என்றும் என்றும் நீடிக்க வைக்கிறது.</p>
     </div>
 
   </div>
@@ -1791,8 +1791,8 @@ function buildPalmLeaf() {
 
   /* Four script rows with textured backgrounds */
   const rows = [
-    { period:'BC 3rd c.',      name:'Brahmi',       chars: toBrahmi(typedTamil),  cls:'f-brahmi',  bg:'script-row-stone'    },
-    { period:'AD 3rd–13th c.', name:'Vatteluttu',   chars: toVatteluttu(typedTamil), cls:'f-tamil', bg:'script-row-palmleaf' },
+    { period:'BC 3rd c.',      name:'Brahmi',       chars: toBrahmi(typedTamil),  cls:'f-brahmi',  bg:'script-row-stone',    desc:'Carved in stone' },
+    { period:'AD 3rd–13th c.', name:'Vatteluttu',   chars: toVatteluttu(typedTamil), cls:'f-tamil', bg:'script-row-palmleaf', desc:'Carved in leaves' },
     { period:'19th c.–today',  name:'Modern Tamil', chars: typedTamil,             cls:'f-tamil',   bg:'script-row-paper'   },
     { period:'AD 3025',        name:'Future Font',  chars: futureFontInput,        cls:'f-tamil',   bg:'script-row-techno'  },
   ];
@@ -1803,7 +1803,7 @@ function buildPalmLeaf() {
         <div style="display: flex; flex-direction: column;">
           <div class="script-row-era">${r.name}</div>
           <div class="script-row-time">${r.period}</div>
-          ${r.name === 'Future Font' ? '<div class="script-row-future-label">In my imagination</div>' : ''}
+          ${r.name === 'Future Font' ? '<div class="script-row-future-label">(In my imagination)</div>' : r.desc ? `<div class="script-row-future-label">${r.desc}</div>` : ''}
         </div>
         <div class="script-row-glyph" style="font-size: 28px; ${r.name === 'Future Font' ? "font-family: 'SF Mono', 'Courier New', monospace; color: #1a0800;" : r.cls === 'f-brahmi' ? "font-family: 'Noto Sans Brahmi','Segoe UI Historic',sans-serif;" : "font-family: 'Noto Serif Tamil',serif;"}">${r.chars || '—'}</div>
       </div>
