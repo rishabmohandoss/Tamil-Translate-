@@ -415,19 +415,37 @@
       font-size: clamp(1.1rem, 3.5vw, 1.35rem); font-weight: 300;
       line-height: 1.9; color: rgba(255,255,255,.75); margin-bottom: 32px;
     }
-    .future-input-wrap {
+    .future-display {
+      font-family: 'SF Mono', 'Courier New', monospace;
+      font-size: clamp(2rem, 8vw, 3rem); color: #00e5ff;
+      background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,.3);
+      border-radius: 8px; padding: 20px; width: 100%; min-height: 80px;
+      text-shadow: 0 0 20px rgba(0,229,255,.6);
+      margin-bottom: 24px; word-break: break-word; line-height: 1.4;
+    }
+    .future-kbd-wrap {
       margin-bottom: 28px;
     }
-    .future-input-wrap textarea {
+    .future-kbd-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; justify-content: center; }
+    .future-key {
       font-family: 'SF Mono', 'Courier New', monospace;
-      font-size: 1.2rem; color: #00e5ff;
-      background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,.3);
-      border-radius: 8px; padding: 16px; width: 100%; min-height: 100px;
-      resize: none; outline: none;
-      transition: border-color .2s;
+      font-size: 1.1rem; padding: 10px 14px;
+      background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,.25);
+      border-radius: 6px; color: #00e5ff;
+      cursor: pointer; text-align: center;
+      transition: all .15s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .future-input-wrap textarea:focus { border-color: rgba(0,229,255,.7); }
-    .future-input-wrap textarea::placeholder { color: rgba(0,229,255,.3); }
+    .future-key:hover { background: rgba(0,229,255,0.25); border-color: rgba(0,229,255,.5); box-shadow: 0 0 10px rgba(0,229,255,.3); }
+    .future-key:active { background: rgba(0,229,255,0.35); }
+    .future-util-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .8rem; padding: 10px 20px;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2);
+      color: rgba(255,255,255,.6); border-radius: 6px; cursor: pointer;
+      transition: all .15s;
+    }
+    .future-util-btn:hover { background: rgba(255,255,255,.15); color: rgba(255,255,255,.85); }
     .future-btn {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.05rem; letter-spacing: .1em;
@@ -1164,10 +1182,55 @@
     <div class="future-prompt">
       In 1,000 years when language is gone and only <em style="color: #c9a96e;">patterns</em> remain,<br>
       what would your name look like?<br><br>
-      Type out the futuristic, crazy characters you imagine:
+      Build your future name with futuristic characters:
     </div>
-    <div class="future-input-wrap">
-      <textarea id="future-input" placeholder="✧ ⟨ψ ◆ ≈ ◇ ✦ ⟩ ..." autocomplete="off" spellcheck="false"></textarea>
+    <div class="future-display" id="future-display">⟨ψ ◆ ≈ ◇⟩</div>
+    <div class="future-kbd-wrap">
+      <div class="future-kbd-row">
+        <button class="future-key" data-char="✦">✦</button>
+        <button class="future-key" data-char="⟨">⟨</button>
+        <button class="future-key" data-char="⟩">⟩</button>
+        <button class="future-key" data-char="◆">◆</button>
+        <button class="future-key" data-char="◇">◇</button>
+        <button class="future-key" data-char="◈">◈</button>
+        <button class="future-key" data-char="★">★</button>
+        <button class="future-key" data-char="✧">✧</button>
+      </div>
+      <div class="future-kbd-row">
+        <button class="future-key" data-char="≈">≈</button>
+        <button class="future-key" data-char="≋">≋</button>
+        <button class="future-key" data-char="∿">∿</button>
+        <button class="future-key" data-char="ψ">ψ</button>
+        <button class="future-key" data-char="φ">φ</button>
+        <button class="future-key" data-char="Ω">Ω</button>
+        <button class="future-key" data-char="∞">∞</button>
+        <button class="future-key" data-char="∴">∴</button>
+      </div>
+      <div class="future-kbd-row">
+        <button class="future-key" data-char="⬡">⬡</button>
+        <button class="future-key" data-char="⬢">⬢</button>
+        <button class="future-key" data-char="⬣">⬣</button>
+        <button class="future-key" data-char="⬤">⬤</button>
+        <button class="future-key" data-char="◉">◉</button>
+        <button class="future-key" data-char="◎">◎</button>
+        <button class="future-key" data-char="◇">◆</button>
+        <button class="future-key" data-char="◘">◘</button>
+      </div>
+      <div class="future-kbd-row">
+        <button class="future-key" data-char="→">→</button>
+        <button class="future-key" data-char="←">←</button>
+        <button class="future-key" data-char="↑">↑</button>
+        <button class="future-key" data-char="↓">↓</button>
+        <button class="future-key" data-char="⇄">⇄</button>
+        <button class="future-key" data-char="⇆">⇆</button>
+        <button class="future-key" data-char="⟺">⟺</button>
+        <button class="future-key" data-char="◈">✕</button>
+      </div>
+      <div class="future-kbd-row">
+        <button class="future-util-btn" id="future-space" style="flex: 1; max-width: 200px;">Space</button>
+        <button class="future-util-btn" id="future-backspace">⌫ Delete</button>
+        <button class="future-util-btn" id="future-clear">✕ Clear</button>
+      </div>
     </div>
     <button class="future-btn" id="future-continue">See Your Palm Leaf ✦</button>
   </div>
@@ -1473,7 +1536,7 @@ englishNextBtn.addEventListener('click', () => {
     const dt    = Math.max(p2.t - p1.t, 1);
     const dist  = Math.hypot(p2.x - p1.x, p2.y - p1.y);
     const speed = dist / dt;
-    const targetW = Math.max(3, Math.min(8, 8.5 - speed * 12));
+    const targetW = Math.max(6, Math.min(14, 15 - speed * 10));
     lastW = lastW * 0.65 + targetW * 0.35;   /* smooth width lerp */
 
     /* Midpoints for smooth quadratic bezier */
@@ -1663,12 +1726,34 @@ $('q-continue').addEventListener('click', () => goTo(7));
 /* ══════════════════════════════════════════════
    SCREEN 7 — Future Font Input
 ══════════════════════════════════════════════ */
-const futureInput = $('future-input');
+const futureDisplay = $('future-display');
 const futureBtn = $('future-continue');
 
-futureInput.addEventListener('input', (e) => {
-  futureFontInput = e.target.value;
+function updateFutureDisplay() {
+  futureDisplay.textContent = futureFontInput || '⟨ψ ◆ ≈ ◇⟩';
   futureBtn.disabled = !futureFontInput.trim();
+}
+
+document.querySelectorAll('.future-key[data-char]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    futureFontInput += btn.dataset.char;
+    updateFutureDisplay();
+  });
+});
+
+$('future-space').addEventListener('click', () => {
+  futureFontInput += ' ';
+  updateFutureDisplay();
+});
+
+$('future-backspace').addEventListener('click', () => {
+  futureFontInput = [...futureFontInput].slice(0, -1).join('');
+  updateFutureDisplay();
+});
+
+$('future-clear').addEventListener('click', () => {
+  futureFontInput = '';
+  updateFutureDisplay();
 });
 
 futureBtn.addEventListener('click', buildPalmLeaf);
@@ -1708,20 +1793,25 @@ function buildPalmLeaf() {
       </div>
     </div>`).join('');
 
-  /* Signature - ensure it's visible */
+  /* Signature - ensure it's visible and prominent */
   const sigWrap = $('palm-sig-wrap');
   sigWrap.innerHTML = '';
   if (signatureDataUrl) {
     const img = document.createElement('img');
     img.src = signatureDataUrl;
     img.alt = 'Signature';
-    img.style.height = '45px';
-    img.style.maxWidth = '160px';
+    img.style.height = '70px';
+    img.style.maxWidth = '220px';
     img.style.objectFit = 'contain';
-    img.style.filter = 'brightness(0.8) contrast(1.1)';
+    img.style.filter = 'brightness(0.9) contrast(1.3)';
+    img.style.display = 'block';
     sigWrap.appendChild(img);
   } else {
-    sigWrap.textContent = '___________________';
+    const line = document.createElement('div');
+    line.textContent = '_________________________';
+    line.style.fontSize = '18px';
+    line.style.letterSpacing = '2px';
+    sigWrap.appendChild(line);
   }
 
   const dateText = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
