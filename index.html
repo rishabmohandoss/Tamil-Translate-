@@ -456,8 +456,8 @@
       background: linear-gradient(135deg, #8b8680 0%, #9a938c 25%, #7f7973 50%, #8e8782 75%, #9a938c 100%);
       background-size: 200% 200%;
       position: relative;
-      padding: 12px 14px;
-      border-radius: 8px;
+      padding: 10px 12px;
+      border-radius: 6px;
       overflow: hidden;
       box-shadow: inset 1px 1px 3px rgba(255,255,255,0.2), inset -1px -1px 3px rgba(0,0,0,0.3);
     }
@@ -475,8 +475,8 @@
     .script-row-palmleaf {
       background: linear-gradient(90deg, #d4a574 0%, #c8955a 50%, #d4a574 100%);
       position: relative;
-      padding: 12px 14px;
-      border-radius: 8px;
+      padding: 10px 12px;
+      border-radius: 6px;
       overflow: hidden;
       box-shadow: inset 1px 1px 3px rgba(255,255,255,0.15), inset -1px -1px 3px rgba(0,0,0,0.2);
     }
@@ -490,8 +490,8 @@
     .script-row-paper {
       background: linear-gradient(135deg, #f5f0e8 0%, #efe5d8 50%, #f5f0e8 100%);
       position: relative;
-      padding: 12px 14px;
-      border-radius: 8px;
+      padding: 10px 12px;
+      border-radius: 6px;
       overflow: hidden;
       box-shadow: inset 1px 1px 3px rgba(255,255,255,0.5), inset -1px -1px 3px rgba(0,0,0,0.1);
       border: 1px solid rgba(0,0,0,0.05);
@@ -504,51 +504,39 @@
       background-size: 100px 100px;
       pointer-events: none;
     }
-    .script-row-techno {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      position: relative;
-      padding: 12px 14px;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: inset 1px 1px 3px rgba(0,229,255,0.2), inset -1px -1px 3px rgba(0,0,0,0.5);
-    }
-    .script-row-techno::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(0deg, transparent 24%, rgba(0,229,255,0.05) 25%, rgba(0,229,255,0.05) 26%, transparent 27%, transparent 74%, rgba(0,229,255,0.05) 75%, rgba(0,229,255,0.05) 76%, transparent 77%, transparent),
-        linear-gradient(90deg, transparent 24%, rgba(0,229,255,0.05) 25%, rgba(0,229,255,0.05) 26%, transparent 27%, transparent 74%, rgba(0,229,255,0.05) 75%, rgba(0,229,255,0.05) 76%, transparent 77%, transparent);
-      background-size: 50px 50px;
-      pointer-events: none;
-    }
     .script-row-content {
       display: grid;
-      grid-template-columns: 1.2fr 1fr 0.7fr;
-      gap: 12px;
+      grid-template-columns: auto 1fr;
+      gap: 16px 12px;
       align-items: center;
       position: relative;
       z-index: 1;
       min-width: 0;
     }
-    .script-row-content > div {
-      min-width: 0;
-      overflow-wrap: break-word;
-      word-break: break-word;
-    }
     .script-row-era {
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
+      grid-column: 1;
+      grid-row: 1;
     }
     .script-row-time {
-      font-size: 12px;
-      font-weight: 500;
+      font-size: 11px;
+      font-weight: 400;
+      grid-column: 1;
+      grid-row: 2;
+      opacity: 0.9;
     }
     .script-row-glyph {
-      font-size: 28px;
+      font-size: 36px;
       font-weight: 700;
       text-align: center;
-      line-height: 1;
+      line-height: 1.1;
+      grid-column: 2;
+      grid-row: 1 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 60px;
     }
 
     /* Clay Tablet Styling */
@@ -1153,7 +1141,7 @@
       </div>
 
       <!-- Right: Script Sections with Textures -->
-      <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0;" id="palm-rows"></div>
+      <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1;" id="palm-rows"></div>
 
     </div>
 
@@ -1251,48 +1239,11 @@ const BV={'அ':'\u{11005}','ஆ':'\u{11006}','இ':'\u{11007}','ஈ':'\u{11008}
 const BM={'ா':'\u{11038}','ி':'\u{11039}','ீ':'\u{1103A}','ு':'\u{1103B}','ூ':'\u{1103C}','ெ':'\u{11041}','ே':'\u{11042}','ை':'\u{11042}','ொ':'\u{11043}','ோ':'\u{11044}','ௌ':'\u{11045}','்':'\u{11046}'};
 function toBrahmi(t) { return [...t].map(c=>BC[c]||BV[c]||BM[c]||'').join(''); }
 
-/* Vatteluttu mapping — complete 247-character Tamil to Vatteluttu */
-const VATTELUTTU_MAP = {
-  "ஃ": "𑀃", "அ": "𑀅", "ஆ": "𑀆", "இ": "𑀇", "ஈ": "𑀈", "உ": "𑀉", "ஊ": "𑀊", "எ": "𑀋", "ஏ": "𑀌", "ஐ": "𑀍", "ஒ": "𑀎", "ஓ": "𑀏", "ஔ": "𑀐",
-  "க": "𑀓", "கா": "𑀓𑀸", "கி": "𑀓𑀹", "கீ": "𑀓𑀺", "கு": "𑀓𑀻", "கூ": "𑀓𑀼", "கெ": "𑀓𑀽", "கே": "𑀓𑀾", "கை": "𑀓𑀿", "கொ": "𑀓𑁀", "கோ": "𑀓𑁁", "கௌ": "𑀓𑁂",
-  "ங": "𑀗", "ஙா": "𑀗𑀸", "ஙி": "𑀗𑀹", "ஙீ": "𑀗𑀺", "ஙு": "𑀗𑀻", "ஙூ": "𑀗𑀼", "ஙெ": "𑀗𑀽", "ஙே": "𑀗𑀾", "ஙை": "𑀗𑀿", "ஙொ": "𑀗𑁀", "ஙோ": "𑀗𑁁", "ஙௌ": "𑀗𑁂",
-  "ச": "𑀘", "சா": "𑀘𑀸", "சி": "𑀘𑀹", "சீ": "𑀘𑀺", "சு": "𑀘𑀻", "சூ": "𑀘𑀼", "செ": "𑀘𑀽", "சே": "𑀘𑀾", "சை": "𑀘𑀿", "சொ": "𑀘𑁀", "சோ": "𑀘𑁁", "சௌ": "𑀘𑁂",
-  "ஞ": "𑀜", "ஞா": "𑀜𑀸", "ஞி": "𑀜𑀹", "ஞீ": "𑀜𑀺", "ஞு": "𑀜𑀻", "ஞூ": "𑀜𑀼", "ஞெ": "𑀜𑀽", "ஞே": "𑀜𑀾", "ஞை": "𑀜𑀿", "ஞொ": "𑀜𑁀", "ஞோ": "𑀜𑁁", "ஞௌ": "𑀜𑁂",
-  "ட": "𑀝", "டா": "𑀝𑀸", "டி": "𑀝𑀹", "டீ": "𑀝𑀺", "டு": "𑀝𑀻", "டூ": "𑀝𑀼", "டெ": "𑀝𑀽", "டே": "𑀝𑀾", "டை": "𑀝𑀿", "டொ": "𑀝𑁀", "டோ": "𑀝𑁁", "டௌ": "𑀝𑁂",
-  "ண": "𑀡", "ணா": "𑀡𑀸", "ணி": "𑀡𑀹", "ணீ": "𑀡𑀺", "ணு": "𑀡𑀻", "ணூ": "𑀡𑀼", "ணெ": "𑀡𑀽", "ணே": "𑀡𑀾", "ணை": "𑀡𑀿", "ணொ": "𑀡𑁀", "ணோ": "𑀡𑁁", "ணௌ": "𑀡𑁂",
-  "த": "𑀢", "தா": "𑀢𑀸", "தி": "𑀢𑀹", "தீ": "𑀢𑀺", "து": "𑀢𑀻", "தூ": "𑀢𑀼", "தெ": "𑀢𑀽", "தே": "𑀢𑀾", "தை": "𑀢𑀿", "தொ": "𑀢𑁀", "தோ": "𑀢𑁁", "தௌ": "𑀢𑁂",
-  "ந": "𑀦", "நா": "𑀦𑀸", "நி": "𑀦𑀹", "நீ": "𑀦𑀺", "நு": "𑀦𑀻", "நூ": "𑀦𑀼", "நெ": "𑀦𑀽", "நே": "𑀦𑀾", "நை": "𑀦𑀿", "நொ": "𑀦𑁀", "நோ": "𑀦𑁁", "நௌ": "𑀦𑁂",
-  "ப": "𑀧", "பா": "𑀧𑀸", "பி": "𑀧𑀹", "பீ": "𑀧𑀺", "பு": "𑀧𑀻", "பூ": "𑀧𑀼", "பெ": "𑀧𑀽", "பே": "𑀧𑀾", "பை": "𑀧𑀿", "பொ": "𑀧𑁀", "போ": "𑀧𑁁", "பௌ": "𑀧𑁂",
-  "ம": "𑀫", "மா": "𑀫𑀸", "மி": "𑀫𑀹", "மீ": "𑀫𑀺", "மு": "𑀫𑀻", "மூ": "𑀫𑀼", "மெ": "𑀫𑀽", "மே": "𑀫𑀾", "மை": "𑀫𑀿", "மொ": "𑀫𑁀", "மோ": "𑀫𑁁", "மௌ": "𑀫𑁂",
-  "ய": "𑀬", "யா": "𑀬𑀸", "யி": "𑀬𑀹", "யீ": "𑀬𑀺", "யு": "𑀬𑀻", "யூ": "𑀬𑀼", "யெ": "𑀬𑀽", "யே": "𑀬𑀾", "யை": "𑀬𑀿", "யொ": "𑀬𑁀", "யோ": "𑀬𑁁", "யௌ": "𑀬𑁂",
-  "ர": "𑀭", "ரா": "𑀭𑀸", "ரி": "𑀭𑀹", "ரீ": "𑀭𑀺", "ரு": "𑀭𑀻", "ரூ": "𑀭𑀼", "ரெ": "𑀭𑀽", "ரே": "𑀭𑀾", "ரை": "𑀭𑀿", "ரொ": "𑀭𑁀", "ரோ": "𑀭𑁁", "ரௌ": "𑀭𑁂",
-  "ல": "𑀮", "லா": "𑀮𑀸", "லி": "𑀮𑀹", "லீ": "𑀮𑀺", "லு": "𑀮𑀻", "லூ": "𑀮𑀼", "லெ": "𑀮𑀽", "லே": "𑀮𑀾", "லை": "𑀮𑀿", "லொ": "𑀮𑁀", "லோ": "𑀮𑁁", "லௌ": "𑀮𑁂",
-  "வ": "𑀯", "வா": "𑀯𑀸", "வி": "𑀯𑀹", "வீ": "𑀯𑀺", "வு": "𑀯𑀻", "வூ": "𑀯𑀼", "வெ": "𑀯𑀽", "வே": "𑀯𑀾", "வை": "𑀯𑀿", "வொ": "𑀯𑁀", "வோ": "𑀯𑁁", "வௌ": "𑀯𑁂",
-  "ழ": "𑀵", "ழா": "𑀵𑀸", "ழி": "𑀵𑀹", "ழீ": "𑀵𑀺", "ழு": "𑀵𑀻", "ழூ": "𑀵𑀼", "ழெ": "𑀵𑀽", "ழே": "𑀵𑀾", "ழை": "𑀵𑀿", "ழொ": "𑀵𑁀", "ழோ": "𑀵𑁁", "ழௌ": "𑀵𑁂",
-  "ள": "𑀴", "ளா": "𑀴𑀸", "ளி": "𑀴𑀹", "ளீ": "𑀴𑀺", "ளு": "𑀴𑀻", "ளூ": "𑀴𑀼", "ளெ": "𑀴𑀽", "ளே": "𑀴𑀾", "ளை": "𑀴𑀿", "ளொ": "𑀴𑁀", "ளோ": "𑀴𑁁", "ளௌ": "𑀴𑁂",
-  "ற": "𑀶", "றா": "𑀶𑀸", "றி": "𑀶𑀹", "றீ": "𑀶𑀺", "று": "𑀶𑀻", "றூ": "𑀶𑀼", "றெ": "𑀶𑀽", "றே": "𑀶𑀾", "றை": "𑀶𑀿", "றொ": "𑀶𑁀", "றோ": "𑀶𑁁", "றௌ": "𑀶𑁂",
-  "ன": "𑀷", "னா": "𑀷𑀸", "னி": "𑀷𑀹", "னீ": "𑀷𑀺", "னு": "𑀷𑀻", "னூ": "𑀷𑀼", "னெ": "𑀷𑀽", "னே": "𑀷𑀾", "னை": "𑀷𑀿", "னொ": "𑀷𑁀", "னோ": "𑀷𑁁", "னௌ": "𑀷𑁂",
-  "க்": "𑀓𑁍", "ங்": "𑀗𑁍", "ச்": "𑀘𑁍", "ஞ்": "𑀜𑁍", "ட்": "𑀝𑁍", "ண்": "𑀡𑁍", "த்": "𑀢𑁍", "ந்": "𑀦𑁍", "ப்": "𑀧𑁍", "ம்": "𑀫𑁍", "ய்": "𑀬𑁍", "ர்": "𑀭𑁍", "ல்": "𑀮𑁍", "வ்": "𑀯𑁍", "ழ்": "𑀵𑁍", "ள்": "𑀴𑁍", "ற்": "𑀶𑁍", "ன்": "𑀷𑁍"
-};
-
-function toVatteluttu(t) {
-  let result = '';
-  let i = 0;
-  while (i < t.length) {
-    /* Try 2-char combinations first (consonant + vowel mark) */
-    if (i + 1 < t.length && VATTELUTTU_MAP[t.substring(i, i + 2)]) {
-      result += VATTELUTTU_MAP[t.substring(i, i + 2)];
-      i += 2;
-    } else if (VATTELUTTU_MAP[t[i]]) {
-      result += VATTELUTTU_MAP[t[i]];
-      i++;
-    } else {
-      result += t[i];
-      i++;
-    }
-  }
-  return result;
-}
+/* Vatteluttu (வட்டெழுத்து) — simplified conversion */
+const VC={'க':'\u{11315}','ங':'\u{11319}','ச':'\u{1131A}','ஞ':'\u{1131E}','ட':'\u{1131F}','ண':'\u{11323}','த':'\u{11324}','ந':'\u{11328}','ப':'\u{1132A}','ம':'\u{1132E}','ய':'\u{1132F}','ர':'\u{11330}','ல':'\u{11332}','வ':'\u{11334}','ழ':'\u{11330}','ள':'\u{11333}','ற':'\u{11330}','ன':'\u{11328}'};
+const VV={'அ':'\u{11305}','ஆ':'\u{11306}','இ':'\u{11307}','ஈ':'\u{11308}','உ':'\u{11309}','ஊ':'\u{1130A}','எ':'\u{1130F}','ஏ':'\u{11310}','ஐ':'\u{11310}','ஒ':'\u{11311}','ஓ':'\u{11312}','ஔ':'\u{11312}'};
+const VM={'ா':'\u{1133E}','ி':'\u{1133F}','ீ':'\u{11340}','ு':'\u{11341}','ூ':'\u{11342}','ெ':'\u{11347}','ே':'\u{11348}','ை':'\u{11348}','ொ':'\u{1134B}','ோ':'\u{1134C}','ௌ':'\u{1134D}','்':'\u{1134D}'};
+function toVatteluttu(t) { return [...t].map(c=>VC[c]||VV[c]||VM[c]||c).join(''); }
 
 /* Future "neural upload" */
 function toFuture(roman) {
