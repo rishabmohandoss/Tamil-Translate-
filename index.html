@@ -878,33 +878,11 @@
     /* ─── Print ─── */
     #print-area { display: none; }
     @media print {
-      body { margin: 0; padding: 0; background: white; }
-      body > div { display: none !important; }
-      #print-area {
-        display: block !important;
-        width: 100%;
-        margin: 0;
-        padding: 10px;
-        background: white;
-        text-align: center;
-      }
-      #print-area .passport {
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
-        padding: 20px;
-        box-shadow: none;
-        border: none;
-        border-radius: 0;
-        background: linear-gradient(135deg, #d4a574 0%, #c8955a 30%, #b8844a 50%, #c49060 80%, #d4a574 100%);
-        page-break-inside: avoid;
-        overflow: visible !important;
-        color: #3d2817;
-      }
-      #print-area .passport > div { display: block !important; visibility: visible !important; }
-      #print-area img { display: block !important; max-width: 100%; }
-      #print-area canvas { display: none !important; }
-      @page { margin: 0.5cm; size: A4; }
+      body { margin: 0; padding: 0; }
+      .screen { display: none !important; }
+      #print-area { display: block !important; text-align: center; padding: 20px; }
+      #print-area .passport { width: 100%; border: none; box-shadow: none; border-radius: 0; }
+      @page { margin: 1cm; size: A4; }
     }
   </style>
 </head>
