@@ -343,12 +343,12 @@
     }
     .evo-inner { position: relative; z-index: 1; width: 100%; max-width: 560px; }
     .evo-era-badge {
-      font-size: .65rem; letter-spacing: .3em; text-transform: uppercase;
+      font-size: 1rem; font-weight: 700; letter-spacing: .3em; text-transform: uppercase;
       color: #c9a96e; margin-bottom: 8px;
       transition: opacity .5s;
     }
     .evo-script-desc {
-      font-size: .85rem; color: rgba(255,255,255,.35);
+      font-size: 1.1rem; font-weight: 600; color: rgba(255,255,255,.4);
       margin-bottom: 32px; font-style: italic;
       transition: opacity .5s;
     }
@@ -381,8 +381,8 @@
     .evo-node-dot.done   { background: rgba(201,169,110,.4); border-color: rgba(201,169,110,.4); }
     .evo-node-dot.active { background: #c9a96e; border-color: #c9a96e; box-shadow: 0 0 12px rgba(201,169,110,.6); }
     .evo-node-lbl {
-      font-size: .55rem; letter-spacing: .1em; text-transform: uppercase;
-      color: rgba(255,255,255,.25); text-align: center;
+      font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(255,255,255,.3); text-align: center;
       transition: color .4s;
     }
     .evo-node.active .evo-node-lbl { color: #c9a96e; }
@@ -1163,7 +1163,7 @@
       </div>
     </div>
 
-    <button class="evo-btn" id="evo-next">Next Era →</button>
+    <button class="evo-btn" id="evo-next">← Previous Era</button>
   </div>
 </div>
 
@@ -1690,7 +1690,7 @@ function renderEvo(idx, animate) {
     btn.textContent = 'What does the future hold? →';
     btn.className   = 'evo-btn gold';
   } else {
-    btn.textContent = 'Next Era →';
+    btn.textContent = '← Previous Era';
     btn.className   = 'evo-btn';
   }
 
