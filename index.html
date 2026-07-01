@@ -563,22 +563,25 @@
       pointer-events: none;
     }
     .script-row-techno {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      background: linear-gradient(135deg, #c9a96e 0%, #b89858 30%, #a88548 50%, #b89858 80%, #c9a96e 100%);
       position: relative;
       padding: 10px 12px;
       border-radius: 6px;
       overflow: hidden;
-      box-shadow: inset 1px 1px 3px rgba(0,229,255,0.2), inset -1px -1px 3px rgba(0,0,0,0.5);
+      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1), inset -1px -1px 3px rgba(255,255,255,0.3);
     }
     .script-row-techno::before {
       content: '';
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(0deg, transparent 24%, rgba(0,229,255,0.05) 25%, rgba(0,229,255,0.05) 26%, transparent 27%, transparent 74%, rgba(0,229,255,0.05) 75%, rgba(0,229,255,0.05) 76%, transparent 77%, transparent),
-        linear-gradient(90deg, transparent 24%, rgba(0,229,255,0.05) 25%, rgba(0,229,255,0.05) 26%, transparent 27%, transparent 74%, rgba(0,229,255,0.05) 75%, rgba(0,229,255,0.05) 76%, transparent 77%, transparent);
+        linear-gradient(0deg, transparent 24%, rgba(0,229,255,0.08) 25%, rgba(0,229,255,0.08) 26%, transparent 27%, transparent 74%, rgba(0,229,255,0.08) 75%, rgba(0,229,255,0.08) 76%, transparent 77%, transparent),
+        linear-gradient(90deg, transparent 24%, rgba(0,229,255,0.08) 25%, rgba(0,229,255,0.08) 26%, transparent 27%, transparent 74%, rgba(0,229,255,0.08) 75%, rgba(0,229,255,0.08) 76%, transparent 77%, transparent);
       background-size: 50px 50px;
       pointer-events: none;
+    }
+    .script-row-future-label {
+      font-size: 10px; opacity: 0.8; margin-top: 4px; font-style: italic;
     }
     .script-row-content {
       display: grid;
@@ -1299,11 +1302,19 @@
 
     </div>
 
-    <!-- Footer -->
-    <div style="margin-top: 20px; border-top: 2px solid rgba(0,0,0,0.15); padding-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
-      <div id="palm-date" style="flex: 1;">Date</div>
-      <div style="width: 30px; height: 1px; background: rgba(0,0,0,0.2); margin: 0 8px;"></div>
-      <div id="palm-sig-wrap" style="display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end;">தமிழ் பெயர்</div>
+    <!-- Footer with Signature -->
+    <div style="margin-top: 20px; border-top: 2px solid rgba(0,0,0,0.15); padding-top: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; font-size: 13px; margin-bottom: 8px;">
+        <div id="palm-date" style="flex: 1;">Date</div>
+        <div style="width: 30px; height: 1px; background: rgba(0,0,0,0.2); margin: 0 8px;"></div>
+        <div style="flex: 1; text-align: right;">தமிழ் பெயர்</div>
+      </div>
+      <div id="palm-sig-wrap" style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; min-height: 80px;"></div>
+    </div>
+
+    <!-- Disclaimer Footer -->
+    <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 10px; line-height: 1.5; color: rgba(0,0,0,0.6); text-align: center;">
+      <p style="margin: 0 0 4px 0;"><strong>Tamil's Timeless Nature:</strong> While the script evolves to adapt with technology, the essence of Tamil language and its pronunciation remains eternal. This uniqueness is what makes Tamil endure through millennia.</p>
     </div>
 
   </div>
@@ -1787,9 +1798,12 @@ function buildPalmLeaf() {
   $('palm-rows').innerHTML = rows.map(r => `
     <div class="${r.bg}">
       <div class="script-row-content">
-        <div class="script-row-era">${r.name}</div>
-        <div class="script-row-time">${r.period}</div>
-        <div class="script-row-glyph" style="font-size: 28px; ${r.name === 'Future Font' ? "font-family: 'SF Mono', 'Courier New', monospace; color: #00e5ff;" : r.cls === 'f-brahmi' ? "font-family: 'Noto Sans Brahmi','Segoe UI Historic',sans-serif;" : "font-family: 'Noto Serif Tamil',serif;"}">${r.chars || '—'}</div>
+        <div style="display: flex; flex-direction: column;">
+          <div class="script-row-era">${r.name}</div>
+          <div class="script-row-time">${r.period}</div>
+          ${r.name === 'Future Font' ? '<div class="script-row-future-label">In my imagination</div>' : ''}
+        </div>
+        <div class="script-row-glyph" style="font-size: 28px; ${r.name === 'Future Font' ? "font-family: 'SF Mono', 'Courier New', monospace; color: #1a0800;" : r.cls === 'f-brahmi' ? "font-family: 'Noto Sans Brahmi','Segoe UI Historic',sans-serif;" : "font-family: 'Noto Serif Tamil',serif;"}">${r.chars || '—'}</div>
       </div>
     </div>`).join('');
 
@@ -1797,6 +1811,13 @@ function buildPalmLeaf() {
   const sigWrap = $('palm-sig-wrap');
   sigWrap.innerHTML = '';
   if (signatureDataUrl) {
+    const sigContainer = document.createElement('div');
+    sigContainer.style.display = 'flex';
+    sigContainer.style.alignItems = 'center';
+    sigContainer.style.justifyContent = 'flex-end';
+    sigContainer.style.width = '100%';
+    sigContainer.style.minHeight = '70px';
+
     const img = document.createElement('img');
     img.src = signatureDataUrl;
     img.alt = 'Signature';
@@ -1805,12 +1826,15 @@ function buildPalmLeaf() {
     img.style.objectFit = 'contain';
     img.style.filter = 'brightness(0.9) contrast(1.3)';
     img.style.display = 'block';
-    sigWrap.appendChild(img);
+    sigContainer.appendChild(img);
+    sigWrap.appendChild(sigContainer);
   } else {
     const line = document.createElement('div');
     line.textContent = '_________________________';
     line.style.fontSize = '18px';
     line.style.letterSpacing = '2px';
+    line.style.width = '100%';
+    line.style.textAlign = 'right';
     sigWrap.appendChild(line);
   }
 
