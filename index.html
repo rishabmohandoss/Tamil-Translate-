@@ -399,7 +399,47 @@
     .evo-btn.gold:hover { background: #e0c080; }
 
     /* ══════════════════════════════════════════
-       SCREEN 5 — QUESTION
+       SCREEN 5 — FUTURE FONT INPUT
+    ══════════════════════════════════════════ */
+    #s-future {
+      background: #040608;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 0 28px;
+    }
+    .future-input-inner { position: relative; z-index: 1; max-width: 560px; width: 100%; }
+    .future-eyebrow {
+      font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
+      color: rgba(0,229,255,.65); margin-bottom: 28px;
+    }
+    .future-prompt {
+      font-size: clamp(1.1rem, 3.5vw, 1.35rem); font-weight: 300;
+      line-height: 1.9; color: rgba(255,255,255,.75); margin-bottom: 32px;
+    }
+    .future-input-wrap {
+      margin-bottom: 28px;
+    }
+    .future-input-wrap textarea {
+      font-family: 'SF Mono', 'Courier New', monospace;
+      font-size: 1.2rem; color: #00e5ff;
+      background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,.3);
+      border-radius: 8px; padding: 16px; width: 100%; min-height: 100px;
+      resize: none; outline: none;
+      transition: border-color .2s;
+    }
+    .future-input-wrap textarea:focus { border-color: rgba(0,229,255,.7); }
+    .future-input-wrap textarea::placeholder { color: rgba(0,229,255,.3); }
+    .future-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; letter-spacing: .1em;
+      background: #c9a96e; color: #040608; border: none;
+      border-radius: 40px; padding: 15px 44px;
+      cursor: pointer; font-weight: 600; transition: background .2s;
+    }
+    .future-btn:hover { background: #e0c080; }
+    .future-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ══════════════════════════════════════════
+       SCREEN 6 — QUESTION
     ══════════════════════════════════════════ */
     #s-q {
       background: #040608;
@@ -504,6 +544,24 @@
       background-size: 100px 100px;
       pointer-events: none;
     }
+    .script-row-techno {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      position: relative;
+      padding: 10px 12px;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: inset 1px 1px 3px rgba(0,229,255,0.2), inset -1px -1px 3px rgba(0,0,0,0.5);
+    }
+    .script-row-techno::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(0deg, transparent 24%, rgba(0,229,255,0.05) 25%, rgba(0,229,255,0.05) 26%, transparent 27%, transparent 74%, rgba(0,229,255,0.05) 75%, rgba(0,229,255,0.05) 76%, transparent 77%, transparent),
+        linear-gradient(90deg, transparent 24%, rgba(0,229,255,0.05) 25%, rgba(0,229,255,0.05) 26%, transparent 27%, transparent 74%, rgba(0,229,255,0.05) 75%, rgba(0,229,255,0.05) 76%, transparent 77%, transparent);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
     .script-row-content {
       display: grid;
       grid-template-columns: auto 1fr;
@@ -527,7 +585,7 @@
       opacity: 0.9;
     }
     .script-row-glyph {
-      font-size: 36px;
+      font-size: 28px;
       font-weight: 700;
       text-align: center;
       line-height: 1.1;
@@ -536,7 +594,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 60px;
+      min-height: 50px;
+      word-break: break-word;
     }
 
     /* Clay Tablet Styling */
@@ -798,10 +857,14 @@
     #print-area { display: none; }
     @media print {
       body > * { display: none !important; }
-      #print-area { display: block !important; text-align: center; padding: .4in; }
-      #print-area .passport { width: 340px; max-width: none; margin: 0 auto;
-        box-shadow: none; border: 2px solid #8a5c08; }
-      @page { size: portrait; margin: 0; }
+      #print-area { display: block !important; text-align: center; padding: 0; margin: 0; background: #0a0812; }
+      #print-area .passport {
+        width: 100%; max-width: 100%; margin: 0; padding: 36px 32px;
+        box-shadow: none; border: none;
+        background: linear-gradient(135deg, #d4a574 0%, #c8955a 30%, #b8844a 50%, #c49060 80%, #d4a574 100%);
+        border-radius: 45px 60px 50px 48px / 55px 50px 48px 45px;
+      }
+      @page { size: A4; margin: 0.5in; }
     }
   </style>
 </head>
@@ -1087,13 +1150,37 @@
 </div>
 
 <!-- ═══════════════════════════════════
-     SCREEN 5 · QUESTION
+     SCREEN 7 · FUTURE FONT INPUT
+═══════════════════════════════════ -->
+<div class="screen" id="s-future">
+  <button class="back-btn" onclick="goBack()">← Back</button>
+  <div class="pips">
+    <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div>
+    <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div><div class="pip active"></div>
+  </div>
+
+  <div class="future-input-inner">
+    <div class="future-eyebrow">Imagine the future</div>
+    <div class="future-prompt">
+      In 1,000 years when language is gone and only <em style="color: #c9a96e;">patterns</em> remain,<br>
+      what would your name look like?<br><br>
+      Type out the futuristic, crazy characters you imagine:
+    </div>
+    <div class="future-input-wrap">
+      <textarea id="future-input" placeholder="✧ ⟨ψ ◆ ≈ ◇ ✦ ⟩ ..." autocomplete="off" spellcheck="false"></textarea>
+    </div>
+    <button class="future-btn" id="future-continue">See Your Palm Leaf ✦</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 6 · QUESTION
 ═══════════════════════════════════ -->
 <div class="screen" id="s-q">
   <button class="back-btn" onclick="goBack()">← Back</button>
   <div class="pips">
     <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div>
-    <div class="pip done"></div><div class="pip done"></div><div class="pip active"></div>
+    <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div><div class="pip active"></div>
   </div>
 
   <div class="q-inner">
@@ -1117,6 +1204,10 @@
 ═══════════════════════════════════ -->
 <div class="screen" id="s-sticker">
   <button class="back-btn" onclick="goBack()" style="top: 20px; left: 20px; position: fixed;">← Back</button>
+  <div class="pips" style="position: absolute; top: max(16px, env(safe-area-inset-top)); right: 20px;">
+    <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div>
+    <div class="pip done"></div><div class="pip done"></div><div class="pip done"></div><div class="pip done"></div><div class="pip active"></div>
+  </div>
 
   <div class="passport" id="palm-leaf">
 
@@ -1170,8 +1261,9 @@ function show(el) { el.classList.remove('hidden'); }
 function hide(el) { el.classList.add('hidden');   }
 
 /* Screen manager */
-const SCREENS = ['s-welcome','s-photo','s-english','s-name','s-sig','s-evo','s-q','s-sticker'];
+const SCREENS = ['s-welcome','s-photo','s-english','s-name','s-sig','s-evo','s-q','s-future','s-sticker'];
 let current = 0;
+let futureFontInput = '';
 function goTo(idx) {
   SCREENS.forEach((id, i) => {
     const el = $(id);
@@ -1564,12 +1656,25 @@ $('evo-next').addEventListener('click', () => {
 });
 
 /* ══════════════════════════════════════════════
-   SCREEN 5 — Question
+   SCREEN 6 — Question
 ══════════════════════════════════════════════ */
-$('q-continue').addEventListener('click', buildPalmLeaf);
+$('q-continue').addEventListener('click', () => goTo(7));
 
 /* ══════════════════════════════════════════════
-   SCREEN 6 — Passport builder
+   SCREEN 7 — Future Font Input
+══════════════════════════════════════════════ */
+const futureInput = $('future-input');
+const futureBtn = $('future-continue');
+
+futureInput.addEventListener('input', (e) => {
+  futureFontInput = e.target.value;
+  futureBtn.disabled = !futureFontInput.trim();
+});
+
+futureBtn.addEventListener('click', buildPalmLeaf);
+
+/* ══════════════════════════════════════════════
+   SCREEN 8 — Passport builder
 ══════════════════════════════════════════════ */
 function buildPalmLeaf() {
   const english = englishName.trim() || transliterate(typedTamil);
@@ -1586,11 +1691,12 @@ function buildPalmLeaf() {
 
   $('palm-name-en').textContent = english;
 
-  /* Three script rows with textured backgrounds */
+  /* Four script rows with textured backgrounds */
   const rows = [
     { period:'BC 3rd c.',      name:'Brahmi',       chars: toBrahmi(typedTamil),  cls:'f-brahmi',  bg:'script-row-stone'    },
     { period:'AD 3rd–13th c.', name:'Vatteluttu',   chars: toVatteluttu(typedTamil), cls:'f-tamil', bg:'script-row-palmleaf' },
     { period:'19th c.–today',  name:'Modern Tamil', chars: typedTamil,             cls:'f-tamil',   bg:'script-row-paper'   },
+    { period:'AD 3025',        name:'Future Font',  chars: futureFontInput,        cls:'f-tamil',   bg:'script-row-techno'  },
   ];
 
   $('palm-rows').innerHTML = rows.map(r => `
@@ -1598,28 +1704,30 @@ function buildPalmLeaf() {
       <div class="script-row-content">
         <div class="script-row-era">${r.name}</div>
         <div class="script-row-time">${r.period}</div>
-        <div class="script-row-glyph" style="${r.cls === 'f-brahmi' ? "font-family: 'Noto Sans Brahmi','Segoe UI Historic',sans-serif;" : r.cls === 'f-grantha' ? "font-family: 'Noto Sans Grantha','Noto Sans',sans-serif;" : "font-family: 'Noto Serif Tamil',serif;"}">${r.chars || '—'}</div>
+        <div class="script-row-glyph" style="font-size: 28px; ${r.name === 'Future Font' ? "font-family: 'SF Mono', 'Courier New', monospace; color: #00e5ff;" : r.cls === 'f-brahmi' ? "font-family: 'Noto Sans Brahmi','Segoe UI Historic',sans-serif;" : "font-family: 'Noto Serif Tamil',serif;"}">${r.chars || '—'}</div>
       </div>
     </div>`).join('');
 
-  /* Signature */
+  /* Signature - ensure it's visible */
   const sigWrap = $('palm-sig-wrap');
   sigWrap.innerHTML = '';
   if (signatureDataUrl) {
     const img = document.createElement('img');
     img.src = signatureDataUrl;
     img.alt = 'Signature';
-    img.style.height = '50px';
-    img.style.maxWidth = '180px';
+    img.style.height = '45px';
+    img.style.maxWidth = '160px';
     img.style.objectFit = 'contain';
-    img.style.filter = 'brightness(0.75)';
-    sigWrap.insertBefore(img, sigWrap.firstChild);
+    img.style.filter = 'brightness(0.8) contrast(1.1)';
+    sigWrap.appendChild(img);
+  } else {
+    sigWrap.textContent = '___________________';
   }
 
   const dateText = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
   $('palm-date').textContent = dateText;
 
-  goTo(7);
+  goTo(8);
 }
 
 /* ══════════════════════════════════════════════
