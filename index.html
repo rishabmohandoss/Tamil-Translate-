@@ -422,6 +422,7 @@
       border-radius: 8px; padding: 20px; width: 100%; min-height: 80px;
       text-shadow: 0 0 20px rgba(0,229,255,.6);
       margin-bottom: 24px; word-break: break-word; line-height: 1.4;
+      display: flex; align-items: flex-start; overflow: hidden;
     }
     .future-kbd-wrap {
       margin-bottom: 28px;
@@ -1763,7 +1764,7 @@ const futureDisplay = $('future-display');
 const futureBtn = $('future-continue');
 
 function updateFutureDisplay() {
-  futureDisplay.textContent = futureFontInput || '⟨ψ ◆ ≈ ◇⟩';
+  futureDisplay.textContent = futureFontInput;
   futureBtn.disabled = !futureFontInput.trim();
 }
 
