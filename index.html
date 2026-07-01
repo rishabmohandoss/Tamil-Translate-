@@ -898,7 +898,12 @@
         border-radius: 0;
         background: linear-gradient(135deg, #d4a574 0%, #c8955a 30%, #b8844a 50%, #c49060 80%, #d4a574 100%);
         page-break-inside: avoid;
+        overflow: visible !important;
+        color: #3d2817;
       }
+      #print-area .passport > div { display: block !important; visibility: visible !important; }
+      #print-area img { display: block !important; max-width: 100%; }
+      #print-area canvas { display: none !important; }
       @page { margin: 0.5cm; size: A4; }
     }
   </style>
